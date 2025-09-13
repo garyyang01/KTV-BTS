@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter pub:*)",
+      "Bash(flutter analyze:*)",
+      "Bash(flutter run:*)",
+      "Bash(flutter:*)",
+      "Bash(sudo gem install:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
