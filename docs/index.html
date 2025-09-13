@@ -1,18 +1,1607 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Garyyang01</title>
+    <title>The K-T-M-V - Neuschwanstein Castle Tickets</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #0a84ff;
+            --primary-purple: #bf5af2;
+            --primary-cyan: #64d2ff;
+            --accent-orange: #ff9f0a;
+            --accent-green: #30d158;
+            --accent-pink: #ff375f;
+
+            --dark-bg-primary: #000000;
+            --dark-bg-secondary: #1c1c1e;
+            --dark-bg-tertiary: #2c2c2e;
+            --dark-bg-quaternary: #3a3a3c;
+
+            --dark-surface-primary: rgba(28, 28, 30, 0.68);
+            --dark-surface-secondary: rgba(44, 44, 46, 0.68);
+            --dark-surface-tertiary: rgba(58, 58, 60, 0.68);
+
+            --text-primary: #ffffff;
+            --text-secondary: rgba(235, 235, 245, 0.6);
+            --text-tertiary: rgba(235, 235, 245, 0.38);
+
+            --glass-ultra-light: rgba(255, 255, 255, 0.05);
+            --glass-light: rgba(255, 255, 255, 0.08);
+            --glass-medium: rgba(255, 255, 255, 0.12);
+            --glass-heavy: rgba(255, 255, 255, 0.18);
+            --glass-dropdown: rgba(28, 28, 30, 0.85);
+
+            --glass-border-light: rgba(255, 255, 255, 0.08);
+            --glass-border-medium: rgba(255, 255, 255, 0.12);
+
+            --shadow-light: rgba(0, 0, 0, 0.1);
+            --shadow-medium: rgba(0, 0, 0, 0.2);
+            --shadow-heavy: rgba(0, 0, 0, 0.4);
+
+            --section-padding: 100px 0;
+            --container-max-width: 1440px;
+            --border-radius-sm: 12px;
+            --border-radius-md: 16px;
+            --border-radius-lg: 24px;
+            --border-radius-xl: 32px;
+            --border-radius-2xl: 48px;
+
+            --transition-smooth: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+            --transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%);
+            background-attachment: fixed;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            max-width: var(--container-max-width);
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Enhanced Glassmorphism Effects */
+        .glass-ultra-light {
+            background: var(--glass-ultra-light);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border-light);
+            box-shadow: 0 8px 32px var(--shadow-light);
+        }
+
+        .glass-light {
+            background: var(--glass-light);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border-light);
+            box-shadow: 0 12px 40px var(--shadow-light);
+        }
+
+        .glass-medium {
+            background: var(--glass-medium);
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+            border: 1px solid var(--glass-border-medium);
+            box-shadow: 0 16px 48px var(--shadow-medium);
+        }
+
+        .glass-heavy {
+            background: var(--glass-heavy);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid var(--glass-border-medium);
+            box-shadow: 0 20px 60px var(--shadow-medium);
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: var(--transition-smooth);
+            padding: 8px 0;
+        }
+
+        .header.scrolled {
+            background: var(--dark-surface-primary);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border-bottom: 1px solid var(--glass-border-light);
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            transition: var(--transition-smooth);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+            color: var(--primary-cyan);
+        }
+
+        .nav-center {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 16px;
+            transition: var(--transition-smooth);
+            padding: 8px 16px;
+            border-radius: var(--border-radius-sm);
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+            background: var(--glass-ultra-light);
+            transform: translateY(-2px);
+        }
+
+        .language-switcher {
+            position: relative;
+        }
+
+        .language-btn {
+            background: var(--glass-light);
+            color: var(--text-primary);
+            border: 1px solid var(--glass-border-light);
+            padding: 8px 16px;
+            border-radius: var(--border-radius-sm);
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .language-btn:hover {
+            background: var(--glass-medium);
+            transform: translateY(-2px);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: var(--glass-dropdown);
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+            border: 1px solid var(--glass-border-medium);
+            border-radius: var(--border-radius-md);
+            padding: 8px;
+            min-width: 140px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: var(--transition-smooth);
+            box-shadow: 0 16px 48px var(--shadow-medium);
+        }
+
+        .language-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .language-option {
+            display: block;
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 10px 16px;
+            border-radius: var(--border-radius-sm);
+            font-size: 14px;
+            transition: var(--transition-smooth);
+        }
+
+        .language-option:hover {
+            color: var(--text-primary);
+            background: var(--glass-light);
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            color: var(--text-primary);
+            padding: 12px 24px;
+            border-radius: var(--border-radius-lg);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: var(--transition-smooth);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(10, 132, 255, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 16px 40px rgba(10, 132, 255, 0.4);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--text-primary);
+            position: relative;
+            overflow: hidden;
+            padding-top: 120px; /* Add padding to prevent header overlap */
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(10, 132, 255, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(191, 90, 242, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(100, 210, 255, 0.08) 0%, transparent 50%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1000px;
+        }
+
+        .hero h1 {
+            font-size: clamp(48px, 8vw, 88px);
+            font-weight: 900;
+            margin-bottom: 32px;
+            line-height: 1.05;
+            letter-spacing: -0.025em;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary-cyan) 50%, var(--primary-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(18px, 3vw, 28px);
+            font-weight: 400;
+            margin-bottom: 48px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 60px;
+        }
+
+        .hero-button {
+            padding: 16px 32px;
+            border-radius: var(--border-radius-xl);
+            font-size: 17px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition-smooth);
+            border: none;
+            cursor: pointer;
+            min-width: 160px;
+            text-align: center;
+        }
+
+        .primary-button {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            color: var(--text-primary);
+            box-shadow: 0 12px 32px rgba(10, 132, 255, 0.2);
+        }
+
+        .primary-button:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 20px 48px rgba(10, 132, 255, 0.3);
+        }
+
+        .secondary-button {
+            background: var(--glass-medium);
+            color: var(--text-primary);
+            border: 1px solid var(--glass-border-medium);
+        }
+
+        .secondary-button:hover {
+            background: var(--glass-heavy);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 16px 40px var(--shadow-light);
+        }
+
+        .download-section {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .download-link {
+            background: var(--glass-light);
+            color: var(--text-primary);
+            padding: 14px 28px;
+            border-radius: var(--border-radius-lg);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: var(--transition-smooth);
+            border: 1px solid var(--glass-border-light);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .download-link:hover {
+            background: var(--glass-medium);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 32px var(--shadow-light);
+        }
+
+        /* Value Proposition */
+        .value-prop {
+            padding: var(--section-padding);
+            position: relative;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 32px;
+            margin-top: 64px;
+        }
+
+        .feature-card {
+            background: var(--glass-light);
+            border-radius: var(--border-radius-xl);
+            padding: 40px;
+            text-align: center;
+            transition: var(--transition-smooth);
+            border: 1px solid var(--glass-border-light);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--glass-ultra-light) 0%, transparent 100%);
+            border-radius: var(--border-radius-xl);
+            opacity: 0;
+            transition: var(--transition-smooth);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            background: var(--glass-medium);
+            box-shadow: 0 24px 64px var(--shadow-medium);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 32px;
+            color: var(--text-primary);
+            box-shadow: 0 12px 32px rgba(10, 132, 255, 0.2);
+            transition: var(--transition-smooth);
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 16px 40px rgba(10, 132, 255, 0.3);
+        }
+
+        .feature-card h3 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .section-header h2 {
+            font-size: clamp(32px, 5vw, 56px);
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .section-header p {
+            font-size: 20px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        /* Calculator Section */
+        .calculator {
+            padding: var(--section-padding);
+            position: relative;
+        }
+
+        .calculator-container {
+            background: var(--glass-light);
+            border-radius: var(--border-radius-2xl);
+            padding: 48px;
+            max-width: 800px;
+            margin: 0 auto;
+            border: 1px solid var(--glass-border-light);
+            box-shadow: 0 20px 60px var(--shadow-medium);
+        }
+
+        .calculator-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-size: 16px;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 16px;
+            border: 1px solid var(--glass-border-light);
+            border-radius: var(--border-radius-md);
+            font-size: 16px;
+            background: var(--glass-ultra-light);
+            color: var(--text-primary);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: var(--transition-smooth);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            background: var(--glass-light);
+            box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .price-display {
+            background: var(--glass-medium);
+            padding: 32px;
+            border-radius: var(--border-radius-xl);
+            text-align: center;
+            border: 1px solid var(--glass-border-medium);
+            box-shadow: 0 16px 48px var(--shadow-light);
+        }
+
+        .price-display h3 {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .total-price {
+            font-size: 48px;
+            font-weight: 900;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            letter-spacing: -0.02em;
+        }
+
+        .price-breakdown {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .price-breakdown div {
+            margin-bottom: 6px;
+        }
+
+        .cheap-highlight {
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        /* Trust Builders */
+        .trust-builders {
+            padding: var(--section-padding);
+            text-align: center;
+        }
+
+        .trust-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 32px;
+            margin-top: 64px;
+        }
+
+        .trust-card {
+            background: var(--glass-light);
+            border-radius: var(--border-radius-xl);
+            padding: 32px;
+            transition: var(--transition-smooth);
+            border: 1px solid var(--glass-border-light);
+        }
+
+        .trust-card:hover {
+            transform: translateY(-6px);
+            background: var(--glass-medium);
+        }
+
+        .trust-stat {
+            font-size: 40px;
+            font-weight: 900;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .trust-description {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        /* Testimonials */
+        .testimonials {
+            padding: var(--section-padding);
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 32px;
+            margin-top: 64px;
+        }
+
+        .testimonial-card {
+            background: var(--glass-light);
+            border-radius: var(--border-radius-xl);
+            padding: 32px;
+            transition: var(--transition-smooth);
+            border: 1px solid var(--glass-border-light);
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-6px) scale(1.01);
+            background: var(--glass-medium);
+        }
+
+        .stars {
+            color: var(--accent-orange);
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .testimonial-text {
+            font-size: 17px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-style: italic;
+            color: var(--text-primary);
+        }
+
+        .testimonial-author {
+            font-weight: 500;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Lead Magnet */
+        .lead-magnet {
+            padding: var(--section-padding);
+            text-align: center;
+        }
+
+        .magnet-card {
+            background: var(--glass-medium);
+            border-radius: var(--border-radius-2xl);
+            padding: 48px;
+            max-width: 700px;
+            margin: 0 auto;
+            border: 1px solid var(--glass-border-medium);
+            box-shadow: 0 24px 64px var(--shadow-medium);
+        }
+
+        .magnet-icon {
+            font-size: 64px;
+            margin-bottom: 24px;
+            display: block;
+        }
+
+        .magnet-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .magnet-description {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .download-button {
+            background: linear-gradient(135deg, var(--accent-green), var(--primary-cyan));
+            color: var(--text-primary);
+            padding: 16px 32px;
+            border-radius: var(--border-radius-xl);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 17px;
+            transition: var(--transition-smooth);
+            display: inline-block;
+            box-shadow: 0 12px 32px rgba(48, 209, 88, 0.2);
+        }
+
+        .download-button:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 20px 48px rgba(48, 209, 88, 0.3);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--glass-medium);
+            border: 1px solid var(--glass-border-light);
+            padding: 64px 0 32px;
+            border-radius: var(--border-radius-2xl) var(--border-radius-2xl) 0 0;
+            margin-top: 80px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h4 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-section ul li a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition-smooth);
+            font-size: 15px;
+        }
+
+        .footer-section ul li a:hover {
+            color: var(--text-primary);
+            transform: translateX(4px);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--glass-border-light);
+            padding-top: 24px;
+            text-align: center;
+            color: var(--text-tertiary);
+            font-size: 14px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 16px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding-top: 100px;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero-subtitle {
+                font-size: 18px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .calculator-container,
+            .magnet-card {
+                padding: 32px 24px;
+            }
+
+            .calculator-form {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid,
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.8s var(--transition-smooth);
+        }
+
+        .float {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark-bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--glass-border-medium);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--glass-border-light);
+        }
+    </style>
 </head>
 <body>
-    <h1>Garyyang01</h1>
-    <p>這是一個測試用的 HTML 頁面。</p>
-    <p>歡迎來到 Garyyang01 的個人網站！</p>
-    <ul>
-        <li>這裡可以放一些介紹內容</li>
-        <li>也可以展示作品或聯絡資訊</li>
-        <li>目前僅供測試使用</li>
-    </ul>
+    <!-- Header -->
+    <header class="header" id="header">
+        <nav class="nav container">
+            <a href="#" class="logo">
+                <span>🏰</span>
+                <span>The K-T-M-V</span>
+            </a>
+
+            <div class="nav-center">
+                <ul class="nav-links">
+                    <li><a href="#features" data-lang="nav-features">Features</a></li>
+                    <li><a href="#calculator" data-lang="nav-pricing">Pricing</a></li>
+                    <li><a href="#testimonials" data-lang="nav-reviews">Reviews</a></li>
+                    <li><a href="#download" data-lang="nav-download">Download</a></li>
+                </ul>
+
+                <div class="language-switcher">
+                    <button class="language-btn" onclick="toggleLanguageDropdown()">
+                        <span id="current-lang">🇺🇸 EN</span>
+                        <span>▼</span>
+                    </button>
+                    <div class="language-dropdown" id="language-dropdown">
+                        <a href="#" class="language-option" onclick="changeLanguage('en')">🇺🇸 English</a>
+                        <a href="#" class="language-option" onclick="changeLanguage('zh-tw')">🇹🇼 繁體中文</a>
+                        <a href="#" class="language-option" onclick="changeLanguage('vi')">🇻🇳 Tiếng Việt</a>
+                        <a href="#" class="language-option" onclick="changeLanguage('ko')">🇰🇷 한국어</a>
+                        <a href="#" class="language-option" onclick="changeLanguage('tl')">🇵🇭 Filipino</a>
+                    </div>
+                </div>
+            </div>
+
+            <a href="#download" class="cta-button" data-lang="nav-cta">Download Now</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="fade-in-up" data-lang="hero-title">Experience the Magic of Neuschwanstein Castle</h1>
+                <p class="hero-subtitle fade-in-up stagger-1" data-lang="hero-subtitle">The most convenient way to book your Neuschwanstein Castle tickets.<br>Children pay only €1 - cheaper than any website!</p>
+                <div class="hero-buttons fade-in-up stagger-2">
+                    <a href="#calculator" class="hero-button primary-button" data-lang="hero-calc">Calculate Price</a>
+                    <a href="#features" class="hero-button secondary-button" data-lang="hero-learn">Learn More</a>
+                </div>
+                <div class="download-section fade-in-up stagger-3">
+                    <a href="https://github.com/garyyang01/KTV-BTS/releases/download/APP/app-release.apk" class="download-link">
+                        <span>📱</span>
+                        <span data-lang="download-app">Download App (.zip)</span>
+                    </a>
+                    <a href="https://github.com/garyyang01/KTV-BTS/releases" class="download-link">
+                        <span>📋</span>
+                        <span data-lang="view-releases">View All Releases</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Value Proposition -->
+    <section class="value-prop" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-lang="features-title">Why Choose Our App?</h2>
+                <p data-lang="features-subtitle">Fast, secure, and the most affordable way to visit Neuschwanstein Castle</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card fade-in-up">
+                    <div class="feature-icon">💰</div>
+                    <h3 data-lang="feature-1-title">Cheapest Prices</h3>
+                    <p data-lang="feature-1-desc">Children pay only €1 instead of being free - still cheaper than any other website! Adults just €19.</p>
+                </div>
+                <div class="feature-card fade-in-up stagger-1">
+                    <div class="feature-icon">⚡</div>
+                    <h3 data-lang="feature-2-title">Instant Confirmation</h3>
+                    <p data-lang="feature-2-desc">Get immediate booking confirmation with your tickets delivered instantly to your phone.</p>
+                </div>
+                <div class="feature-card fade-in-up stagger-2">
+                    <div class="feature-icon">🔒</div>
+                    <h3 data-lang="feature-3-title">Secure Payment</h3>
+                    <p data-lang="feature-3-desc">Your payment information is protected with bank-level security and PCI-DSS compliance.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Calculator -->
+    <section class="calculator" id="calculator">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-lang="calc-title">Price Calculator</h2>
+                <p data-lang="calc-subtitle">Calculate your total cost with our transparent pricing - no hidden fees</p>
+            </div>
+            <div class="calculator-container">
+                <form class="calculator-form" id="priceCalculator">
+                    <div class="form-group">
+                        <label for="adults" data-lang="calc-adults">Adults (18+ years)</label>
+                        <input type="number" id="adults" name="adults" min="0" value="2">
+                    </div>
+                    <div class="form-group">
+                        <label for="children" data-lang="calc-children">Children (Under 18)</label>
+                        <input type="number" id="children" name="children" min="0" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="date" data-lang="calc-date">Visit Date</label>
+                        <input type="date" id="date" name="date">
+                    </div>
+                    <div class="form-group">
+                        <label for="time" data-lang="calc-time">Time Slot</label>
+                        <select id="time" name="time">
+                            <option value="09:00">09:00 - 10:30</option>
+                            <option value="11:00">11:00 - 12:30</option>
+                            <option value="13:00">13:00 - 14:30</option>
+                            <option value="15:00">15:00 - 16:30</option>
+                        </select>
+                    </div>
+                </form>
+                <div class="price-display">
+                    <h3 data-lang="calc-total">Total Cost</h3>
+                    <div class="total-price" id="totalPrice">€39</div>
+                    <div class="price-breakdown">
+                        <div><span data-lang="calc-adult-tickets">Adult tickets:</span> <span id="adultTotal">€38</span> (2 × €19)</div>
+                        <div class="cheap-highlight"><span data-lang="calc-child-tickets">Child tickets:</span> <span id="childTotal">€1</span> (1 × €1)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Builders -->
+    <section class="trust-builders">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-lang="trust-title">Trusted by Thousands</h2>
+                <p data-lang="trust-subtitle">Join over 20,000+ satisfied customers who chose our platform</p>
+            </div>
+            <div class="trust-grid">
+                <div class="trust-card">
+                    <div class="trust-stat">20,000+</div>
+                    <div class="trust-description" data-lang="trust-customers">Happy Customers</div>
+                </div>
+                <div class="trust-card">
+                    <div class="trust-stat">★★★★★</div>
+                    <div class="trust-description" data-lang="trust-rating">5-Star Rating</div>
+                </div>
+                <div class="trust-card">
+                    <div class="trust-stat">🔐</div>
+                    <div class="trust-description" data-lang="trust-secure">PCI-DSS Secure</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-lang="testimonials-title">What Our Customers Say</h2>
+                <p data-lang="testimonials-subtitle">Real experiences from travelers who used our app</p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card fade-in-up">
+                    <div class="stars">★★★★★</div>
+                    <p class="testimonial-text" data-lang="testimonial-1">"The booking process was incredibly simple and the child pricing saved us so much money! Even at €1 per child, it's still cheaper than other sites."</p>
+                    <div class="testimonial-author" data-lang="testimonial-author-1">- Sarah Johnson, United States</div>
+                </div>
+                <div class="testimonial-card fade-in-up stagger-1">
+                    <div class="stars">★★★★★</div>
+                    <p class="testimonial-text" data-lang="testimonial-2">"User-friendly interface and lightning-fast payment process. Showing the digital tickets at the entrance was seamless and convenient."</p>
+                    <div class="testimonial-author" data-lang="testimonial-author-2">- Marco Rossi, Italy</div>
+                </div>
+                <div class="testimonial-card fade-in-up stagger-2">
+                    <div class="stars">★★★★★</div>
+                    <p class="testimonial-text" data-lang="testimonial-3">"Customer service responded quickly to our questions. The entire castle experience was fantastic. Highly recommend to anyone visiting Germany!"</p>
+                    <div class="testimonial-author" data-lang="testimonial-author-3">- Emma Thompson, United Kingdom</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lead Magnet -->
+    <section class="lead-magnet">
+        <div class="container">
+            <div class="magnet-card">
+                <div class="magnet-icon">📋</div>
+                <h3 class="magnet-title" data-lang="magnet-title">Free Castle Guide</h3>
+                <p class="magnet-description" data-lang="magnet-desc">Download our exclusive "Top 5 Castle Viewpoints" guide and make the most of your visit to Neuschwanstein Castle.</p>
+                <a href="https://github.com/garyyang01/KTV-BTS/releases/download/APP/castle-guide.pdf" class="download-button" data-lang="magnet-cta">Download Free Guide</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- App Download Section -->
+    <section class="app-store" id="download">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-lang="download-title">Download Our App Today</h2>
+                <p data-lang="download-subtitle">Get the latest version directly from our GitHub repository</p>
+            </div>
+            <div class="download-section">
+                <a href="https://github.com/garyyang01/KTV-BTS/releases/download/APP/app-release.apk" class="download-link">
+                    <span>📱</span>
+                    <span data-lang="download-latest">Download Latest Version</span>
+                </a>
+                <a href="https://github.com/garyyang01/KTV-BTS" class="download-link">
+                    <span>⭐</span>
+                    <span data-lang="view-source">View Source Code</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4 data-lang="footer-product">Product</h4>
+                    <ul>
+                        <li><a href="#" data-lang="footer-app">Mobile App</a></li>
+                        <li><a href="#" data-lang="footer-web">Web Version</a></li>
+                        <li><a href="#" data-lang="footer-api">API Access</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4 data-lang="footer-support">Support</h4>
+                    <ul>
+                        <li><a href="#" data-lang="footer-faq">FAQ</a></li>
+                        <li><a href="#" data-lang="footer-contact">Contact Support</a></li>
+                        <li><a href="#" data-lang="footer-refund">Refund Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4 data-lang="footer-company">Company</h4>
+                    <ul>
+                        <li><a href="#" data-lang="footer-about">About Us</a></li>
+                        <li><a href="#" data-lang="footer-privacy">Privacy Policy</a></li>
+                        <li><a href="#" data-lang="footer-terms">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4 data-lang="footer-contact-title">Contact</h4>
+                    <ul>
+                        <li><a href="mailto:support@ktmv-tickets.com">📧 support@ktmv-tickets.com</a></li>
+                        <li><a href="tel:+49-8362-930830">📞 +49-8362-930830</a></li>
+                        <li><a href="#">💬 <span data-lang="footer-chat">Live Chat</span></a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 The K-T-M-V. <span data-lang="footer-rights">All rights reserved.</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Multi-language support
+        const translations = {
+            'en': {
+                'nav-features': 'Features',
+                'nav-pricing': 'Pricing',
+                'nav-reviews': 'Reviews',
+                'nav-download': 'Download',
+                'nav-cta': 'Download Now',
+                'hero-title': 'Experience the Magic of Neuschwanstein Castle',
+                'hero-subtitle': 'The most convenient way to book your Neuschwanstein Castle tickets.<br>Children pay only €1 - cheaper than any website!',
+                'hero-calc': 'Calculate Price',
+                'hero-learn': 'Learn More',
+                'download-app': 'Download App',
+                'view-releases': 'View All Releases',
+                'features-title': 'Why Choose Our App?',
+                'features-subtitle': 'Fast, secure, and the most affordable way to visit Neuschwanstein Castle',
+                'feature-1-title': 'Cheapest Prices',
+                'feature-1-desc': 'Children pay only €1 instead of being free - still cheaper than any other website! Adults just €19.',
+                'feature-2-title': 'Instant Confirmation',
+                'feature-2-desc': 'Get immediate booking confirmation with your tickets delivered instantly to your phone.',
+                'feature-3-title': 'Secure Payment',
+                'feature-3-desc': 'Your payment information is protected with bank-level security and PCI-DSS compliance.',
+                'calc-title': 'Price Calculator',
+                'calc-subtitle': 'Calculate your total cost with our transparent pricing - no hidden fees',
+                'calc-adults': 'Adults (18+ years)',
+                'calc-children': 'Children (Under 18)',
+                'calc-date': 'Visit Date',
+                'calc-time': 'Time Slot',
+                'calc-total': 'Total Cost',
+                'calc-adult-tickets': 'Adult tickets:',
+                'calc-child-tickets': 'Child tickets:',
+                'trust-title': 'Trusted by Thousands',
+                'trust-subtitle': 'Join over 20,000+ satisfied customers who chose our platform',
+                'trust-customers': 'Happy Customers',
+                'trust-rating': '5-Star Rating',
+                'trust-secure': 'PCI-DSS Secure',
+                'testimonials-title': 'What Our Customers Say',
+                'testimonials-subtitle': 'Real experiences from travelers who used our app',
+                'testimonial-1': '"The booking process was incredibly simple and the child pricing saved us so much money! Even at €1 per child, it\'s still cheaper than other sites."',
+                'testimonial-author-1': '- Sarah Johnson, United States',
+                'testimonial-2': '"User-friendly interface and lightning-fast payment process. Showing the digital tickets at the entrance was seamless and convenient."',
+                'testimonial-author-2': '- Marco Rossi, Italy',
+                'testimonial-3': '"Customer service responded quickly to our questions. The entire castle experience was fantastic. Highly recommend to anyone visiting Germany!"',
+                'testimonial-author-3': '- Emma Thompson, United Kingdom',
+                'magnet-title': 'Free Castle Guide',
+                'magnet-desc': 'Download our exclusive "Top 5 Castle Viewpoints" guide and make the most of your visit to Neuschwanstein Castle.',
+                'magnet-cta': 'Download Free Guide',
+                'download-title': 'Download Our App Today',
+                'download-subtitle': 'Get the latest version directly from our GitHub repository',
+                'download-latest': 'Download Latest Version',
+                'view-source': 'View Source Code',
+                'footer-product': 'Product',
+                'footer-app': 'Mobile App',
+                'footer-web': 'Web Version',
+                'footer-api': 'API Access',
+                'footer-support': 'Support',
+                'footer-faq': 'FAQ',
+                'footer-contact': 'Contact Support',
+                'footer-refund': 'Refund Policy',
+                'footer-company': 'Company',
+                'footer-about': 'About Us',
+                'footer-privacy': 'Privacy Policy',
+                'footer-terms': 'Terms of Service',
+                'footer-contact-title': 'Contact',
+                'footer-chat': 'Live Chat',
+                'footer-rights': 'All rights reserved.'
+            },
+            'zh-tw': {
+                'nav-features': '特色',
+                'nav-pricing': '定價',
+                'nav-reviews': '評價',
+                'nav-download': '下載',
+                'nav-cta': '立即下載',
+                'hero-title': '體驗新天鵝堡的魔力',
+                'hero-subtitle': '預訂新天鵝堡門票最便利的方式。<br>兒童只需€1 - 比任何網站都便宜！',
+                'hero-calc': '計算價格',
+                'hero-learn': '了解更多',
+                'download-app': '下載應用程式',
+                'view-releases': '查看所有版本',
+                'features-title': '為什麼選擇我們的應用程式？',
+                'features-subtitle': '快速、安全、是參觀新天鵝堡最實惠的方式',
+                'feature-1-title': '最便宜的價格',
+                'feature-1-desc': '兒童只需支付€1而不是免費 - 仍然比任何其他網站便宜！成人只需€19。',
+                'feature-2-title': '即時確認',
+                'feature-2-desc': '立即獲得預訂確認，門票會即時傳送到您的手機。',
+                'feature-3-title': '安全付款',
+                'feature-3-desc': '您的付款資訊受到銀行級安全保護和PCI-DSS合規性保護。',
+                'calc-title': '價格計算器',
+                'calc-subtitle': '計算您的總費用，透明定價，無隱藏費用',
+                'calc-adults': '成人 (18歲以上)',
+                'calc-children': '兒童 (18歲以下)',
+                'calc-date': '參觀日期',
+                'calc-time': '時段',
+                'calc-total': '總費用',
+                'calc-adult-tickets': '成人票：',
+                'calc-child-tickets': '兒童票：',
+                'trust-title': '數千人的信任',
+                'trust-subtitle': '加入超過20,000名滿意的客戶',
+                'trust-customers': '滿意客戶',
+                'trust-rating': '五星評價',
+                'trust-secure': 'PCI-DSS安全',
+                'testimonials-title': '客戶評價',
+                'testimonials-subtitle': '來自使用我們應用程式的旅客的真實體驗',
+                'testimonial-1': '"預訂過程非常簡單，兒童定價為我們節省了很多錢！即使兒童€1，仍然比其他網站便宜。"',
+                'testimonial-author-1': '- 莎拉·約翰遜，美國',
+                'testimonial-2': '"用戶友好的介面和超快的付款流程。在入口處出示數位門票非常順暢方便。"',
+                'testimonial-author-2': '- 馬可·羅西，義大利',
+                'testimonial-3': '"客服快速回應我們的問題。整個城堡體驗很棒。強烈推薦給任何要去德國的人！"',
+                'testimonial-author-3': '- 艾瑪·湯普森，英國',
+                'magnet-title': '免費城堡指南',
+                'magnet-desc': '下載我們獨家的"前5大城堡觀景點"指南，充分利用您的新天鵝堡之行。',
+                'magnet-cta': '下載免費指南',
+                'download-title': '立即下載我們的應用程式',
+                'download-subtitle': '直接從我們的GitHub儲存庫獲取最新版本',
+                'download-latest': '下載最新版本',
+                'view-source': '查看原始碼',
+                'footer-product': '產品',
+                'footer-app': '手機應用程式',
+                'footer-web': '網頁版',
+                'footer-api': 'API存取',
+                'footer-support': '支援',
+                'footer-faq': '常見問題',
+                'footer-contact': '聯繫支援',
+                'footer-refund': '退款政策',
+                'footer-company': '公司',
+                'footer-about': '關於我們',
+                'footer-privacy': '隱私政策',
+                'footer-terms': '服務條款',
+                'footer-contact-title': '聯繫',
+                'footer-chat': '即時聊天',
+                'footer-rights': '版權所有。'
+            },
+            'vi': {
+                'nav-features': 'Tính năng',
+                'nav-pricing': 'Giá cả',
+                'nav-reviews': 'Đánh giá',
+                'nav-download': 'Tải xuống',
+                'nav-cta': 'Tải ngay',
+                'hero-title': 'Trải nghiệm sự kỳ diệu của lâu đài Neuschwanstein',
+                'hero-subtitle': 'Cách thuận tiện nhất để đặt vé lâu đài Neuschwanstein.<br>Trẻ em chỉ trả €1 - rẻ hơn bất kỳ trang web nào!',
+                'hero-calc': 'Tính giá',
+                'hero-learn': 'Tìm hiểu thêm',
+                'download-app': 'Tải ứng dụng',
+                'view-releases': 'Xem tất cả phiên bản',
+                'features-title': 'Tại sao chọn ứng dụng của chúng tôi?',
+                'features-subtitle': 'Nhanh chóng, an toàn và cách tiết kiệm nhất để tham quan lâu đài Neuschwanstein',
+                'feature-1-title': 'Giá rẻ nhất',
+                'feature-1-desc': 'Trẻ em chỉ trả €1 thay vì miễn phí - vẫn rẻ hơn bất kỳ trang web nào khác! Người lớn chỉ €19.',
+                'feature-2-title': 'Xác nhận tức thì',
+                'feature-2-desc': 'Nhận xác nhận đặt chỗ ngay lập tức với vé được gửi ngay đến điện thoại của bạn.',
+                'feature-3-title': 'Thanh toán an toàn',
+                'feature-3-desc': 'Thông tin thanh toán của bạn được bảo vệ với bảo mật cấp ngân hàng và tuân thủ PCI-DSS.',
+                'calc-title': 'Máy tính giá',
+                'calc-subtitle': 'Tính tổng chi phí của bạn với giá cả minh bạch - không có phí ẩn',
+                'calc-adults': 'Người lớn (18+ tuổi)',
+                'calc-children': 'Trẻ em (Dưới 18 tuổi)',
+                'calc-date': 'Ngày tham quan',
+                'calc-time': 'Khung giờ',
+                'calc-total': 'Tổng chi phí',
+                'calc-adult-tickets': 'Vé người lớn:',
+                'calc-child-tickets': 'Vé trẻ em:',
+                'trust-title': 'Được hàng nghìn người tin tưởng',
+                'trust-subtitle': 'Tham gia cùng hơn 20.000 khách hàng hài lòng đã chọn nền tảng của chúng tôi',
+                'trust-customers': 'Khách hàng hài lòng',
+                'trust-rating': 'Đánh giá 5 sao',
+                'trust-secure': 'Bảo mật PCI-DSS',
+                'testimonials-title': 'Khách hàng nói gì',
+                'testimonials-subtitle': 'Trải nghiệm thực tế từ những du khách đã sử dụng ứng dụng của chúng tôi',
+                'testimonial-1': '"Quá trình đặt chỗ cực kỳ đơn giản và giá trẻ em đã tiết kiệm cho chúng tôi rất nhiều tiền! Ngay cả khi €1 mỗi trẻ, vẫn rẻ hơn các trang khác."',
+                'testimonial-author-1': '- Sarah Johnson, Hoa Kỳ',
+                'testimonial-2': '"Giao diện thân thiện với người dùng và quy trình thanh toán siêu nhanh. Xuất trình vé điện tử tại lối vào rất mượt mà và tiện lợi."',
+                'testimonial-author-2': '- Marco Rossi, Ý',
+                'testimonial-3': '"Dịch vụ khách hàng phản hồi nhanh chóng cho các câu hỏi của chúng tôi. Toàn bộ trải nghiệm lâu đài thật tuyệt vời. Rất khuyên bất kỳ ai đến Đức!"',
+                'testimonial-author-3': '- Emma Thompson, Vương quốc Anh',
+                'magnet-title': 'Hướng dẫn lâu đài miễn phí',
+                'magnet-desc': 'Tải xuống hướng dẫn độc quyền "Top 5 điểm ngắm lâu đài" và tận dụng tối đa chuyến thăm lâu đài Neuschwanstein của bạn.',
+                'magnet-cta': 'Tải hướng dẫn miễn phí',
+                'download-title': 'Tải ứng dụng của chúng tôi ngay hôm nay',
+                'download-subtitle': 'Nhận phiên bản mới nhất trực tiếp từ kho GitHub của chúng tôi',
+                'download-latest': 'Tải phiên bản mới nhất',
+                'view-source': 'Xem mã nguồn',
+                'footer-product': 'Sản phẩm',
+                'footer-app': 'Ứng dụng di động',
+                'footer-web': 'Phiên bản web',
+                'footer-api': 'Truy cập API',
+                'footer-support': 'Hỗ trợ',
+                'footer-faq': 'FAQ',
+                'footer-contact': 'Liên hệ hỗ trợ',
+                'footer-refund': 'Chính sách hoàn tiền',
+                'footer-company': 'Công ty',
+                'footer-about': 'Về chúng tôi',
+                'footer-privacy': 'Chính sách quyền riêng tư',
+                'footer-terms': 'Điều khoản dịch vụ',
+                'footer-contact-title': 'Liên hệ',
+                'footer-chat': 'Chat trực tiếp',
+                'footer-rights': 'Bảo lưu mọi quyền.'
+            },
+            'ko': {
+                'nav-features': '특징',
+                'nav-pricing': '가격',
+                'nav-reviews': '리뷰',
+                'nav-download': '다운로드',
+                'nav-cta': '지금 다운로드',
+                'hero-title': '노이슈반슈타인 성의 마법을 경험하세요',
+                'hero-subtitle': '노이슈반슈타인 성 티켓을 예약하는 가장 편리한 방법.<br>어린이는 단 €1 - 어떤 웹사이트보다 저렴!',
+                'hero-calc': '가격 계산',
+                'hero-learn': '자세히 알아보기',
+                'download-app': '앱 다운로드',
+                'view-releases': '모든 릴리스 보기',
+                'features-title': '왜 저희 앱을 선택해야 할까요?',
+                'features-subtitle': '빠르고 안전하며 노이슈반슈타인 성을 방문하는 가장 저렴한 방법',
+                'feature-1-title': '가장 저렴한 가격',
+                'feature-1-desc': '어린이는 무료 대신 €1만 지불 - 여전히 다른 어떤 웹사이트보다 저렴합니다! 성인은 단 €19.',
+                'feature-2-title': '즉시 확인',
+                'feature-2-desc': '예약 확인을 즉시 받고 티켓이 휴대폰으로 즉시 전달됩니다.',
+                'feature-3-title': '안전한 결제',
+                'feature-3-desc': '귀하의 결제 정보는 은행 수준의 보안과 PCI-DSS 준수로 보호됩니다.',
+                'calc-title': '가격 계산기',
+                'calc-subtitle': '투명한 가격으로 총 비용을 계산하세요 - 숨겨진 수수료 없음',
+                'calc-adults': '성인 (18세 이상)',
+                'calc-children': '어린이 (18세 미만)',
+                'calc-date': '방문 날짜',
+                'calc-time': '시간대',
+                'calc-total': '총 비용',
+                'calc-adult-tickets': '성인 티켓:',
+                'calc-child-tickets': '어린이 티켓:',
+                'trust-title': '수천 명의 신뢰',
+                'trust-subtitle': '저희 플랫폼을 선택한 20,000명 이상의 만족한 고객과 함께하세요',
+                'trust-customers': '만족한 고객',
+                'trust-rating': '5성 평점',
+                'trust-secure': 'PCI-DSS 보안',
+                'testimonials-title': '고객이 말하는 것',
+                'testimonials-subtitle': '저희 앱을 사용한 여행자들의 실제 경험',
+                'testimonial-1': '"예약 과정이 믿을 수 없을 정도로 간단했고 어린이 가격으로 많은 돈을 절약했습니다! 어린이당 €1이어도 여전히 다른 사이트보다 저렴합니다."',
+                'testimonial-author-1': '- 사라 존슨, 미국',
+                'testimonial-2': '"사용자 친화적인 인터페이스와 번개같이 빠른 결제 과정. 입구에서 디지털 티켓을 보여주는 것이 매끄럽고 편리했습니다."',
+                'testimonial-author-2': '- 마르코 로시, 이탈리아',
+                'testimonial-3': '"고객 서비스가 우리 질문에 빠르게 응답했습니다. 전체 성 경험이 환상적이었습니다. 독일에 가는 모든 사람에게 강력히 추천합니다!"',
+                'testimonial-author-3': '- 엠마 톰슨, 영국',
+                'magnet-title': '무료 성 가이드',
+                'magnet-desc': '독점적인 "상위 5개 성 전망대" 가이드를 다운로드하고 노이슈반슈타인 성 방문을 최대한 활용하세요.',
+                'magnet-cta': '무료 가이드 다운로드',
+                'download-title': '오늘 저희 앱을 다운로드하세요',
+                'download-subtitle': 'GitHub 저장소에서 직접 최신 버전을 받으세요',
+                'download-latest': '최신 버전 다운로드',
+                'view-source': '소스 코드 보기',
+                'footer-product': '제품',
+                'footer-app': '모바일 앱',
+                'footer-web': '웹 버전',
+                'footer-api': 'API 액세스',
+                'footer-support': '지원',
+                'footer-faq': 'FAQ',
+                'footer-contact': '지원 문의',
+                'footer-refund': '환불 정책',
+                'footer-company': '회사',
+                'footer-about': '회사 소개',
+                'footer-privacy': '개인정보 보호정책',
+                'footer-terms': '서비스 약관',
+                'footer-contact-title': '연락처',
+                'footer-chat': '실시간 채팅',
+                'footer-rights': '모든 권리 보유.'
+            },
+            'tl': {
+                'nav-features': 'Mga Katangian',
+                'nav-pricing': 'Presyo',
+                'nav-reviews': 'Mga Review',
+                'nav-download': 'I-download',
+                'nav-cta': 'I-download Ngayon',
+                'hero-title': 'Maranasan ang Mahika ng Neuschwanstein Castle',
+                'hero-subtitle': 'Ang pinaka-convenient na paraan upang mag-book ng inyong Neuschwanstein Castle tickets.<br>Ang mga bata ay nagbabayad lang ng €1 - mas mura kaysa sa anumang website!',
+                'hero-calc': 'Kalkulahin ang Presyo',
+                'hero-learn': 'Matuto Pa',
+                'download-app': 'I-download ang App',
+                'view-releases': 'Tingnan Lahat ng Releases',
+                'features-title': 'Bakit Piliin ang Aming App?',
+                'features-subtitle': 'Mabilis, secure, at ang pinaka-affordable na paraan upang bisitahin ang Neuschwanstein Castle',
+                'feature-1-title': 'Pinakamababang Presyo',
+                'feature-1-desc': 'Ang mga bata ay nagbabayad lang ng €1 imbes na libre - mas mura pa rin kaysa sa ibang website! Ang mga adulto ay €19 lang.',
+                'feature-2-title': 'Instant na Kumpirmasyon',
+                'feature-2-desc': 'Makakuha ng instant booking confirmation na may tickets na delivered agad sa inyong phone.',
+                'feature-3-title': 'Secure na Bayad',
+                'feature-3-desc': 'Ang inyong payment information ay protected ng bank-level security at PCI-DSS compliance.',
+                'calc-title': 'Price Calculator',
+                'calc-subtitle': 'Kalkulahin ang inyong kabuuang gastos gamit ang aming transparent na pricing - walang nakatagong bayad',
+                'calc-adults': 'Mga Adulto (18+ taon)',
+                'calc-children': 'Mga Bata (Wala pang 18)',
+                'calc-date': 'Petsa ng Pagbisita',
+                'calc-time': 'Time Slot',
+                'calc-total': 'Kabuuang Gastos',
+                'calc-adult-tickets': 'Tickets ng adulto:',
+                'calc-child-tickets': 'Tickets ng bata:',
+                'trust-title': 'Pinagkakatiwalaan ng Libu-libo',
+                'trust-subtitle': 'Sumali sa mahigit 20,000+ satisfied customers na pumili sa aming platform',
+                'trust-customers': 'Masayang Customers',
+                'trust-rating': '5-Star Rating',
+                'trust-secure': 'PCI-DSS Secure',
+                'testimonials-title': 'Ano ang Sinasabi ng Aming Mga Customer',
+                'testimonials-subtitle': 'Tunay na mga karanasan mula sa mga travelers na gumamit ng aming app',
+                'testimonial-1': '"Ang booking process ay hindi makapaniwalang simple at ang child pricing ay nakapag-save sa amin ng maraming pera! Kahit na €1 bawat bata, mas mura pa rin kaysa sa ibang sites."',
+                'testimonial-author-1': '- Sarah Johnson, Estados Unidos',
+                'testimonial-2': '"User-friendly na interface at napakabilis na payment process. Ang pagpapakita ng digital tickets sa entrance ay napakadaling at convenient."',
+                'testimonial-author-2': '- Marco Rossi, Italy',
+                'testimonial-3': '"Ang customer service ay mabilis tumugon sa aming mga tanong. Ang buong castle experience ay napakaganda. Highly recommended sa lahat ng pupunta sa Germany!"',
+                'testimonial-author-3': '- Emma Thompson, United Kingdom',
+                'magnet-title': 'Libreng Castle Guide',
+                'magnet-desc': 'I-download ang aming exclusive na "Top 5 Castle Viewpoints" guide at gawing sulit ang inyong visit sa Neuschwanstein Castle.',
+                'magnet-cta': 'I-download ang Libreng Guide',
+                'download-title': 'I-download ang Aming App Ngayon',
+                'download-subtitle': 'Kunin ang latest version direkta mula sa aming GitHub repository',
+                'download-latest': 'I-download ang Latest Version',
+                'view-source': 'Tingnan ang Source Code',
+                'footer-product': 'Produkto',
+                'footer-app': 'Mobile App',
+                'footer-web': 'Web Version',
+                'footer-api': 'API Access',
+                'footer-support': 'Suporta',
+                'footer-faq': 'FAQ',
+                'footer-contact': 'Contact Support',
+                'footer-refund': 'Refund Policy',
+                'footer-company': 'Kumpanya',
+                'footer-about': 'Tungkol sa Amin',
+                'footer-privacy': 'Privacy Policy',
+                'footer-terms': 'Terms of Service',
+                'footer-contact-title': 'Contact',
+                'footer-chat': 'Live Chat',
+                'footer-rights': 'Lahat ng karapatan ay nakalaan.'
+            }
+        };
+
+        let currentLanguage = 'en';
+
+        // Language switching functionality
+        function toggleLanguageDropdown() {
+            const dropdown = document.getElementById('language-dropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            const langNames = {
+                'en': '🇺🇸 EN',
+                'zh-tw': '🇹🇼 中文',
+                'vi': '🇻🇳 VI',
+                'ko': '🇰🇷 한국어',
+                'tl': '🇵🇭 FIL'
+            };
+
+            document.getElementById('current-lang').textContent = langNames[lang];
+            document.getElementById('language-dropdown').classList.remove('active');
+
+            // Update all text elements
+            const elements = document.querySelectorAll('[data-lang]');
+            elements.forEach(element => {
+                const key = element.getAttribute('data-lang');
+                if (translations[lang] && translations[lang][key]) {
+                    element.innerHTML = translations[lang][key];
+                }
+            });
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const switcher = document.querySelector('.language-switcher');
+            if (!switcher.contains(event.target)) {
+                document.getElementById('language-dropdown').classList.remove('active');
+            }
+        });
+
+        // Price Calculator Functionality
+        function calculatePrice() {
+            const adults = parseInt(document.getElementById('adults').value) || 0;
+            const children = parseInt(document.getElementById('children').value) || 0;
+            const adultPrice = 19; // €19 per adult
+            const childPrice = 1;  // €1 per child
+
+            const adultTotal = adults * adultPrice;
+            const childTotal = children * childPrice;
+            const total = adultTotal + childTotal;
+
+            document.getElementById('totalPrice').textContent = `€${total}`;
+            document.getElementById('adultTotal').textContent = `€${adultTotal}`;
+            document.getElementById('childTotal').textContent = `€${childTotal}`;
+
+            // Update breakdown text
+            const adultBreakdown = adults > 0 ? `(${adults} × €${adultPrice})` : '';
+            const childBreakdown = children > 0 ? `(${children} × €${childPrice})` : '';
+
+            document.querySelector('.price-breakdown div:first-child').innerHTML =
+                `<span data-lang="calc-adult-tickets">${translations[currentLanguage]['calc-adult-tickets']}</span> <span id="adultTotal">€${adultTotal}</span> ${adultBreakdown}`;
+            document.querySelector('.price-breakdown div:last-child').innerHTML =
+                `<span class="cheap-highlight"><span data-lang="calc-child-tickets">${translations[currentLanguage]['calc-child-tickets']}</span> <span id="childTotal">€${childTotal}</span> ${childBreakdown}</span>`;
+        }
+
+        // Add event listeners for calculator inputs
+        document.getElementById('adults').addEventListener('input', calculatePrice);
+        document.getElementById('children').addEventListener('input', calculatePrice);
+
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('date').setAttribute('min', today);
+        document.getElementById('date').value = today;
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all fade-in-up elements
+        document.querySelectorAll('.fade-in-up').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.8s cubic-bezier(0.23, 1, 0.320, 1), transform 0.8s cubic-bezier(0.23, 1, 0.320, 1)';
+            observer.observe(el);
+        });
+
+        // Parallax effect for hero background
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero');
+            const heroHeight = hero.offsetHeight;
+
+            if (scrolled < heroHeight) {
+                const parallaxSpeed = scrolled * 0.3;
+                hero.style.transform = `translateY(${parallaxSpeed}px)`;
+            }
+        });
+
+        // Enhanced smooth animations for feature icons
+        document.querySelectorAll('.feature-icon').forEach((icon, index) => {
+            icon.style.animationDelay = `${index * 0.2}s`;
+            icon.classList.add('float');
+        });
+
+        // Background gradient animation
+        let gradientAngle = 135;
+        setInterval(() => {
+            gradientAngle += 0.2;
+            document.body.style.background = `linear-gradient(${gradientAngle}deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%)`;
+        }, 100);
+
+        // Initialize calculator and set default language
+        calculatePrice();
+        changeLanguage('en');
+    </script>
 </body>
 </html>
