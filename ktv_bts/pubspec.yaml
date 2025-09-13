@@ -44,7 +44,7 @@ dependencies:
 
   # Email packages
   mailer: ^6.0.1
-  enough_mail: ^2.1.7
+  enough_mail: ^2.1.6
   flutter_local_notifications: ^17.2.2
 
 dev_dependencies:

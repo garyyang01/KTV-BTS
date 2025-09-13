@@ -39,13 +39,18 @@ class StripePaymentService implements IStripePaymentService {
 
   @override
   Future<void> initialize() async {
-    // Initialize environment configuration
-    await EnvConfig.initialize();
-    
-    // Validate that required environment variables are present
-    EnvConfig.validateRequiredVars();
-    
-    _isInitialized = true;
+    try {
+      // Initialize environment configuration
+      await EnvConfig.initialize();
+      
+      // Validate that required environment variables are present
+      EnvConfig.validateRequiredVars();
+      
+      _isInitialized = true;
+    } catch (e) {
+      // 如果環境變數載入失敗，拋出更清楚的錯誤訊息
+      throw Exception('Stripe API 金鑰未設定。請檢查 .env 檔案是否存在並包含正確的 STRIPE_PUBLIC_KEY 和 STRIPE_SECRET_KEY。\n\n錯誤詳情: $e');
+    }
   }
 
   @override
@@ -70,6 +75,8 @@ class StripePaymentService implements IStripePaymentService {
         'metadata[customer_name]': request.customerName,
         'metadata[is_adult]': request.isAdult.toString(),
         'metadata[time]': request.time,
+        'automatic_payment_methods[enabled]': 'true',
+        'automatic_payment_methods[allow_redirects]': 'never',
       };
 
       final response = await http.post(
