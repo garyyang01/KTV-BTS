@@ -26,9 +26,6 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
             // Hero Section
             _buildHeroSection(),
             
-            // Trust Signals
-            _buildTrustSignals(),
-            
             // Booking Form Section
             const Padding(
               padding: EdgeInsets.all(16.0),
@@ -71,40 +68,62 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
         padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
-            // Castle Image Placeholder
+            // Castle Image
             Container(
               width: double.infinity,
-              height: 200,
+              height: 250,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-                color: Colors.grey.shade300,
-                border: Border.all(color: Colors.grey.shade400),
-              ),
-              child: const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.castle,
-                    size: 80,
-                    color: Colors.grey,
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Castle panorama from Marienbrücke',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 14,
-                    ),
-                  ),
-                  Text(
-                    '(Image will be added later)',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 12,
-                      fontStyle: FontStyle.italic,
-                    ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
                   ),
                 ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.asset(
+                  'assets/images/neuschwanstein_castle.png',
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      height: 250,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey.shade400),
+                      ),
+                      child: const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.castle,
+                            size: 80,
+                            color: Colors.grey,
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            'Neuschwanstein Castle',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Text(
+                            'Image not found',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
             const SizedBox(height: 24),
@@ -137,79 +156,4 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
     );
   }
 
-  /// 建立信任標誌區塊
-  Widget _buildTrustSignals() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade50,
-        border: Border(
-          top: BorderSide(color: Colors.grey.shade200),
-          bottom: BorderSide(color: Colors.grey.shade200),
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          // 5-Star Rating
-          _buildTrustItem(
-            icon: Icons.star,
-            iconColor: Colors.amber,
-            title: '★★★★★',
-            subtitle: '4.8/5 Rating',
-          ),
-          
-          // Official Ticket
-          _buildTrustItem(
-            icon: Icons.verified,
-            iconColor: Colors.blue,
-            title: 'Official Ticket',
-            subtitle: 'Authorized Partner',
-          ),
-          
-          // Secure Payment
-          _buildTrustItem(
-            icon: Icons.security,
-            iconColor: Colors.green,
-            title: 'Secure Payment',
-            subtitle: 'SSL Protected',
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// 建立單個信任標誌項目
-  Widget _buildTrustItem({
-    required IconData icon,
-    required Color iconColor,
-    required String title,
-    required String subtitle,
-  }) {
-    return Column(
-      children: [
-        Icon(
-          icon,
-          color: iconColor,
-          size: 24,
-        ),
-        const SizedBox(height: 4),
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Text(
-          subtitle,
-          style: TextStyle(
-            fontSize: 10,
-            color: Colors.grey.shade600,
-          ),
-        ),
-      ],
-    );
-  }
 }

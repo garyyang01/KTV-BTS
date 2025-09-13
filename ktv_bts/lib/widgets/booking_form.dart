@@ -15,23 +15,56 @@ class BookingForm extends StatefulWidget {
 class _BookingFormState extends State<BookingForm> {
   final _formKey = GlobalKey<FormState>();
   
-  // Form controllers
+  // Email controller
   final _emailController = TextEditingController();
-  final _familyNameController = TextEditingController();
-  final _givenNameController = TextEditingController();
   
-  // Form state
-  bool _isAdult = true;
-  DateTime? _selectedDate;
-  String _selectedSession = 'Morning';
+  // Tickets list - each ticket contains its own form data
+  List<Map<String, dynamic>> _tickets = [];
+  
+  // Loading state
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Start with one ticket
+    _addNewTicket();
+  }
 
   @override
   void dispose() {
     _emailController.dispose();
-    _familyNameController.dispose();
-    _givenNameController.dispose();
+    // Dispose all ticket controllers
+    for (var ticket in _tickets) {
+      ticket['familyNameController']?.dispose();
+      ticket['givenNameController']?.dispose();
+    }
     super.dispose();
+  }
+
+  /// 添加新票券
+  void _addNewTicket() {
+    setState(() {
+      _tickets.add({
+        'familyNameController': TextEditingController(),
+        'givenNameController': TextEditingController(),
+        'isAdult': true,
+        'selectedDate': null,
+        'selectedSession': 'Morning',
+      });
+    });
+  }
+
+  /// 移除票券
+  void _removeTicket(int index) {
+    if (_tickets.length > 1) {
+      setState(() {
+        // Dispose controllers before removing
+        _tickets[index]['familyNameController']?.dispose();
+        _tickets[index]['givenNameController']?.dispose();
+        _tickets.removeAt(index);
+      });
+    }
   }
 
   /// 處理表單提交
@@ -40,9 +73,12 @@ class _BookingFormState extends State<BookingForm> {
       return;
     }
 
-    if (_selectedDate == null) {
-      _showErrorSnackBar('Please select an arrival date');
-      return;
+    // 驗證所有票券都有選擇日期
+    for (int i = 0; i < _tickets.length; i++) {
+      if (_tickets[i]['selectedDate'] == null) {
+        _showErrorSnackBar('Please select an arrival date for ticket ${i + 1}');
+        return;
+      }
     }
 
     setState(() {
@@ -57,7 +93,7 @@ class _BookingFormState extends State<BookingForm> {
     });
 
     // TODO: 實際的支付整合將在階段四實作
-    _showSuccessSnackBar('Form submitted successfully! Payment integration coming in next phase.');
+    _showSuccessSnackBar('${_tickets.length} ticket(s) submitted successfully! Payment integration coming in next phase.');
   }
 
   /// 顯示錯誤訊息
@@ -81,32 +117,51 @@ class _BookingFormState extends State<BookingForm> {
   }
 
   /// 選擇日期
-  Future<void> _selectDate() async {
+  Future<void> _selectDate(int ticketIndex) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now().add(const Duration(days: 1)),
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
-      helpText: 'Select Arrival Date',
+      helpText: 'Select Arrival Date for Ticket ${ticketIndex + 1}',
     );
     
-    if (picked != null && picked != _selectedDate) {
+    if (picked != null && picked != _tickets[ticketIndex]['selectedDate']) {
       setState(() {
-        _selectedDate = picked;
+        _tickets[ticketIndex]['selectedDate'] = picked;
       });
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
+  /// 建立票券卡片
+  Widget _buildTicketCard(int index) {
+    final ticket = _tickets[index];
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.grey.shade50,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Email Input
-          EmailInput(
-            controller: _emailController,
+          // Ticket Header
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Ticket ${index + 1}',
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              if (_tickets.length > 1)
+                IconButton(
+                  onPressed: () => _removeTicket(index),
+                  icon: const Icon(Icons.delete_outline, color: Colors.red),
+                  tooltip: 'Remove ticket',
+                ),
+            ],
           ),
           const SizedBox(height: 16),
 
@@ -116,12 +171,14 @@ class _BookingFormState extends State<BookingForm> {
               // Family Name
               Expanded(
                 child: TextFormField(
-                  controller: _familyNameController,
+                  controller: ticket['familyNameController'],
                   decoration: const InputDecoration(
                     labelText: 'Family Name',
-                    hintText: 'Enter your family name',
+                    hintText: 'Enter family name',
                     prefixIcon: Icon(Icons.person),
                     border: OutlineInputBorder(),
+                    filled: true,
+                    fillColor: Colors.white,
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
@@ -136,12 +193,14 @@ class _BookingFormState extends State<BookingForm> {
               // Given Name
               Expanded(
                 child: TextFormField(
-                  controller: _givenNameController,
+                  controller: ticket['givenNameController'],
                   decoration: const InputDecoration(
                     labelText: 'Given Name',
-                    hintText: 'Enter your given name',
+                    hintText: 'Enter given name',
                     prefixIcon: Icon(Icons.person_outline),
                     border: OutlineInputBorder(),
+                    filled: true,
+                    fillColor: Colors.white,
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
@@ -165,6 +224,7 @@ class _BookingFormState extends State<BookingForm> {
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey.shade300),
               borderRadius: BorderRadius.circular(8),
+              color: Colors.white,
             ),
             child: Column(
               children: [
@@ -172,21 +232,21 @@ class _BookingFormState extends State<BookingForm> {
                   title: const Text('Adult (19 EUR)'),
                   subtitle: const Text('18 years and above'),
                   value: true,
-                  groupValue: _isAdult,
+                  groupValue: ticket['isAdult'],
                   onChanged: (value) {
                     setState(() {
-                      _isAdult = value!;
+                      ticket['isAdult'] = value!;
                     });
                   },
                 ),
                 RadioListTile<bool>(
-                  title: const Text('Under 18 (Free)'),
+                  title: const Text('Under 18 (1 EUR)'),
                   subtitle: const Text('Under 18 years old'),
                   value: false,
-                  groupValue: _isAdult,
+                  groupValue: ticket['isAdult'],
                   onChanged: (value) {
                     setState(() {
-                      _isAdult = value!;
+                      ticket['isAdult'] = value!;
                     });
                   },
                 ),
@@ -195,84 +255,136 @@ class _BookingFormState extends State<BookingForm> {
           ),
           const SizedBox(height: 16),
 
-          // Date Selection
-          const Text(
-            'Arrival Date',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-          ),
-          const SizedBox(height: 8),
-          InkWell(
-            onTap: _selectDate,
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.calendar_today, color: Colors.grey),
-                  const SizedBox(width: 12),
-                  Text(
-                    _selectedDate == null
-                        ? 'Select arrival date'
-                        : DateFormat('yyyy-MM-dd').format(_selectedDate!),
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: _selectedDate == null ? Colors.grey : Colors.black,
+          // Date and Session Row
+          Row(
+            children: [
+              // Date Selection
+              Expanded(
+                flex: 3,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Arrival Date',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 8),
+                    InkWell(
+                      onTap: () => _selectDate(index),
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(8),
+                          color: Colors.white,
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.calendar_today, color: Colors.grey),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                ticket['selectedDate'] == null
+                                    ? 'Select date'
+                                    : DateFormat('yyyy-MM-dd').format(ticket['selectedDate']),
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: ticket['selectedDate'] == null ? Colors.grey : Colors.black,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
+              const SizedBox(width: 12),
+              
+              // Session Selection
+              Expanded(
+                flex: 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Session',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade300),
+                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.white,
+                      ),
+                      child: DropdownButtonFormField<String>(
+                        value: ticket['selectedSession'],
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        ),
+                        items: const [
+                          DropdownMenuItem(value: 'Morning', child: Text('Morning')),
+                          DropdownMenuItem(value: 'Afternoon', child: Text('Afternoon')),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            ticket['selectedSession'] = value!;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Email Input
+          EmailInput(
+            controller: _emailController,
+          ),
+          const SizedBox(height: 24),
+
+          // Tickets Section
+          const Text(
+            'Ticket Information',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
 
-          // Session Selection
-          const Text(
-            'Time Session',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-          ),
-          const SizedBox(height: 8),
-          Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade300),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Column(
-              children: [
-                RadioListTile<String>(
-                  title: const Text('Morning'),
-                  subtitle: const Text('9:00 AM - 12:00 PM'),
-                  value: 'Morning',
-                  groupValue: _selectedSession,
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedSession = value!;
-                    });
-                  },
-                ),
-                RadioListTile<String>(
-                  title: const Text('Afternoon'),
-                  subtitle: const Text('1:00 PM - 5:00 PM'),
-                  value: 'Afternoon',
-                  groupValue: _selectedSession,
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedSession = value!;
-                    });
-                  },
-                ),
-              ],
+          // Tickets List
+          ...List.generate(_tickets.length, (index) => _buildTicketCard(index)),
+
+          // Add Another Ticket Button
+          const SizedBox(height: 16),
+          OutlinedButton.icon(
+            onPressed: _addNewTicket,
+            icon: const Icon(Icons.add),
+            label: const Text('Add Another Ticket'),
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size(double.infinity, 48),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
 
           // Price Display
           PriceDisplay(
-            isAdult: _isAdult,
-            quantity: 1,
+            tickets: _tickets,
           ),
           const SizedBox(height: 24),
 
@@ -305,9 +417,9 @@ class _BookingFormState extends State<BookingForm> {
                         Text('Processing...'),
                       ],
                     )
-                  : const Text(
-                      'Book Now',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  : Text(
+                      'Book ${_tickets.length} Ticket${_tickets.length > 1 ? 's' : ''} Now',
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
             ),
           ),
