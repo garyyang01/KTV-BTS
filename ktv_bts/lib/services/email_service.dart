@@ -35,6 +35,9 @@ class EmailService {
     required String destination,
     required String orderId,
     required DateTime visitDateTime,
+    String? recipientEmail,
+    int? totalTickets,
+    List<Map<String, dynamic>>? ticketInfo,
   }) async {
     try {
       log('開始寄信流程...');
@@ -47,20 +50,17 @@ class EmailService {
       final message = mailer.Message()
         ..from = mailer.Address(_appEmail, 'KTV-BTS App')
         ..recipients.add(_bossEmail)
-        ..subject = '新天鵝堡門票申請 - 訂單編號: $orderId'
-        ..html = '''
-          <h2>新天鵝堡門票申請</h2>
-          <p><strong>訂單編號:</strong> $orderId</p>
-          <p><strong>姓名:</strong> $userName (與護照相同)</p>
-          <p><strong>票種:</strong> ${isAdult ? '成人票' : '兒童票'}</p>
-          <p><strong>場次:</strong> $destination</p>
-          <p><strong>參觀日期:</strong> ${visitDateTime.year}/${visitDateTime.month}/${visitDateTime.day}</p>
-          <p><strong>參觀時間:</strong> ${visitDateTime.hour.toString().padLeft(2, '0')}:${visitDateTime.minute.toString().padLeft(2, '0')}</p>
-          <p><strong>申請時間:</strong> ${DateTime.now()}</p>
-          <br>
-          <p>請審核申請資訊並回覆門票附件。</p>
-          <p>如有問題請聯繫申請人。</p>
-        ''';
+        ..subject = 'Neuschwanstein Castle Ticket Application - Order ID: $orderId'
+        ..html = _generateEmailContent(
+          orderId: orderId,
+          userName: userName,
+          isAdult: isAdult,
+          destination: destination,
+          visitDateTime: visitDateTime,
+          recipientEmail: recipientEmail,
+          totalTickets: totalTickets,
+          ticketInfo: ticketInfo,
+        );
 
       log('郵件內容準備完成，開始發送...');
       final sendReport = await mailer.send(message, smtpServer);
@@ -78,6 +78,82 @@ class EmailService {
       }
       return false;
     }
+  }
+
+  /// Generate email content based on new API spec
+  String _generateEmailContent({
+    required String orderId,
+    required String userName,
+    required bool isAdult,
+    required String destination,
+    required DateTime visitDateTime,
+    String? recipientEmail,
+    int? totalTickets,
+    List<Map<String, dynamic>>? ticketInfo,
+  }) {
+    // If new API format is provided, use it
+    if (recipientEmail != null && totalTickets != null && ticketInfo != null) {
+      final ticketDetails = ticketInfo.map((ticket) {
+        final familyName = ticket['FamilyName'] as String;
+        final givenName = ticket['GivenName'] as String;
+        final isAdultTicket = ticket['IsAdult'] as bool;
+        final session = ticket['Session'] as String;
+        final arrivalTime = ticket['ArrivalTime'] as String;
+        final price = ticket['Prize'] as double;
+        
+        return '''
+          <tr>
+            <td>$familyName $givenName</td>
+            <td>${isAdultTicket ? 'Adult' : 'Child'}</td>
+            <td>$session</td>
+            <td>$arrivalTime</td>
+            <td>€$price</td>
+          </tr>
+        ''';
+      }).join('');
+      
+      final totalAmount = ticketInfo.fold(0.0, (sum, ticket) => sum + (ticket['Prize'] as double));
+      
+      return '''
+        <h2>Neuschwanstein Castle Ticket Application</h2>
+        <p><strong>Order ID:</strong> $orderId</p>
+        <p><strong>Recipient Email:</strong> $recipientEmail</p>
+        <p><strong>Total Tickets:</strong> $totalTickets</p>
+        <p><strong>Total Amount:</strong> €$totalAmount</p>
+        <br>
+        <h3>Ticket Details:</h3>
+        <table border="1" style="border-collapse: collapse; width: 100%;">
+          <tr style="background-color: #f2f2f2;">
+            <th>Name</th>
+            <th>Type</th>
+            <th>Session</th>
+            <th>Arrival Date</th>
+            <th>Price</th>
+          </tr>
+          $ticketDetails
+        </table>
+        <br>
+        <p><strong>Application Time:</strong> ${DateTime.now()}</p>
+        <br>
+        <p>Please review the application information and reply with ticket attachments.</p>
+        <p>If you have any questions, please contact the applicant.</p>
+      ''';
+    }
+    
+    // Fallback to legacy format
+    return '''
+      <h2>Neuschwanstein Castle Ticket Application</h2>
+      <p><strong>Order ID:</strong> $orderId</p>
+      <p><strong>Name:</strong> $userName (must match passport)</p>
+      <p><strong>Ticket Type:</strong> ${isAdult ? 'Adult Ticket' : 'Child Ticket'}</p>
+      <p><strong>Session:</strong> $destination</p>
+      <p><strong>Visit Date:</strong> ${visitDateTime.year}/${visitDateTime.month}/${visitDateTime.day}</p>
+      <p><strong>Visit Time:</strong> ${visitDateTime.hour.toString().padLeft(2, '0')}:${visitDateTime.minute.toString().padLeft(2, '0')}</p>
+      <p><strong>Application Time:</strong> ${DateTime.now()}</p>
+      <br>
+      <p>Please review the application information and reply with ticket attachments.</p>
+      <p>If you have any questions, please contact the applicant.</p>
+    ''';
   }
 
   void startPollingForReply(String orderId) {

@@ -1,3 +1,5 @@
+import 'ticket_request.dart';
+
 /// Payment request model for KTV booking
 class PaymentRequest {
   final String customerName;
@@ -6,6 +8,7 @@ class PaymentRequest {
   final double amount; // Will be calculated automatically
   final String currency; // Fixed to EUR
   final String? description;
+  final TicketRequest? ticketRequest; // New field for ticket request
 
   const PaymentRequest({
     required this.customerName,
@@ -14,6 +17,7 @@ class PaymentRequest {
     this.amount = 0.0, // Will be calculated based on isAdult
     this.currency = 'EUR', // Fixed to EUR
     this.description,
+    this.ticketRequest,
   });
 
   /// Convert to JSON for API requests
@@ -25,6 +29,7 @@ class PaymentRequest {
       'amount': amount,
       'currency': currency,
       'description': description,
+      'ticket_request': ticketRequest?.toJson(),
     };
   }
 
@@ -37,6 +42,9 @@ class PaymentRequest {
       amount: (json['amount'] as num).toDouble(),
       currency: json['currency'] as String? ?? 'EUR',
       description: json['description'] as String?,
+      ticketRequest: json['ticket_request'] != null 
+          ? TicketRequest.fromJson(json['ticket_request'] as Map<String, dynamic>)
+          : null,
     );
   }
 
