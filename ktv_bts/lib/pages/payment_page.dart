@@ -288,20 +288,41 @@ class _PaymentPageState extends State<PaymentPage> {
             Text('Payment Successful!'),
           ],
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Customer: ${widget.paymentRequest.customerName}'),
-            Text('Ticket Type: ${widget.paymentRequest.isAdult ? 'Adult' : 'Child'}'),
-            Text('Time Slot: ${widget.paymentRequest.time}'),
-            Text('Amount: ${widget.paymentRequest.isAdult ? '19.0' : '0.0'} EUR'),
-            const SizedBox(height: 16),
-            const Text(
-              'Your ticket has been successfully purchased!\nPlease keep this receipt as your entry voucher.',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ],
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Customer: ${widget.paymentRequest.customerName}'),
+              Text('Total Amount: ${widget.paymentRequest.amount} EUR'),
+              Text('Description: ${widget.paymentRequest.description}'),
+              const SizedBox(height: 16),
+              
+              // 顯示票券詳細資訊
+              if (widget.paymentRequest.ticketRequest != null) ...[
+                const Text(
+                  'Ticket Details:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                ...widget.paymentRequest.ticketRequest!.ticketInfo.map((ticket) => 
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: Text(
+                      '• ${ticket.fullName} (${ticket.isAdult ? 'Adult' : 'Child'}) - ${ticket.session} - ${ticket.arrivalTime} - ${ticket.price} EUR',
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
+              
+              const Text(
+                'Your ticket(s) have been successfully purchased!\nPlease keep this receipt as your entry voucher.',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(
