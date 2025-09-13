@@ -36,7 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   
   # Stripe payment dependencies
-  stripe_payment: ^1.1.4
+  # flutter_stripe: ^8.0.0  # Temporarily disabled due to compatibility issues
   http: ^1.1.0
   
   # Environment variables

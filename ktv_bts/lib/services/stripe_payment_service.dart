@@ -39,6 +39,7 @@ class StripePaymentService implements IStripePaymentService {
   static const String _stripeApiBaseUrl = 'https://api.stripe.com/v1';
   
   bool _isInitialized = false;
+  PaymentResponse? _lastPaymentIntent;
   
   /// Get Stripe public key from environment variables
   String get _publicKey => EnvConfig.stripePublicKey;
@@ -54,6 +55,8 @@ class StripePaymentService implements IStripePaymentService {
       
       // Validate that required environment variables are present
       EnvConfig.validateRequiredVars();
+      
+      // Stripe initialization completed
       
       _isInitialized = true;
     } catch (e) {
@@ -96,13 +99,15 @@ class StripePaymentService implements IStripePaymentService {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        return PaymentResponse.success(
+        final paymentResponse = PaymentResponse.success(
           paymentIntentId: data['id'],
           clientSecret: data['client_secret'],
           status: data['status'],
           amount: amount,
           currency: request.currency,
         );
+        _lastPaymentIntent = paymentResponse;
+        return paymentResponse;
       } else {
         final errorData = json.decode(response.body);
         return PaymentResponse.failure(
@@ -129,15 +134,15 @@ class StripePaymentService implements IStripePaymentService {
         throw Exception('Service not initialized. Call initialize() first.');
       }
 
-      // 使用 Stripe 測試 token 而不是原始卡號數據
-      // 根據卡號選擇對應的測試 token
-      final testToken = _getTestTokenForCard(cardNumber);
-      
+      // Create payment method using Stripe API directly
       final headers = {
         'Authorization': 'Bearer $_secretKey',
         'Content-Type': 'application/x-www-form-urlencoded',
       };
 
+      // Use test token for card
+      final testToken = _getTestTokenForCard(cardNumber);
+      
       final body = {
         'type': 'card',
         'card[token]': testToken,
@@ -167,7 +172,7 @@ class StripePaymentService implements IStripePaymentService {
       }
     } catch (e) {
       return PaymentResponse.failure(
-        errorMessage: 'Network error: ${e.toString()}',
+        errorMessage: 'Payment method creation failed: ${e.toString()}',
       );
     }
   }
@@ -178,6 +183,8 @@ class StripePaymentService implements IStripePaymentService {
     required String paymentMethodId,
   }) async {
     try {
+      // For now, we'll use the server-side confirmation approach
+      // This maintains compatibility with the existing flow
       final headers = {
         'Authorization': 'Bearer $_secretKey',
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -210,7 +217,7 @@ class StripePaymentService implements IStripePaymentService {
       }
     } catch (e) {
       return PaymentResponse.failure(
-        errorMessage: 'Network error: ${e.toString()}',
+        errorMessage: 'Payment confirmation failed: ${e.toString()}',
       );
     }
   }
