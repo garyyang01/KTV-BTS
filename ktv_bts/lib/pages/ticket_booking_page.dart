@@ -59,7 +59,7 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+            Theme.of(context).colorScheme.primary.withOpacity(0.1),
             Colors.white,
           ],
         ),
@@ -76,7 +76,7 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
+                    color: Colors.black.withOpacity(0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),

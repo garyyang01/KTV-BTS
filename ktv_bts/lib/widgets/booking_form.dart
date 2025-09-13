@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../widgets/email_input.dart';
 import '../widgets/price_display.dart';
+import '../models/ticket_request.dart';
+import '../models/ticket_info.dart';
+import '../models/payment_request.dart';
+import '../pages/payment_page.dart';
 
 /// 預訂表單組件
 /// 包含所有票券預訂所需的輸入欄位
@@ -85,15 +89,31 @@ class _BookingFormState extends State<BookingForm> {
       _isLoading = true;
     });
 
-    // 模擬 API 呼叫
-    await Future.delayed(const Duration(seconds: 2));
+    try {
+      // 創建 TicketRequest 物件
+      final ticketRequest = _createTicketRequest();
+      
+      // 創建 PaymentRequest 物件
+      final paymentRequest = _createPaymentRequest(ticketRequest);
 
-    setState(() {
-      _isLoading = false;
-    });
+      setState(() {
+        _isLoading = false;
+      });
 
-    // TODO: 實際的支付整合將在階段四實作
-    _showSuccessSnackBar('${_tickets.length} ticket(s) submitted successfully! Payment integration coming in next phase.');
+      // 導航到支付頁面
+      if (mounted) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => PaymentPage(paymentRequest: paymentRequest),
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      _showErrorSnackBar('Error preparing payment: $e');
+    }
   }
 
   /// 顯示錯誤訊息
@@ -106,15 +126,6 @@ class _BookingFormState extends State<BookingForm> {
     );
   }
 
-  /// 顯示成功訊息
-  void _showSuccessSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.green,
-      ),
-    );
-  }
 
   /// 選擇日期
   Future<void> _selectDate(int ticketIndex) async {
@@ -131,6 +142,64 @@ class _BookingFormState extends State<BookingForm> {
         _tickets[ticketIndex]['selectedDate'] = picked;
       });
     }
+  }
+
+  /// 創建 TicketRequest 物件
+  TicketRequest _createTicketRequest() {
+    final ticketInfoList = <TicketInfo>[];
+    
+    for (var ticket in _tickets) {
+      final familyName = ticket['familyNameController'].text.trim();
+      final givenName = ticket['givenNameController'].text.trim();
+      final isAdult = ticket['isAdult'] as bool;
+      final session = ticket['selectedSession'] as String;
+      final selectedDate = ticket['selectedDate'] as DateTime;
+      final arrivalTime = DateFormat('yyyy-MM-dd').format(selectedDate);
+      final price = isAdult ? 19.0 : 1.0; // 成人19歐元，兒童1歐元
+      
+      ticketInfoList.add(TicketInfo(
+        familyName: familyName,
+        givenName: givenName,
+        isAdult: isAdult,
+        session: session,
+        arrivalTime: arrivalTime,
+        price: price,
+      ));
+    }
+    
+    return TicketRequest(
+      recipientEmail: _emailController.text.trim(),
+      totalTickets: _tickets.length,
+      ticketInfo: ticketInfoList,
+    );
+  }
+
+  /// 創建 PaymentRequest 物件
+  PaymentRequest _createPaymentRequest(TicketRequest ticketRequest) {
+    // 計算總金額
+    final totalAmount = ticketRequest.totalAmount;
+    
+    // 創建客戶名稱（使用第一個票券的姓名）
+    final firstTicket = ticketRequest.ticketInfo.first;
+    final customerName = '${firstTicket.familyName} ${firstTicket.givenName}';
+    
+    // 創建描述
+    final adultCount = ticketRequest.adultTickets.length;
+    final childCount = ticketRequest.childTickets.length;
+    String description = 'Neuschwanstein Castle Tickets - ';
+    if (adultCount > 0) description += '$adultCount Adult';
+    if (adultCount > 0 && childCount > 0) description += ', ';
+    if (childCount > 0) description += '$childCount Child';
+    
+    return PaymentRequest(
+      customerName: customerName,
+      isAdult: adultCount > 0, // 如果有成人票就設為成人
+      time: firstTicket.session, // 使用第一個票券的時段
+      amount: totalAmount,
+      currency: 'EUR',
+      description: description,
+      ticketRequest: ticketRequest,
+    );
   }
 
   /// 建立票券卡片
