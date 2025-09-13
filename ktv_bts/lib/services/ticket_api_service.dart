@@ -6,7 +6,7 @@ import '../models/ticket_request.dart';
 class TicketApiService {
   // Actual endpoint
   static const String _apiBaseUrl = 'https://ezzn8n.zeabur.app';
-  static const String _ticketEndpoint = '/webhook-test/order-ticket';
+  static const String _ticketEndpoint = '/webhook/order-ticket';
 
   /// Submit ticket request to external API
   Future<TicketApiResponse> submitTicketRequest({
@@ -21,14 +21,34 @@ class TicketApiService {
         'TicketInfo': ticketRequest.ticketInfo.map((ticket) => ticket.toJson()).toList(),
       };
 
+      final requestUrl = '$_apiBaseUrl$_ticketEndpoint';
+      final requestJson = json.encode(requestBody);
+      
+      // Log request details
+      print('🚀 [API REQUEST]');
+      print('📍 URL: $requestUrl');
+      print('📤 Method: POST');
+      print('📋 Headers: {"Content-Type": "application/json", "Accept": "application/json"}');
+      print('📦 Request Body:');
+      print('   ${requestJson.replaceAll(',', ',\n   ')}');
+      print('');
+
       final response = await http.post(
-        Uri.parse('$_apiBaseUrl$_ticketEndpoint'),
+        Uri.parse(requestUrl),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: json.encode(requestBody),
+        body: requestJson,
       );
+
+      // Log response details
+      print('📥 [API RESPONSE]');
+      print('📊 Status Code: ${response.statusCode}');
+      print('📋 Headers: ${response.headers}');
+      print('📦 Response Body:');
+      print('   ${response.body.replaceAll(',', ',\n   ')}');
+      print('');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final responseData = json.decode(response.body);
@@ -36,12 +56,23 @@ class TicketApiService {
         final errorMessage = responseData['ErrorMessage'] as String? ?? 'Unknown error';
         
         if (errorCode == 0) {
+          print('✅ [API SUCCESS]');
+          print('🎉 Ticket request submitted successfully');
+          print('📊 ErrorCode: $errorCode');
+          print('');
+          
           return TicketApiResponse.success(
             message: 'Ticket request submitted successfully',
             data: responseData,
             errorCode: errorCode,
           );
         } else {
+          print('⚠️ [API BUSINESS ERROR]');
+          print('❌ ErrorCode: $errorCode');
+          print('📝 ErrorMessage: $errorMessage');
+          print('📊 StatusCode: ${response.statusCode}');
+          print('');
+          
           return TicketApiResponse.failure(
             errorMessage: errorMessage,
             statusCode: response.statusCode,
@@ -53,6 +84,12 @@ class TicketApiService {
         final errorCode = errorData['ErrorCode'] as int? ?? -1;
         final errorMessage = errorData['ErrorMessage'] as String? ?? 'Failed to submit ticket request';
         
+        print('🚫 [API HTTP ERROR]');
+        print('📊 StatusCode: ${response.statusCode}');
+        print('❌ ErrorCode: $errorCode');
+        print('📝 ErrorMessage: $errorMessage');
+        print('');
+        
         return TicketApiResponse.failure(
           errorMessage: errorMessage,
           statusCode: response.statusCode,
@@ -60,6 +97,13 @@ class TicketApiService {
         );
       }
     } catch (e) {
+      // Log error details
+      print('❌ [API ERROR]');
+      print('🔥 Error Type: ${e.runtimeType}');
+      print('📝 Error Message: ${e.toString()}');
+      print('📍 URL: $_apiBaseUrl$_ticketEndpoint');
+      print('');
+      
       return TicketApiResponse.failure(
         errorMessage: 'Network error: ${e.toString()}',
         statusCode: 0,
