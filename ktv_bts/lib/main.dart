@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'config/env_config.dart';
 
-void main() {
+void main() async {
+  // Initialize environment configuration
+  await EnvConfig.initialize();
+  
   runApp(const MyApp());
 }
 
