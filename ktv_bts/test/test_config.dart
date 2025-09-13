@@ -3,8 +3,8 @@
 /// This file contains configuration constants and utilities for testing
 
 // Import required classes
-import '../models/payment_request.dart';
-import '../models/payment_response.dart';
+import 'package:ktv_bts/models/payment_request.dart';
+import 'package:ktv_bts/models/payment_response.dart';
 
 class TestConfig {
   // Test environment variables

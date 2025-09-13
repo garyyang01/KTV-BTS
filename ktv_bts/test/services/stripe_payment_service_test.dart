@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -15,7 +14,6 @@ import 'stripe_payment_service_test.mocks.dart';
 void main() {
   group('StripePaymentService Tests', () {
     late StripePaymentService paymentService;
-    late MockClient mockClient;
 
     setUpAll(() async {
       // Load test environment variables
@@ -24,7 +22,6 @@ void main() {
 
     setUp(() {
       paymentService = StripePaymentService();
-      mockClient = MockClient();
     });
 
     group('Initialization', () {
