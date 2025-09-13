@@ -42,6 +42,11 @@ dependencies:
   # Environment variables
   flutter_dotenv: ^5.1.0
 
+  # Email packages
+  mailer: ^6.0.1
+  enough_mail: ^2.1.7
+  flutter_local_notifications: ^17.2.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
