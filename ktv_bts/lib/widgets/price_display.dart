@@ -1,25 +1,41 @@
 import 'package:flutter/material.dart';
 
 /// 價格顯示組件
-/// 根據年齡群組動態顯示票價
+/// 根據票券列表動態顯示總價
 class PriceDisplay extends StatelessWidget {
-  final bool isAdult;
-  final int quantity;
+  final List<Map<String, dynamic>> tickets;
 
   const PriceDisplay({
     super.key,
-    required this.isAdult,
-    this.quantity = 1,
+    required this.tickets,
   });
 
-  /// 計算票價
-  int get ticketPrice => isAdult ? 19 : 0;
+  /// 計算單張票價
+  int getTicketPrice(bool isAdult) => isAdult ? 19 : 1;
   
   /// 計算總價
-  int get totalPrice => ticketPrice * quantity;
+  int get totalPrice {
+    return tickets.fold(0, (sum, ticket) {
+      return sum + getTicketPrice(ticket['isAdult'] ?? true);
+    });
+  }
+
+  /// 計算成人票數量
+  int get adultCount {
+    return tickets.where((ticket) => ticket['isAdult'] == true).length;
+  }
+
+  /// 計算兒童票數量
+  int get childCount {
+    return tickets.where((ticket) => ticket['isAdult'] == false).length;
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (tickets.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -33,29 +49,72 @@ class PriceDisplay extends StatelessWidget {
             'Price Summary',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                isAdult ? 'Adult Ticket' : 'Under 18 Ticket',
-                style: const TextStyle(fontSize: 16),
-              ),
-              Text(
-                '€$ticketPrice',
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-              ),
-            ],
-          ),
-          if (quantity > 1) ...[
-            const SizedBox(height: 4),
+          const SizedBox(height: 12),
+          
+          // Adult tickets
+          if (adultCount > 0) ...[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Quantity: $quantity'),
                 Text(
-                  'Total: €$totalPrice',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  'Adult Ticket${adultCount > 1 ? 's' : ''} (${adultCount}x)',
+                  style: const TextStyle(fontSize: 16),
+                ),
+                Text(
+                  '€${adultCount * 19}',
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+          ],
+          
+          // Child tickets
+          if (childCount > 0) ...[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Under 18 Ticket${childCount > 1 ? 's' : ''} (${childCount}x)',
+                  style: const TextStyle(fontSize: 16),
+                ),
+                Text(
+                  '€${childCount * 1}',
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+          ],
+          
+          // Total
+          if (tickets.length > 1) ...[
+            const Divider(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Total (${tickets.length} ticket${tickets.length > 1 ? 's' : ''})',
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  '€$totalPrice',
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green),
+                ),
+              ],
+            ),
+          ] else ...[
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Total',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  '€$totalPrice',
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green),
                 ),
               ],
             ),
