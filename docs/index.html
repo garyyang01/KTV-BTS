@@ -3,40 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The K-T-M-V - Neuschwanstein Castle Tickets</title>
+    <title>Neuschwanstein Castle Ticket App</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-blue: #0a84ff;
-            --primary-purple: #bf5af2;
-            --primary-cyan: #64d2ff;
-            --accent-orange: #ff9f0a;
-            --accent-green: #30d158;
-            --accent-pink: #ff375f;
+            /* Travel-friendly Color Palette */
+            --bavarian-blue: #1E88E5;
+            --sky-blue: #87CEEB;
+            --forest-green: #7CB342;
+            --sunshine-gold: #FFB300;
+            --castle-stone: #8D7053;
+            --snow-white: #FAFAFA;
 
-            --dark-bg-primary: #000000;
-            --dark-bg-secondary: #1c1c1e;
-            --dark-bg-tertiary: #2c2c2e;
-            --dark-bg-quaternary: #3a3a3c;
+            /* Background Gradients */
+            --hero-gradient: linear-gradient(135deg, #87CEEB 0%, #64B5F6 25%, #42A5F5 50%, #2196F3 75%, #1E88E5 100%);
+            --page-gradient: linear-gradient(180deg, #E3F2FD 0%, #BBDEFB 50%, #90CAF9 100%);
 
-            --dark-surface-primary: rgba(28, 28, 30, 0.68);
-            --dark-surface-secondary: rgba(44, 44, 46, 0.68);
-            --dark-surface-tertiary: rgba(58, 58, 60, 0.68);
+            /* Text Colors */
+            --text-primary: #263238;
+            --text-secondary: #455A64;
+            --text-light: #FFFFFF;
+            --text-accent: #1565C0;
 
-            --text-primary: #ffffff;
-            --text-secondary: rgba(235, 235, 245, 0.6);
-            --text-tertiary: rgba(235, 235, 245, 0.38);
+            /* Light Glassmorphism */
+            --glass-ultra-light: rgba(255, 255, 255, 0.15);
+            --glass-light: rgba(255, 255, 255, 0.25);
+            --glass-medium: rgba(255, 255, 255, 0.35);
+            --glass-heavy: rgba(255, 255, 255, 0.45);
+            --glass-dropdown: rgba(255, 255, 255, 0.9);
 
-            --glass-ultra-light: rgba(255, 255, 255, 0.05);
-            --glass-light: rgba(255, 255, 255, 0.08);
-            --glass-medium: rgba(255, 255, 255, 0.12);
-            --glass-heavy: rgba(255, 255, 255, 0.18);
-            --glass-dropdown: rgba(28, 28, 30, 0.85);
-
-            --glass-border-light: rgba(255, 255, 255, 0.08);
-            --glass-border-medium: rgba(255, 255, 255, 0.12);
+            --glass-border-light: rgba(255, 255, 255, 0.3);
+            --glass-border-medium: rgba(255, 255, 255, 0.4);
 
             --shadow-light: rgba(0, 0, 0, 0.1);
             --shadow-medium: rgba(0, 0, 0, 0.2);
@@ -64,7 +63,7 @@
             font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
             color: var(--text-primary);
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%);
+            background: var(--page-gradient);
             background-attachment: fixed;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
@@ -246,8 +245,8 @@
         }
 
         .cta-button {
-            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
-            color: var(--text-primary);
+            background: linear-gradient(135deg, var(--bavarian-blue), var(--sunshine-gold));
+            color: var(--text-light);
             padding: 12px 24px;
             border-radius: var(--border-radius-lg);
             text-decoration: none;
@@ -256,12 +255,12 @@
             transition: var(--transition-smooth);
             border: none;
             cursor: pointer;
-            box-shadow: 0 8px 24px rgba(10, 132, 255, 0.3);
+            box-shadow: 0 8px 24px rgba(30, 136, 229, 0.3);
         }
 
         .cta-button:hover {
             transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 16px 40px rgba(10, 132, 255, 0.4);
+            box-shadow: 0 16px 40px rgba(30, 136, 229, 0.4);
         }
 
         /* Hero Section */
@@ -275,6 +274,9 @@
             position: relative;
             overflow: hidden;
             padding-top: 120px; /* Add padding to prevent header overlap */
+            background: linear-gradient(rgba(135, 206, 235, 0.1), rgba(30, 136, 229, 0.2)),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><defs><linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:%2387CEEB;stop-opacity:1" /><stop offset="100%" style="stop-color:%23E3F2FD;stop-opacity:1" /></linearGradient></defs><rect width="1200" height="600" fill="url(%23sky)"/><polygon points="400,450 450,350 500,450" fill="%23A5A5A5" opacity="0.3"/><polygon points="450,350 500,250 550,350" fill="%23B0B0B0" opacity="0.3"/><polygon points="600,500 700,300 800,500" fill="%238D7053" opacity="0.4"/><polygon points="700,300 750,200 800,300" fill="%23A68B5B" opacity="0.4"/><polygon points="720,350 730,300 740,350" fill="%23654321" opacity="0.6"/><polygon points="730,340 740,320 750,340" fill="%23654321" opacity="0.6"/><circle cx="200" cy="150" r="60" fill="%23FFFFFF" opacity="0.8"/><circle cx="300" cy="120" r="40" fill="%23FFFFFF" opacity="0.6"/><circle cx="900" cy="180" r="50" fill="%23FFFFFF" opacity="0.7"/></svg>') center/cover;
+            background-attachment: fixed;
         }
 
         .hero::before {
@@ -284,9 +286,8 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: radial-gradient(circle at 20% 50%, rgba(10, 132, 255, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 20%, rgba(191, 90, 242, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 40% 80%, rgba(100, 210, 255, 0.08) 0%, transparent 50%);
+            background: var(--hero-gradient);
+            opacity: 0.2;
         }
 
         .hero-content {
@@ -301,7 +302,7 @@
             margin-bottom: 32px;
             line-height: 1.05;
             letter-spacing: -0.025em;
-            background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary-cyan) 50%, var(--primary-purple) 100%);
+            background: linear-gradient(135deg, var(--bavarian-blue) 0%, var(--forest-green) 50%, var(--castle-stone) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -337,14 +338,14 @@
         }
 
         .primary-button {
-            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
-            color: var(--text-primary);
-            box-shadow: 0 12px 32px rgba(10, 132, 255, 0.2);
+            background: linear-gradient(135deg, var(--bavarian-blue), var(--sunshine-gold));
+            color: var(--text-light);
+            box-shadow: 0 12px 32px rgba(30, 136, 229, 0.2);
         }
 
         .primary-button:hover {
             transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 20px 48px rgba(10, 132, 255, 0.3);
+            box-shadow: 0 20px 48px rgba(30, 136, 229, 0.3);
         }
 
         .secondary-button {
@@ -437,21 +438,21 @@
         .feature-icon {
             width: 80px;
             height: 80px;
-            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            background: linear-gradient(135deg, var(--bavarian-blue), var(--sunshine-gold));
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 24px;
             font-size: 32px;
-            color: var(--text-primary);
-            box-shadow: 0 12px 32px rgba(10, 132, 255, 0.2);
+            color: var(--text-light);
+            box-shadow: 0 12px 32px rgba(30, 136, 229, 0.2);
             transition: var(--transition-smooth);
         }
 
         .feature-card:hover .feature-icon {
             transform: scale(1.1) rotate(5deg);
-            box-shadow: 0 16px 40px rgba(10, 132, 255, 0.3);
+            box-shadow: 0 16px 40px rgba(30, 136, 229, 0.3);
         }
 
         .feature-card h3 {
@@ -539,9 +540,9 @@
         .form-group input:focus,
         .form-group select:focus {
             outline: none;
-            border-color: var(--primary-blue);
+            border-color: var(--bavarian-blue);
             background: var(--glass-light);
-            box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.1);
+            box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.1);
         }
 
         .form-group input::placeholder {
@@ -583,7 +584,7 @@
         }
 
         .cheap-highlight {
-            color: var(--accent-green);
+            color: var(--forest-green);
             font-weight: 600;
         }
 
@@ -651,7 +652,7 @@
         }
 
         .stars {
-            color: var(--accent-orange);
+            color: var(--sunshine-gold);
             font-size: 20px;
             margin-bottom: 20px;
         }
@@ -706,8 +707,8 @@
         }
 
         .download-button {
-            background: linear-gradient(135deg, var(--accent-green), var(--primary-cyan));
-            color: var(--text-primary);
+            background: linear-gradient(135deg, var(--forest-green), var(--bavarian-blue));
+            color: var(--text-light);
             padding: 16px 32px;
             border-radius: var(--border-radius-xl);
             text-decoration: none;
@@ -715,12 +716,12 @@
             font-size: 17px;
             transition: var(--transition-smooth);
             display: inline-block;
-            box-shadow: 0 12px 32px rgba(48, 209, 88, 0.2);
+            box-shadow: 0 12px 32px rgba(124, 179, 66, 0.2);
         }
 
         .download-button:hover {
             transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 20px 48px rgba(48, 209, 88, 0.3);
+            box-shadow: 0 20px 48px rgba(124, 179, 66, 0.3);
         }
 
         /* Footer */
@@ -874,7 +875,7 @@
         <nav class="nav container">
             <a href="#" class="logo">
                 <span>🏰</span>
-                <span>The K-T-M-V</span>
+                <span>Neuschwanstein Castle Ticket App</span>
             </a>
 
             <div class="nav-center">
@@ -917,7 +918,7 @@
                 <div class="download-section fade-in-up stagger-3">
                     <a href="https://github.com/garyyang01/KTV-BTS/releases/download/APP/app-release.apk" class="download-link">
                         <span>📱</span>
-                        <span data-lang="download-app">Download App (.zip)</span>
+                        <span data-lang="download-app">Download App</span>
                     </a>
                     <a href="https://github.com/garyyang01/KTV-BTS/releases" class="download-link">
                         <span>📋</span>
@@ -1593,10 +1594,10 @@
         });
 
         // Background gradient animation
-        let gradientAngle = 135;
+        let gradientAngle = 180;
         setInterval(() => {
-            gradientAngle += 0.2;
-            document.body.style.background = `linear-gradient(${gradientAngle}deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%)`;
+            gradientAngle += 0.1;
+            document.body.style.background = `linear-gradient(${gradientAngle}deg, #E3F2FD 0%, #BBDEFB 50%, #90CAF9 100%)`;
         }, 100);
 
         // Initialize calculator and set default language
