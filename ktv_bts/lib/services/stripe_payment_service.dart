@@ -12,6 +12,15 @@ abstract class IStripePaymentService {
   /// Create payment intent for KTV booking
   Future<PaymentResponse> createPaymentIntent(PaymentRequest request);
   
+  /// Create payment method with card details
+  Future<PaymentResponse> createPaymentMethod({
+    required String cardNumber,
+    required int expMonth,
+    required int expYear,
+    required String cvc,
+    required String cardholderName,
+  });
+  
   /// Confirm payment with payment method
   Future<PaymentResponse> confirmPayment({
     required String paymentIntentId,
@@ -98,6 +107,62 @@ class StripePaymentService implements IStripePaymentService {
         final errorData = json.decode(response.body);
         return PaymentResponse.failure(
           errorMessage: errorData['error']?['message'] ?? 'Payment intent creation failed',
+        );
+      }
+    } catch (e) {
+      return PaymentResponse.failure(
+        errorMessage: 'Network error: ${e.toString()}',
+      );
+    }
+  }
+
+  @override
+  Future<PaymentResponse> createPaymentMethod({
+    required String cardNumber,
+    required int expMonth,
+    required int expYear,
+    required String cvc,
+    required String cardholderName,
+  }) async {
+    try {
+      if (!_isInitialized) {
+        throw Exception('Service not initialized. Call initialize() first.');
+      }
+
+      // 使用 Stripe 測試 token 而不是原始卡號數據
+      // 根據卡號選擇對應的測試 token
+      final testToken = _getTestTokenForCard(cardNumber);
+      
+      final headers = {
+        'Authorization': 'Bearer $_secretKey',
+        'Content-Type': 'application/x-www-form-urlencoded',
+      };
+
+      final body = {
+        'type': 'card',
+        'card[token]': testToken,
+        'billing_details[name]': cardholderName,
+      };
+
+      final response = await http.post(
+        Uri.parse('$_stripeApiBaseUrl/payment_methods'),
+        headers: headers,
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return PaymentResponse.success(
+          paymentIntentId: data['id'], // 這裡返回 PaymentMethod ID
+          clientSecret: null,
+          status: 'created',
+          amount: 0, // PaymentMethod 沒有金額
+          currency: 'EUR',
+        );
+      } else {
+        final errorData = json.decode(response.body);
+        return PaymentResponse.failure(
+          errorMessage: errorData['error']?['message'] ?? 'Payment method creation failed',
         );
       }
     } catch (e) {
@@ -223,7 +288,7 @@ class StripePaymentService implements IStripePaymentService {
   double _calculateAmount(PaymentRequest request) {
     // KTV pricing logic - Fixed EUR pricing
     if (request.isAdult) {
-      return 20.0; // Adult: 20 EUR (fixed)
+      return 19.0; // Adult: 19 EUR (fixed)
     } else {
       return 0.0; // Child: 0 EUR (free)
     }
@@ -237,4 +302,32 @@ class StripePaymentService implements IStripePaymentService {
 
   /// Get public key for client-side Stripe initialization
   String get publicKey => _publicKey;
+
+  /// 根據卡號獲取對應的 Stripe 測試 token
+  /// 這些是 Stripe 提供的測試 token，用於模擬不同的卡號
+  String _getTestTokenForCard(String cardNumber) {
+    // 移除空格和格式化字符
+    final cleanCardNumber = cardNumber.replaceAll(RegExp(r'\D'), '');
+    
+    // 根據卡號前幾位判斷卡類型並返回對應的測試 token
+    if (cleanCardNumber.startsWith('4242')) {
+      // Visa 成功卡
+      return 'tok_visa';
+    } else if (cleanCardNumber.startsWith('4000')) {
+      // Visa 拒絕卡
+      return 'tok_chargeDeclined';
+    } else if (cleanCardNumber.startsWith('5555')) {
+      // Mastercard 成功卡
+      return 'tok_mastercard';
+    } else if (cleanCardNumber.startsWith('3782')) {
+      // American Express 成功卡
+      return 'tok_amex';
+    } else if (cleanCardNumber.startsWith('6011')) {
+      // Discover 成功卡
+      return 'tok_discover';
+    } else {
+      // 默認使用 Visa 成功卡
+      return 'tok_visa';
+    }
+  }
 }
