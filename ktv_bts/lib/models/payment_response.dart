@@ -21,10 +21,10 @@ class PaymentResponse {
   /// Create successful payment response
   factory PaymentResponse.success({
     required String paymentIntentId,
-    required String clientSecret,
-    required String status,
-    required double amount,
-    required String currency,
+    String? clientSecret,
+    String? status,
+    double? amount,
+    String? currency,
   }) {
     return PaymentResponse(
       success: true,

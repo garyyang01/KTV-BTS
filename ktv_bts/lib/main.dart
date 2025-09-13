@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'services/email_service.dart';
 import 'pages/payment_test_page.dart';
+import 'pages/payment_page.dart';
+import 'models/payment_request.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +32,10 @@ class MyApp extends StatelessWidget {
       home: const LandingPage(),
       routes: {
         '/payment-test': (context) => const PaymentTestPage(),
+        '/payment': (context) {
+          final args = ModalRoute.of(context)!.settings.arguments as PaymentRequest;
+          return PaymentPage(paymentRequest: args);
+        },
       },
     );
   }
@@ -53,11 +59,20 @@ class _LandingPageState extends State<LandingPage> {
       return;
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Ticket reserved for ${_nameController.text} at $_selectedTime'),
-        backgroundColor: const Color(0xFF059669),
-      ),
+    // 創建支付請求
+    final paymentRequest = PaymentRequest(
+      customerName: _nameController.text.trim(),
+      isAdult: _isAdult,
+      time: _selectedTime,
+      currency: 'EUR',
+      description: '新天鵝堡門票 - $_selectedTime 時段',
+    );
+
+    // 導航到支付頁面
+    Navigator.pushNamed(
+      context,
+      '/payment',
+      arguments: paymentRequest,
     );
   }
 
