@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'services/email_service.dart';
 import 'pages/payment_test_page.dart';
 import 'pages/payment_page.dart';
+import 'pages/ticket_booking_page.dart';
+import 'pages/payment_confirmation_page.dart';
 import 'models/payment_request.dart';
 
 void main() async {
@@ -29,13 +31,15 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const LandingPage(),
+      home: const TicketBookingPage(),
       routes: {
         '/payment-test': (context) => const PaymentTestPage(),
         '/payment': (context) {
           final args = ModalRoute.of(context)!.settings.arguments as PaymentRequest;
           return PaymentPage(paymentRequest: args);
         },
+        '/payment-confirmation': (context) => const PaymentConfirmationPage(),
+        '/legacy-landing': (context) => const LandingPage(),
       },
     );
   }
