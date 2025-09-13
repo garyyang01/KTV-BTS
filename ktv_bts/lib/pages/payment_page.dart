@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../services/stripe_payment_service.dart';
+import '../services/ticket_api_service.dart';
 import '../models/payment_request.dart';
 import '../models/payment_response.dart';
+import '../models/ticket_request.dart';
+import '../models/ticket_info.dart';
 
 class PaymentPage extends StatefulWidget {
   final PaymentRequest paymentRequest;
@@ -19,6 +22,7 @@ class PaymentPage extends StatefulWidget {
 class _PaymentPageState extends State<PaymentPage> {
   final _formKey = GlobalKey<FormState>();
   final _stripeService = StripePaymentService();
+  final _ticketApiService = TicketApiService();
   
   // 表單控制器
   final _cardNumberController = TextEditingController();
@@ -77,7 +81,7 @@ class _PaymentPageState extends State<PaymentPage> {
     if (_lastPaymentIntent == null || !_lastPaymentIntent!.success) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('請先創建支付意圖'),
+          content: Text('Please create payment intent first'),
           backgroundColor: Colors.orange,
         ),
       );
@@ -108,7 +112,7 @@ class _PaymentPageState extends State<PaymentPage> {
       if (!paymentMethodResponse.success) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('支付處理失敗: ${paymentMethodResponse.errorMessage}'),
+            content: Text('Payment processing failed: ${paymentMethodResponse.errorMessage}'),
             backgroundColor: Colors.red,
           ),
         );
@@ -122,12 +126,12 @@ class _PaymentPageState extends State<PaymentPage> {
       );
 
       if (response.success) {
-        // 支付成功，顯示成功頁面或返回主頁
-        _showSuccessDialog();
+        // 支付成功，調用外部 API
+        await _submitTicketToApi(response.paymentIntentId!);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('支付失敗: ${response.errorMessage}'),
+            content: Text('Payment failed: ${response.errorMessage}'),
             backgroundColor: Colors.red,
           ),
         );
@@ -135,7 +139,7 @@ class _PaymentPageState extends State<PaymentPage> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('支付處理錯誤: $e'),
+          content: Text('Payment processing error: $e'),
           backgroundColor: Colors.red,
         ),
       );
@@ -163,8 +167,114 @@ class _PaymentPageState extends State<PaymentPage> {
       );
       return response;
     } catch (e) {
-      return PaymentResponse.failure(errorMessage: '創建支付方法失敗: $e');
+      return PaymentResponse.failure(errorMessage: 'Failed to create payment method: $e');
     }
+  }
+
+  /// Submit ticket request to external API after successful payment
+  Future<void> _submitTicketToApi(String paymentIntentId) async {
+    try {
+      // Check if we have ticket request data
+      if (widget.paymentRequest.ticketRequest == null) {
+        // Fallback to legacy single ticket format
+        final legacyTicketRequest = _createLegacyTicketRequest();
+        final apiResponse = await _ticketApiService.submitTicketRequest(
+          paymentRefno: paymentIntentId,
+          ticketRequest: legacyTicketRequest,
+        );
+        
+        if (apiResponse.success) {
+          _showSuccessDialog();
+        } else {
+          _showApiErrorDialog(apiResponse.errorMessage ?? 'Unknown error');
+        }
+      } else {
+        // Use new ticket request format
+        final apiResponse = await _ticketApiService.submitTicketRequest(
+          paymentRefno: paymentIntentId,
+          ticketRequest: widget.paymentRequest.ticketRequest!,
+        );
+        
+        if (apiResponse.success) {
+          _showSuccessDialog();
+        } else {
+          _showApiErrorDialog(apiResponse.errorMessage ?? 'Unknown error');
+        }
+      }
+    } catch (e) {
+      _showApiErrorDialog('Failed to submit ticket request: $e');
+    }
+  }
+
+  /// Create legacy ticket request from current payment request
+  TicketRequest _createLegacyTicketRequest() {
+    // This is a fallback for when ticketRequest is null
+    // We'll create a single ticket based on the current payment request
+    final customerName = widget.paymentRequest.customerName;
+    final nameParts = customerName.split(' ');
+    final familyName = nameParts.length > 1 ? nameParts.last : '';
+    final givenName = nameParts.length > 1 ? nameParts.take(nameParts.length - 1).join(' ') : customerName;
+    
+    return TicketRequest(
+      recipientEmail: 'customer@example.com', // Default email
+      totalTickets: 1,
+      ticketInfo: [
+        TicketInfo(
+          familyName: familyName,
+          givenName: givenName,
+          isAdult: widget.paymentRequest.isAdult,
+          session: widget.paymentRequest.time,
+          arrivalTime: DateTime.now().add(const Duration(days: 1)).toIso8601String().split('T')[0], // Tomorrow
+          price: widget.paymentRequest.isAdult ? 19.0 : 0.0,
+        ),
+      ],
+    );
+  }
+
+  /// Show API error dialog
+  void _showApiErrorDialog(String errorMessage) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.warning, color: Colors.orange),
+            SizedBox(width: 8),
+            Text('API Error'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Payment was successful, but there was an error submitting the ticket request:'),
+            const SizedBox(height: 8),
+            Text(
+              errorMessage,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Please contact support with your payment reference:',
+              style: TextStyle(fontWeight: FontWeight.w500),
+            ),
+            Text(
+              _lastPaymentIntent?.paymentIntentId ?? 'Unknown',
+              style: const TextStyle(fontFamily: 'monospace'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close dialog
+              Navigator.of(context).pop(); // Return to previous page
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _showSuccessDialog() {
@@ -175,20 +285,20 @@ class _PaymentPageState extends State<PaymentPage> {
           children: [
             Icon(Icons.check_circle, color: Colors.green),
             SizedBox(width: 8),
-            Text('支付成功！'),
+            Text('Payment Successful!'),
           ],
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('客戶: ${widget.paymentRequest.customerName}'),
-            Text('票種: ${widget.paymentRequest.isAdult ? '成人票' : '兒童票'}'),
-            Text('時段: ${widget.paymentRequest.time}'),
-            Text('金額: ${widget.paymentRequest.isAdult ? '19.0' : '0.0'} EUR'),
+            Text('Customer: ${widget.paymentRequest.customerName}'),
+            Text('Ticket Type: ${widget.paymentRequest.isAdult ? 'Adult' : 'Child'}'),
+            Text('Time Slot: ${widget.paymentRequest.time}'),
+            Text('Amount: ${widget.paymentRequest.isAdult ? '19.0' : '0.0'} EUR'),
             const SizedBox(height: 16),
             const Text(
-              '您的門票已成功購買！\n請保留此收據作為入場憑證。',
+              'Your ticket has been successfully purchased!\nPlease keep this receipt as your entry voucher.',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
@@ -196,10 +306,10 @@ class _PaymentPageState extends State<PaymentPage> {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.of(context).pop(); // 關閉對話框
-              Navigator.of(context).pop(); // 返回上一頁
+              Navigator.of(context).pop(); // Close dialog
+              Navigator.of(context).pop(); // Return to previous page
             },
-            child: const Text('完成'),
+            child: const Text('Done'),
           ),
         ],
       ),
@@ -248,7 +358,7 @@ class _PaymentPageState extends State<PaymentPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('支付頁面'),
+        title: const Text('Payment'),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
         leading: IconButton(
@@ -270,18 +380,18 @@ class _PaymentPageState extends State<PaymentPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      '📋 訂單摘要',
+                      '📋 Order Summary',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Text('客戶姓名: ${widget.paymentRequest.customerName}'),
-                    Text('票種: ${widget.paymentRequest.isAdult ? '成人票' : '兒童票'}'),
-                    Text('時段: ${widget.paymentRequest.time}'),
-                    Text('金額: ${widget.paymentRequest.isAdult ? '19.0' : '0.0'} EUR'),
-                    Text('描述: ${widget.paymentRequest.description}'),
+                    Text('Customer Name: ${widget.paymentRequest.customerName}'),
+                    Text('Ticket Type: ${widget.paymentRequest.isAdult ? 'Adult' : 'Child'}'),
+                    Text('Time Slot: ${widget.paymentRequest.time}'),
+                    Text('Amount: ${widget.paymentRequest.isAdult ? '19.0' : '0.0'} EUR'),
+                    Text('Description: ${widget.paymentRequest.description}'),
                   ],
                 ),
               ),
@@ -298,7 +408,7 @@ class _PaymentPageState extends State<PaymentPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        '💳 支付資訊',
+                        '💳 Payment Information',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -306,30 +416,30 @@ class _PaymentPageState extends State<PaymentPage> {
                       ),
                       const SizedBox(height: 16),
 
-                      // 持卡人姓名
+                      // Cardholder Name
                       TextFormField(
                         controller: _cardholderNameController,
                         decoration: const InputDecoration(
-                          labelText: '持卡人姓名',
+                          labelText: 'Cardholder Name',
                           border: OutlineInputBorder(),
                           prefixIcon: Icon(Icons.person),
                         ),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return '請輸入持卡人姓名';
+                            return 'Please enter cardholder name';
                           }
                           return null;
                         },
                       ),
                       const SizedBox(height: 16),
 
-                      // 卡號
+                      // Card Number
                       TextFormField(
                         controller: _cardNumberController,
                         keyboardType: TextInputType.number,
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(19), // 16位數字 + 3個空格
+                          LengthLimitingTextInputFormatter(19), // 16 digits + 3 spaces
                           TextInputFormatter.withFunction((oldValue, newValue) {
                             final formatted = _formatCardNumber(newValue.text);
                             return TextEditingValue(
@@ -339,25 +449,25 @@ class _PaymentPageState extends State<PaymentPage> {
                           }),
                         ],
                         decoration: const InputDecoration(
-                          labelText: '卡號',
+                          labelText: 'Card Number',
                           border: OutlineInputBorder(),
                           prefixIcon: Icon(Icons.credit_card),
                           hintText: '4242 4242 4242 4242',
                         ),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return '請輸入卡號';
+                            return 'Please enter card number';
                           }
                           String digitsOnly = value.replaceAll(' ', '');
                           if (digitsOnly.length != 16) {
-                            return '卡號必須為16位數字';
+                            return 'Card number must be 16 digits';
                           }
                           return null;
                         },
                       ),
                       const SizedBox(height: 16),
 
-                      // 到期日和CVC
+                      // Expiry Date and CVC
                       Row(
                         children: [
                           Expanded(
@@ -377,16 +487,16 @@ class _PaymentPageState extends State<PaymentPage> {
                                 }),
                               ],
                               decoration: const InputDecoration(
-                                labelText: '到期日',
+                                labelText: 'Expiry Date',
                                 border: OutlineInputBorder(),
                                 hintText: '12/25',
                               ),
                               validator: (value) {
                                 if (value == null || value.trim().isEmpty) {
-                                  return '請輸入到期日';
+                                  return 'Please enter expiry date';
                                 }
                                 if (!RegExp(r'^\d{2}/\d{2}$').hasMatch(value)) {
-                                  return '格式: MM/YY';
+                                  return 'Format: MM/YY';
                                 }
                                 return null;
                               },
@@ -408,10 +518,10 @@ class _PaymentPageState extends State<PaymentPage> {
                               ),
                               validator: (value) {
                                 if (value == null || value.trim().isEmpty) {
-                                  return '請輸入CVC';
+                                  return 'Please enter CVC';
                                 }
                                 if (value.length < 3 || value.length > 4) {
-                                  return 'CVC必須為3-4位數字';
+                                  return 'CVC must be 3-4 digits';
                                 }
                                 return null;
                               },
@@ -421,7 +531,7 @@ class _PaymentPageState extends State<PaymentPage> {
                       ),
                       const SizedBox(height: 24),
 
-                      // 支付按鈕
+                      // Payment Button
                       ElevatedButton(
                         onPressed: _isLoading ? null : _processPayment,
                         style: ElevatedButton.styleFrom(
@@ -442,11 +552,11 @@ class _PaymentPageState extends State<PaymentPage> {
                                     ),
                                   ),
                                   SizedBox(width: 12),
-                                  Text('處理中...'),
+                                  Text('Processing...'),
                                 ],
                               )
                             : const Text(
-                                '💳 立即支付',
+                                '💳 Pay Now',
                                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                       ),

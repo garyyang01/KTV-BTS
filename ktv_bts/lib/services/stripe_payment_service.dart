@@ -284,9 +284,14 @@ class StripePaymentService implements IStripePaymentService {
     }
   }
 
-  /// Calculate KTV booking amount based on customer type
+  /// Calculate KTV booking amount based on ticket request
   double _calculateAmount(PaymentRequest request) {
-    // KTV pricing logic - Fixed EUR pricing
+    // If ticketRequest is provided, calculate from ticket info
+    if (request.ticketRequest != null) {
+      return request.ticketRequest!.totalAmount;
+    }
+    
+    // Fallback to legacy single ticket calculation
     if (request.isAdult) {
       return 19.0; // Adult: 19 EUR (fixed)
     } else {
@@ -296,8 +301,24 @@ class StripePaymentService implements IStripePaymentService {
 
   /// Generate description for payment
   String _generateDescription(PaymentRequest request) {
+    // If ticketRequest is provided, generate description from ticket info
+    if (request.ticketRequest != null) {
+      final ticketRequest = request.ticketRequest!;
+      final adultCount = ticketRequest.adultTickets.length;
+      final childCount = ticketRequest.childTickets.length;
+      
+      if (adultCount > 0 && childCount > 0) {
+        return 'Neuschwanstein Castle Tickets - $adultCount Adult(s), $childCount Child(ren) - ${ticketRequest.ticketInfo.first.session} Session';
+      } else if (adultCount > 0) {
+        return 'Neuschwanstein Castle Tickets - $adultCount Adult(s) - ${ticketRequest.ticketInfo.first.session} Session';
+      } else {
+        return 'Neuschwanstein Castle Tickets - $childCount Child(ren) - ${ticketRequest.ticketInfo.first.session} Session';
+      }
+    }
+    
+    // Fallback to legacy single ticket description
     final customerType = request.isAdult ? 'Adult' : 'Child';
-    return 'KTV Booking - $customerType - ${request.time} Session';
+    return 'Neuschwanstein Castle Ticket - $customerType - ${request.time} Session';
   }
 
   /// Get public key for client-side Stripe initialization
