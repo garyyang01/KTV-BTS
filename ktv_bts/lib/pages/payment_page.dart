@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import '../services/stripe_payment_service.dart';
 import '../services/ticket_api_service.dart';
+import '../services/ip_verification_service.dart';
 import '../models/payment_request.dart';
 import '../models/payment_response.dart';
 import '../models/ticket_request.dart';
@@ -25,13 +26,14 @@ class _PaymentPageState extends State<PaymentPage> {
   final _formKey = GlobalKey<FormState>();
   final _stripeService = StripePaymentService();
   final _ticketApiService = TicketApiService();
-  
+  final _ipVerificationService = IpVerificationService();
+
   // 表單控制器
   final _cardNumberController = TextEditingController();
   final _expiryDateController = TextEditingController();
   final _cvcController = TextEditingController();
   final _cardholderNameController = TextEditingController();
-  
+
   bool _isLoading = false;
   PaymentResponse? _lastPaymentIntent;
 
@@ -77,11 +79,20 @@ class _PaymentPageState extends State<PaymentPage> {
 
   Future<void> _processPayment() async {
     print('💳 Starting payment process...');
-    
+
     if (!_formKey.currentState!.validate()) {
       print('💳 Form validation failed');
       return;
     }
+
+    // 在進行刷卡前進行 IP 驗證
+    print('🔒 Verifying user IP before payment...');
+    final isIpAuthorized = await _ipVerificationService.verifyUserIp();
+    if (!isIpAuthorized) {
+      _showIpBlockedDialog();
+      return;
+    }
+    print('✅ IP verification passed, proceeding with payment');
 
     if (_lastPaymentIntent == null || !_lastPaymentIntent!.success) {
       print('💳 Payment intent not ready');
@@ -611,13 +622,40 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 
+  /// 顯示 IP 被阻擋的對話框
+  void _showIpBlockedDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.block, color: Colors.red),
+            SizedBox(width: 8),
+            Text('Access Denied'),
+          ],
+        ),
+        content: Text(_ipVerificationService.getBlockedUserMessage()),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close dialog
+              Navigator.of(context).pop(); // Go back to previous page
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
   /// 導航到火車票預訂頁面
   void _navigateToTrainBooking() {
     // 獲取門票資訊
     final ticketInfos = widget.paymentRequest.ticketRequest?.ticketInfo ?? [];
     final ticketDate = _getTicketDate();
     final ticketSession = widget.paymentRequest.time;
-    
+
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => RailSearchTestPage(

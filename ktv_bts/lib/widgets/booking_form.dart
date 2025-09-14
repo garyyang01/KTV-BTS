@@ -7,6 +7,7 @@ import '../models/ticket_info.dart';
 import '../models/payment_request.dart';
 import '../pages/payment_page.dart';
 import '../pages/rail_search_test_page.dart';
+import '../services/ip_verification_service.dart';
 
 /// 預訂表單組件
 /// 包含所有票券預訂所需的輸入欄位
@@ -19,13 +20,14 @@ class BookingForm extends StatefulWidget {
 
 class _BookingFormState extends State<BookingForm> {
   final _formKey = GlobalKey<FormState>();
-  
+  final _ipVerificationService = IpVerificationService();
+
   // Email controller
   final _emailController = TextEditingController();
-  
+
   // Tickets list - each ticket contains its own form data
   List<Map<String, dynamic>> _tickets = [];
-  
+
   // Loading state (no longer needed since we show dialog immediately)
   // bool _isLoading = false;
 
@@ -86,9 +88,16 @@ class _BookingFormState extends State<BookingForm> {
       }
     }
 
+    // 在用戶選擇票種後，進行 IP 驗證檢查
+    final isIpAuthorized = await _ipVerificationService.verifyUserIp();
+    if (!isIpAuthorized) {
+      _showIpBlockedDialog();
+      return;
+    }
+
     // 創建 TicketRequest 物件
     final ticketRequest = _createTicketRequest();
-    
+
     // 創建 PaymentRequest 物件
     final paymentRequest = _createPaymentRequest(ticketRequest);
 
@@ -102,6 +111,32 @@ class _BookingFormState extends State<BookingForm> {
       SnackBar(
         content: Text(message),
         backgroundColor: Colors.red,
+      ),
+    );
+  }
+
+  /// 顯示 IP 被阻擋的對話框
+  void _showIpBlockedDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.block, color: Colors.red),
+            SizedBox(width: 8),
+            Text('Access Denied'),
+          ],
+        ),
+        content: Text(_ipVerificationService.getBlockedUserMessage()),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('OK'),
+          ),
+        ],
       ),
     );
   }
