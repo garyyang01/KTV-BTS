@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/search_bar_widget.dart';
 import '../widgets/content_display_widget.dart';
 import '../models/search_option.dart';
+import 'my_train_tickets_page.dart';
 
 /// 主頁面 - 統一的票券搜索和申請頁面
 class MainPage extends StatefulWidget {
@@ -20,6 +21,16 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
+  /// 導航到我的票券頁面
+  void _navigateToMyTickets() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const MyTrainTicketsPage(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,6 +47,13 @@ class _MainPageState extends State<MainPage> {
         foregroundColor: Colors.white,
         elevation: 2,
         centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: _navigateToMyTickets,
+            icon: const Icon(Icons.confirmation_number),
+            tooltip: 'My Train Tickets',
+          ),
+        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
