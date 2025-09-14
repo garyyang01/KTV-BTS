@@ -4,10 +4,10 @@ import '../models/train_solution.dart';
 import '../models/payment_request.dart';
 import 'payment_page.dart';
 
-/// 火車班次選擇頁面
+/// Train schedule selection page
 class TrainSelectionPage extends StatefulWidget {
   final List<TrainSolution> solutions;
-  final PaymentRequest? originalTicketRequest; // 原始門票支付請求（用於組合支付）
+  final PaymentRequest? originalTicketRequest; // Original ticket payment request (for combined payment)
 
   const TrainSelectionPage({
     super.key,
@@ -25,7 +25,7 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
   int? selectedServiceIndex;
   int? selectedTrainIndex;
   
-  // 乘客資訊表單控制器
+  // Passenger information form controllers
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -34,7 +34,7 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
   final _birthdateController = TextEditingController();
   String _selectedGender = 'male';
   
-  // 表單驗證鍵
+  // Form validation key
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -105,7 +105,7 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              '已選擇: ${widget.solutions[selectedSolutionIndex!].trains[selectedTrainIndex!].number} - ${widget.solutions[selectedSolutionIndex!].offers[selectedOfferIndex!].services[selectedServiceIndex!].description}',
+                              'Selected: ${widget.solutions[selectedSolutionIndex!].trains[selectedTrainIndex!].number} - ${widget.solutions[selectedSolutionIndex!].offers[selectedOfferIndex!].services[selectedServiceIndex!].description}',
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: Theme.of(context).primaryColor,
@@ -177,7 +177,7 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 營運商信息
+                // Carrier information
                 Row(
                   children: [
                     if (solution.carrierIcon.isNotEmpty)
@@ -214,7 +214,7 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
                             ),
                           ),
                           Text(
-                            '${solution.offers.length} 種票價選項',
+                            '${solution.offers.length} fare options',
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               color: Colors.grey.shade600,
                             ),
@@ -284,7 +284,7 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
           setState(() {
             selectedSolutionIndex = solutionIndex;
             selectedTrainIndex = trainIndex;
-            // 重置票價選擇
+            // Reset fare selection
             selectedOfferIndex = null;
             selectedServiceIndex = null;
           });
@@ -306,7 +306,7 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
           ),
           child: Row(
             children: [
-              // 選擇指示器
+              // Selection indicator
               Container(
                 width: 20,
                 height: 20,
@@ -332,7 +332,7 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
               ),
               const SizedBox(width: 12),
               
-              // 車次信息
+              // Train number information
               Expanded(
                 flex: 2,
                 child: Column(
@@ -359,7 +359,7 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
                 ),
               ),
               
-              // 出發信息
+              // Departure information
               Expanded(
                 flex: 2,
                 child: Column(
@@ -386,13 +386,13 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
                 ),
               ),
               
-              // 箭頭
+              // Arrow
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8),
                 child: Icon(Icons.arrow_forward, size: 16),
               ),
               
-              // 到達信息
+              // Arrival information
               Expanded(
                 flex: 2,
                 child: Column(
@@ -419,7 +419,7 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
                 ),
               ),
               
-              // 時間和停靠站信息
+              // Time and stop information
               Expanded(
                 flex: 1,
                 child: Column(
@@ -435,7 +435,7 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
                     ),
                     if (train.stops.isNotEmpty)
                       Text(
-                        '${train.stops.length} 站',
+                        '${train.stops.length} stops',
                         style: TextStyle(
                           color: Colors.grey.shade600,
                           fontSize: 10,
@@ -532,7 +532,7 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '行程時間: ${train.formattedDuration}',
+                'Duration: ${train.formattedDuration}',
                 style: TextStyle(
                   color: Colors.grey.shade600,
                   fontSize: 12,
@@ -540,7 +540,7 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
               ),
               if (train.stops.isNotEmpty)
                 Text(
-                  '${train.stops.length} 個停靠站',
+                  '${train.stops.length} stops',
                   style: TextStyle(
                     color: Colors.grey.shade600,
                     fontSize: 12,
@@ -621,7 +621,7 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
               
               const SizedBox(height: 8),
               
-              // 服務選項
+              // Service options
               ...offer.services.asMap().entries.map((entry) {
                 final serviceIndex = entry.key;
                 final service = entry.value;
@@ -691,7 +691,7 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
                     ),
                     if (service.available.seats > 0)
                       Text(
-                        '剩餘座位: ${service.available.seats}',
+                        'Available Seats: ${service.available.seats}',
                         style: TextStyle(
                           color: Colors.grey.shade600,
                           fontSize: 11,
@@ -722,7 +722,7 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Text(
-                        '已選擇',
+                        'Selected',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 10,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-/// 支付確認頁面
-/// 顯示支付成功後的確認資訊和票券詳情
+/// Payment Confirmation Page
+/// Displays confirmation information and ticket details after successful payment
 class PaymentConfirmationPage extends StatelessWidget {
   const PaymentConfirmationPage({super.key});
 

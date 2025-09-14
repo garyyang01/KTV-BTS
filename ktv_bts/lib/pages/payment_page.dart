@@ -145,14 +145,14 @@ class _PaymentPageState extends State<PaymentPage> {
     });
 
     try {
-      // 使用測試卡號創建 PaymentMethod
+      // Create PaymentMethod using test card number
       final cardNumber = _cardNumberController.text.replaceAll(' ', '');
       final expiryParts = _expiryDateController.text.split('/');
       final month = expiryParts[0];
       final year = '20${expiryParts[1]}';
       final cvc = _cvcController.text;
 
-      // 創建 PaymentMethod
+      // Create PaymentMethod
       final paymentMethodResponse = await _createPaymentMethod(
         cardNumber: cardNumber,
         expMonth: int.parse(month),
@@ -171,7 +171,7 @@ class _PaymentPageState extends State<PaymentPage> {
         return;
       }
 
-      // 確認支付
+      // Confirm payment
       final response = await _stripeService.confirmPayment(
         paymentIntentId: _lastPaymentIntent!.paymentIntentId!,
         paymentMethodId: paymentMethodResponse.paymentIntentId!,
@@ -179,11 +179,11 @@ class _PaymentPageState extends State<PaymentPage> {
 
       if (response.success) {
         print('💳 Payment successful with ID: ${response.paymentIntentId}');
-        // 支付成功，調用外部 API
+        // Payment successful, call external API
         await _submitTicketToApi(response.paymentIntentId!);
       } else if (response.requiresAction) {
         print('🔒 3DS authentication required');
-        // 顯示 3DS 驗證提示
+        // Show 3DS authentication prompt
         _show3DSAuthenticationDialog(response);
       } else {
         print('💳 Payment failed: ${response.errorMessage}');
@@ -401,155 +401,155 @@ class _PaymentPageState extends State<PaymentPage> {
         ),
       ];
 
-      // 從火車票服務中獲取 booking_code
-      print('🚄 檢查 trainService: ${widget.paymentRequest.trainService}');
+      // Get booking_code from train service
+      print('🚄 Check trainService: ${widget.paymentRequest.trainService}');
       print('🚄 trainService.bookingCode: ${widget.paymentRequest.trainService?.bookingCode}');
       
       final bookingCode = widget.paymentRequest.trainService?.bookingCode ?? 'bc_05';
       
-      print('🚄 使用 booking_code: $bookingCode');
+      print('🚄 Using booking_code: $bookingCode');
       
-      // 創建線上訂單請求
+      // Create online order request
       final onlineOrderRequest = OnlineOrderRequest(
         passengers: passengers,
-        sections: [bookingCode], // 使用真實的 booking_code
+        sections: [bookingCode], // Use real booking_code
         seatReserved: true,
-        memo: paymentIntentId, // 使用支付ID作為備註
+        memo: paymentIntentId, // Use payment ID as memo
       );
 
-      print('🚄 線上訂單請求參數: ${onlineOrderRequest.toJson()}');
+      print('🚄 Online order request parameters: ${onlineOrderRequest.toJson()}');
 
-      // 調用 G2Rail API
+      // Call G2Rail API
       final response = await _railBookingService.createOnlineOrder(
         request: onlineOrderRequest,
       );
 
       if (response.success) {
-        print('✅ G2Rail 線上訂單創建成功');
-        print('🆔 訂單ID: ${response.data?.id}');
-        print('🚄 路線: ${response.data?.from.localName} → ${response.data?.to.localName}');
-        print('⏰ 出發時間: ${response.data?.departure}');
-        print('⏰ 到達時間: ${response.data?.arrival}');
+        print('✅ G2Rail online order created successfully');
+        print('🆔 Order ID: ${response.data?.id}');
+        print('🚄 Route: ${response.data?.from.localName} → ${response.data?.to.localName}');
+        print('⏰ Departure Time: ${response.data?.departure}');
+        print('⏰ Arrival Time: ${response.data?.arrival}');
         
-        // 線上訂單創建成功後，立即確認訂單
+        // Immediately confirm order after successful online order creation
         if (response.data?.id != null) {
           await _confirmOnlineOrder(response.data!.id);
         }
       } else {
-        print('❌ G2Rail 線上訂單創建失敗: ${response.errorMessage}');
-        // 即使線上訂單創建失敗，也不影響整體流程，只記錄錯誤
+        print('❌ G2Rail online order creation failed: ${response.errorMessage}');
+        // Even if online order creation fails, it does not affect the overall flow, just log the error
       }
     } catch (e) {
-      print('❌ 創建 G2Rail 線上訂單異常: $e');
-      // 即使線上訂單創建失敗，也不影響整體流程，只記錄錯誤
+      print('❌ Exception creating G2Rail online order: $e');
+      // Even if online order creation fails, it does not affect the overall flow, just log the error
     }
   }
 
-  /// 確認 G2Rail 線上訂單
+  /// Confirm G2Rail online order
   Future<void> _confirmOnlineOrder(String onlineOrderId) async {
     try {
-      print('🎫 開始確認 G2Rail 線上訂單');
-      print('🆔 線上訂單ID: $onlineOrderId');
+      print('🎫 Starting G2Rail online order confirmation');
+      print('🆔 Online Order ID: $onlineOrderId');
 
-      // 調用 G2Rail 確認 API
+      // Call G2Rail confirmation API
       final response = await _railBookingService.confirmOnlineOrder(
         onlineOrderId: onlineOrderId,
       );
 
       if (response.success) {
-        print('✅ G2Rail 線上訂單確認成功');
-        print('🆔 確認ID: ${response.data?.id}');
+        print('✅ G2Rail online order confirmed successfully');
+        print('🆔 Confirmation ID: ${response.data?.id}');
         print('🎫 PNR: ${response.data?.order.pnr}');
-        print('🚄 路線: ${response.data?.order.from.localName} → ${response.data?.order.to.localName}');
-        print('⏰ 出發時間: ${response.data?.order.departure}');
+        print('🚄 Route: ${response.data?.order.from.localName} → ${response.data?.order.to.localName}');
+        print('⏰ Departure Time: ${response.data?.order.departure}');
         
-        // 顯示座位資訊
+        // Display seat information
         if (response.data?.order.reservations.isNotEmpty == true) {
           final reservation = response.data!.order.reservations.first;
-          print('🚂 列車: ${reservation.trainName}, 車廂: ${reservation.car}, 座位: ${reservation.seat}');
+          print('🚂 Train: ${reservation.trainName}, Car: ${reservation.car}, Seat: ${reservation.seat}');
         }
         
-        // 顯示票價資訊
-        print('💰 支付價格: ${(response.data?.paymentPrice.cents ?? 0) / 100} ${response.data?.paymentPrice.currency}');
-        print('💰 收費價格: ${(response.data?.chargingPrice.cents ?? 0) / 100} ${response.data?.chargingPrice.currency}');
-        print('💰 折扣金額: ${(response.data?.rebateAmount.cents ?? 0) / 100} ${response.data?.rebateAmount.currency}');
+        // Display fare information
+        print('💰 Payment Price: ${(response.data?.paymentPrice.cents ?? 0) / 100} ${response.data?.paymentPrice.currency}');
+        print('💰 Charging Price: ${(response.data?.chargingPrice.cents ?? 0) / 100} ${response.data?.chargingPrice.currency}');
+        print('💰 Rebate Amount: ${(response.data?.rebateAmount.cents ?? 0) / 100} ${response.data?.rebateAmount.currency}');
         
-        // 顯示是否需要再次確認
-        print('🔄 是否需要再次確認: ${response.data?.confirmAgain}');
+        // Display whether re-confirmation is needed
+        print('🔄 Need re-confirmation: ${response.data?.confirmAgain}');
         
-        // 顯示登機資訊
+        // Display check-in information
         if (response.data?.ticketCheckIns.isNotEmpty == true) {
           final checkIn = response.data!.ticketCheckIns.first;
-          print('🎫 登機URL: ${checkIn.checkInUrl}');
-          print('⏰ 最早登機時間: ${checkIn.earliestCheckInTimestamp}');
-          print('⏰ 最晚登機時間: ${checkIn.latestCheckInTimestamp}');
+          print('🎫 Check-in URL: ${checkIn.checkInUrl}');
+          print('⏰ Earliest Check-in Time: ${checkIn.earliestCheckInTimestamp}');
+          print('⏰ Latest Check-in Time: ${checkIn.latestCheckInTimestamp}');
         }
         
-        // 保存確認資訊到本地存儲
+        // Save confirmation information to local storage
         await TicketStorageService.saveTicketConfirmation(
           orderId: onlineOrderId,
           confirmation: response.data!,
         );
         
-        // 線上訂單確認成功後，下載票券
+        // Download tickets after successful online order confirmation
         await _downloadOnlineTickets(onlineOrderId);
       } else {
-        print('❌ G2Rail 線上訂單確認失敗: ${response.errorMessage}');
-        // 即使確認失敗，也不影響整體流程，只記錄錯誤
+        print('❌ G2Rail online order confirmation failed: ${response.errorMessage}');
+        // Even if confirmation fails, it does not affect the overall flow, just log the error
       }
     } catch (e) {
-      print('❌ 確認 G2Rail 線上訂單異常: $e');
-      // 即使確認失敗，也不影響整體流程，只記錄錯誤
+      print('❌ Exception confirming G2Rail online order: $e');
+      // Even if confirmation fails, it does not affect the overall flow, just log the error
     }
   }
 
-  /// 下載 G2Rail 線上票券
+  /// Download G2Rail online tickets
   Future<void> _downloadOnlineTickets(String onlineOrderId) async {
     try {
-      print('🎫 開始下載 G2Rail 線上票券');
-      print('🆔 線上訂單ID: $onlineOrderId');
+      print('🎫 Starting G2Rail online ticket download');
+      print('🆔 Online Order ID: $onlineOrderId');
 
-      // 調用 G2Rail 票券下載 API
+      // Call G2Rail ticket download API
       final response = await _railBookingService.downloadOnlineTickets(
         onlineOrderId: onlineOrderId,
       );
 
       if (response.success) {
-        print('✅ G2Rail 線上票券下載成功');
-        print('🎫 票券數量: ${response.data?.tickets.length}');
+        print('✅ G2Rail online ticket download successful');
+        print('🎫 Ticket Count: ${response.data?.tickets.length}');
         
         for (int i = 0; i < (response.data?.tickets.length ?? 0); i++) {
           final ticket = response.data!.tickets[i];
-          print('🎫 票券 ${i + 1}: ${ticket.ticketTypeDisplayName}');
-          print('🔗 下載連結: ${ticket.file}');
+          print('🎫 Ticket ${i + 1}: ${ticket.ticketTypeDisplayName}');
+          print('🔗 Download Link: ${ticket.file}');
           
-          // 可以根據需要進一步處理票券文件
+          // Can further process ticket files as needed
           if (ticket.isPdfTicket) {
-            print('📄 這是 PDF 票券，可以下載並保存到本地');
+            print('📄 This is a PDF ticket, can download and save locally');
           } else if (ticket.isMobileTicket) {
-            print('📱 這是手機票券，可以顯示在應用中');
+            print('📱 This is a mobile ticket, can display in app');
           }
         }
         
-        // 保存票券文件資訊到本地存儲
+        // Save ticket file information to local storage
         await TicketStorageService.saveTicketFiles(
           orderId: onlineOrderId,
           tickets: response.data!,
         );
         
-        // 這裡可以添加實際的下載邏輯，例如：
-        // - 下載 PDF 文件到本地存儲
-        // - 將手機票券保存到用戶的票券錢包
-        // - 發送票券到用戶郵箱
-        print('💡 票券下載完成，可以根據業務需求進一步處理票券文件');
+        // Here you can add actual download logic, for example:
+        // - Download PDF files to local storage
+        // - Save mobile tickets to user's ticket wallet
+        // - Send tickets to user's email
+        print('💡 Ticket download completed, can further process ticket files based on business requirements');
         
       } else {
-        print('❌ G2Rail 線上票券下載失敗: ${response.errorMessage}');
-        // 即使下載失敗，也不影響整體流程，只記錄錯誤
+        print('❌ G2Rail online ticket download failed: ${response.errorMessage}');
+        // Even if download fails, it does not affect the overall flow, just log the error
       }
     } catch (e) {
-      print('❌ 下載 G2Rail 線上票券異常: $e');
-      // 即使下載失敗，也不影響整體流程，只記錄錯誤
+      print('❌ Exception downloading G2Rail online tickets: $e');
+      // Even if download fails, it does not affect the overall flow, just log the error
     }
   }
 
@@ -787,13 +787,13 @@ class _PaymentPageState extends State<PaymentPage> {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
-                Text('• 新天鵝堡門票: ${widget.paymentRequest.ticketOnlyAmount.toStringAsFixed(2)} EUR'),
-                Text('• 火車票: ${widget.paymentRequest.trainTicketAmount!.toStringAsFixed(2)} EUR'),
-                Text('• 總計: ${widget.paymentRequest.amount.toStringAsFixed(2)} EUR'),
+                Text('• Neuschwanstein Castle Ticket: ${widget.paymentRequest.ticketOnlyAmount.toStringAsFixed(2)} EUR'),
+                Text('• Train Ticket: ${widget.paymentRequest.trainTicketAmount!.toStringAsFixed(2)} EUR'),
+                Text('• Total: ${widget.paymentRequest.amount.toStringAsFixed(2)} EUR'),
                 const SizedBox(height: 16),
               ],
               
-              // 顯示票券詳細資訊
+              // Display ticket details
               if (widget.paymentRequest.ticketRequest != null) ...[
                 const Text(
                   'Ticket Details:',
@@ -812,28 +812,28 @@ class _PaymentPageState extends State<PaymentPage> {
                 const SizedBox(height: 16),
               ],
               
-              // 顯示火車票詳細資訊
+              // Display train ticket details
               if (widget.paymentRequest.trainInfo != null) ...[
                 const Text(
                   'Train Details:',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
-                Text('• 車次: ${widget.paymentRequest.trainInfo!.number}'),
-                Text('• 路線: ${widget.paymentRequest.trainInfo!.from.localName} → ${widget.paymentRequest.trainInfo!.to.localName}'),
-                Text('• 出發: ${DateFormat('HH:mm').format(widget.paymentRequest.trainInfo!.departure)}'),
-                Text('• 到達: ${DateFormat('HH:mm').format(widget.paymentRequest.trainInfo!.arrival)}'),
-                Text('• 行程時間: ${widget.paymentRequest.trainInfo!.formattedDuration}'),
+                Text('• Train Number: ${widget.paymentRequest.trainInfo!.number}'),
+                Text('• Route: ${widget.paymentRequest.trainInfo!.from.localName} → ${widget.paymentRequest.trainInfo!.to.localName}'),
+                Text('• Departure: ${DateFormat('HH:mm').format(widget.paymentRequest.trainInfo!.departure)}'),
+                Text('• Arrival: ${DateFormat('HH:mm').format(widget.paymentRequest.trainInfo!.arrival)}'),
+                Text('• Duration: ${widget.paymentRequest.trainInfo!.formattedDuration}'),
                 if (widget.paymentRequest.trainOffer != null)
-                  Text('• 票價類型: ${widget.paymentRequest.trainOffer!.description}'),
+                  Text('• Fare Type: ${widget.paymentRequest.trainOffer!.description}'),
                 if (widget.paymentRequest.trainService != null)
-                  Text('• 座位類型: ${widget.paymentRequest.trainService!.description}'),
+                  Text('• Seat Type: ${widget.paymentRequest.trainService!.description}'),
                 const SizedBox(height: 16),
               ],
               
               Text(
                 widget.paymentRequest.isCombinedPayment 
-                    ? '您的門票和火車票已成功購買！\n請保留此收據作為入場和乘車憑證。'
+                    ? 'Your tickets and train tickets have been successfully purchased!\nPlease keep this receipt as your entry and travel voucher.'
                     : 'Your ticket(s) have been successfully purchased!\nPlease keep this receipt as your entry voucher.',
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
@@ -844,15 +844,15 @@ class _PaymentPageState extends State<PaymentPage> {
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(); // Close dialog
-              // 如果是火車票或組合支付，直接回到首頁；如果是門票，詢問是否訂購火車票
+              // If train ticket or combined payment, go directly to homepage; if ticket, ask if want to book train ticket
               if (widget.paymentRequest.time == 'Train Journey' || widget.paymentRequest.isCombinedPayment) {
-                // 火車票或組合支付成功，直接回到首頁
+                // Train ticket or combined payment successful, go directly to homepage
                 Navigator.of(context).pushNamedAndRemoveUntil(
                   '/',
                   (route) => false,
                 );
               } else {
-                // 門票支付成功，詢問是否訂購火車票
+                // Ticket payment successful, ask if want to book train ticket
                 _showTrainBookingDialog();
               }
             },
@@ -863,11 +863,11 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 
-  /// 顯示是否訂購火車票的對話框
+  /// Show dialog asking if want to book train ticket
   void _showTrainBookingDialog() {
     print('🚄 Showing train booking dialog');
     
-    // 從門票資訊中獲取日期和時段
+    // Get date and session from ticket information
     final ticketDate = _getTicketDate();
     final ticketSession = widget.paymentRequest.time;
     final departureTime = _getDepartureTime(ticketSession);
@@ -899,7 +899,7 @@ class _PaymentPageState extends State<PaymentPage> {
             ),
             const SizedBox(height: 12),
             const Text(
-              '您是否也需要預訂火車票前往新天鵝堡？',
+              'Do you also need to book train tickets to Neuschwanstein Castle?',
               style: TextStyle(fontSize: 14),
             ),
             const SizedBox(height: 8),
@@ -958,23 +958,23 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 
-  /// 獲取門票日期
+  /// Get ticket date
   String _getTicketDate() {
     if (widget.paymentRequest.ticketRequest != null && 
         widget.paymentRequest.ticketRequest!.ticketInfo.isNotEmpty) {
       return widget.paymentRequest.ticketRequest!.ticketInfo.first.arrivalTime;
     }
-    // 如果沒有門票資訊，使用明天的日期作為預設
+    // If no ticket information, use tomorrow's date as default
     return DateTime.now().add(const Duration(days: 1)).toIso8601String().split('T')[0];
   }
 
-  /// 根據門票時段獲取出發時間
+  /// Get departure time based on ticket session
   String _getDepartureTime(String session) {
-    // 無論是 Morning 還是 Afternoon，火車票時間都設定為 12:00
+    // Whether Morning or Afternoon, train ticket time is set to 12:00
     return '12:00';
   }
 
-  /// 顯示 3DS 驗證對話框
+  /// Show 3DS authentication dialog
   void _show3DSAuthenticationDialog(PaymentResponse response) {
     showDialog(
       context: context,
@@ -1028,7 +1028,7 @@ class _PaymentPageState extends State<PaymentPage> {
             ),
             const SizedBox(height: 16),
             const Text(
-              '注意：在實際應用中，這裡會集成 Stripe Elements 來處理 3DS 驗證流程。',
+              'Note: In actual application, Stripe Elements will be integrated here to handle 3DS authentication flow.',
               style: TextStyle(fontSize: 12, color: Colors.grey),
             ),
           ],
@@ -1037,12 +1037,12 @@ class _PaymentPageState extends State<PaymentPage> {
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
-              // 暫時跳過 3DS 驗證，直接調用 API
+              // Temporarily skip 3DS authentication, directly call API
               if (response.paymentIntentId != null) {
                 _submitTicketToApi(response.paymentIntentId!);
               }
             },
-            child: const Text('跳過驗證（測試用）'),
+            child: const Text('Skip Authentication (Test)'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -1051,14 +1051,14 @@ class _PaymentPageState extends State<PaymentPage> {
                 _isLoading = false;
               });
             },
-            child: const Text('取消'),
+            child: const Text('Cancel'),
           ),
         ],
       ),
     );
   }
 
-  /// 顯示 IP 被阻擋的對話框
+  /// Show IP blocked dialog
   void _showIpBlockedDialog() {
     showDialog(
       context: context,
@@ -1085,9 +1085,9 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 
-  /// 導航到火車票預訂頁面
+  /// Navigate to train ticket booking page
   void _navigateToTrainBooking() {
-    // 獲取門票資訊
+    // Get ticket information
     final ticketInfos = widget.paymentRequest.ticketRequest?.ticketInfo ?? [];
     final ticketDate = _getTicketDate();
     final ticketSession = widget.paymentRequest.time;
@@ -1108,12 +1108,12 @@ class _PaymentPageState extends State<PaymentPage> {
     // 移除所有非數字字符
     String digitsOnly = input.replaceAll(RegExp(r'\D'), '');
     
-    // 限制長度為16位
+    // Limit length to 16 digits
     if (digitsOnly.length > 16) {
       digitsOnly = digitsOnly.substring(0, 16);
     }
     
-    // 每4位數字添加空格
+    // Add space every 4 digits
     String formatted = '';
     for (int i = 0; i < digitsOnly.length; i++) {
       if (i > 0 && i % 4 == 0) {
@@ -1129,12 +1129,12 @@ class _PaymentPageState extends State<PaymentPage> {
     // 移除所有非數字字符
     String digitsOnly = input.replaceAll(RegExp(r'\D'), '');
     
-    // 限制長度為4位
+    // Limit length to 4 digits
     if (digitsOnly.length > 4) {
       digitsOnly = digitsOnly.substring(0, 4);
     }
     
-    // 在月份和年份之間添加斜杠
+    // Add slash between month and year
     if (digitsOnly.length >= 2) {
       return '${digitsOnly.substring(0, 2)}/${digitsOnly.substring(2)}';
     }
@@ -1159,7 +1159,7 @@ class _PaymentPageState extends State<PaymentPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // 訂單摘要
+            // Order summary
             Card(
               color: Colors.blue.shade50,
               child: Padding(
@@ -1168,7 +1168,7 @@ class _PaymentPageState extends State<PaymentPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.paymentRequest.isCombinedPayment ? '📋 組合訂單摘要' : '📋 Order Summary',
+                      widget.paymentRequest.isCombinedPayment ? '📋 Combined Order Summary' : '📋 Order Summary',
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -1179,23 +1179,23 @@ class _PaymentPageState extends State<PaymentPage> {
                     Text('Ticket Type: ${widget.paymentRequest.isAdult ? 'Adult' : 'Child'}'),
                     Text('Time Slot: ${widget.paymentRequest.time}'),
                     
-                    // 如果是組合支付，顯示詳細的金額分解
+                    // If combined payment, show detailed amount breakdown
                     if (widget.paymentRequest.isCombinedPayment) ...[
                       const SizedBox(height: 8),
                       const Divider(),
                       const Text(
-                        '💰 費用明細',
+                        '💰 Cost Details',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text('新天鵝堡門票: ${widget.paymentRequest.ticketOnlyAmount.toStringAsFixed(2)} ${widget.paymentRequest.currency}'),
-                      Text('火車票: ${widget.paymentRequest.trainTicketAmount!.toStringAsFixed(2)} ${widget.paymentRequest.currency}'),
+                      Text('Neuschwanstein Castle Ticket: ${widget.paymentRequest.ticketOnlyAmount.toStringAsFixed(2)} ${widget.paymentRequest.currency}'),
+                      Text('Train Ticket: ${widget.paymentRequest.trainTicketAmount!.toStringAsFixed(2)} ${widget.paymentRequest.currency}'),
                       const Divider(),
                       Text(
-                        '總金額: ${widget.paymentRequest.amount.toStringAsFixed(2)} ${widget.paymentRequest.currency}',
+                        'Total Amount: ${widget.paymentRequest.amount.toStringAsFixed(2)} ${widget.paymentRequest.currency}',
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -1208,12 +1208,12 @@ class _PaymentPageState extends State<PaymentPage> {
                     
                     Text('Description: ${widget.paymentRequest.description}'),
                     
-                    // 如果是火車票或組合支付，顯示額外的火車資訊
+                    // If train ticket or combined payment, show additional train information
                     if (widget.paymentRequest.time == 'Train Journey' || widget.paymentRequest.isCombinedPayment) ...[
                       const SizedBox(height: 8),
                       const Divider(),
                       const Text(
-                        '🚄 火車資訊',
+                        '🚄 Train Information',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -1221,16 +1221,16 @@ class _PaymentPageState extends State<PaymentPage> {
                       ),
                       const SizedBox(height: 4),
                       if (widget.paymentRequest.trainInfo != null) ...[
-                        Text('車次: ${widget.paymentRequest.trainInfo!.number}'),
-                        Text('類型: ${widget.paymentRequest.trainInfo!.typeName}'),
-                        Text('路線: ${widget.paymentRequest.trainInfo!.from.localName} → ${widget.paymentRequest.trainInfo!.to.localName}'),
-                        Text('出發: ${DateFormat('HH:mm').format(widget.paymentRequest.trainInfo!.departure)}'),
-                        Text('到達: ${DateFormat('HH:mm').format(widget.paymentRequest.trainInfo!.arrival)}'),
-                        Text('行程時間: ${widget.paymentRequest.trainInfo!.formattedDuration}'),
+                        Text('Train Number: ${widget.paymentRequest.trainInfo!.number}'),
+                        Text('Type: ${widget.paymentRequest.trainInfo!.typeName}'),
+                        Text('Route: ${widget.paymentRequest.trainInfo!.from.localName} → ${widget.paymentRequest.trainInfo!.to.localName}'),
+                        Text('Departure: ${DateFormat('HH:mm').format(widget.paymentRequest.trainInfo!.departure)}'),
+                        Text('Arrival: ${DateFormat('HH:mm').format(widget.paymentRequest.trainInfo!.arrival)}'),
+                        Text('Duration: ${widget.paymentRequest.trainInfo!.formattedDuration}'),
                         if (widget.paymentRequest.trainOffer != null)
-                          Text('票價類型: ${widget.paymentRequest.trainOffer!.description}'),
+                          Text('Fare Type: ${widget.paymentRequest.trainOffer!.description}'),
                         if (widget.paymentRequest.trainService != null)
-                          Text('座位類型: ${widget.paymentRequest.trainService!.description}'),
+                          Text('Seat Type: ${widget.paymentRequest.trainService!.description}'),
                       ],
                     ],
                   ],
@@ -1239,7 +1239,7 @@ class _PaymentPageState extends State<PaymentPage> {
             ),
             const SizedBox(height: 20),
 
-            // 支付表單
+            // Payment form
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),

@@ -157,79 +157,79 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
     } catch (e) {
       setState(() {
         _isLoading = false;
-        _errorMessage = '搜尋異常: ${e.toString()}';
-        _statusMessage = '搜尋異常';
+        _errorMessage = 'Search exception: ${e.toString()}';
+        _statusMessage = 'Search exception';
         _searchResults = null;
         _trainSolutions = [];
       });
     }
   }
 
-  /// 解析火車班次解決方案
+  /// Parse train schedule solutions
   List<TrainSolution> _parseTrainSolutions(List<dynamic> solutions) {
     final List<TrainSolution> trainSolutions = [];
     
-    print('🔍 開始解析 ${solutions.length} 個班次解決方案');
+    print('🔍 Starting to parse ${solutions.length} schedule solutions');
     
     for (int i = 0; i < solutions.length; i++) {
       var solution = solutions[i];
-      print('🔍 解析第 ${i + 1} 個解決方案: ${solution.runtimeType}');
+      print('🔍 Parsing solution ${i + 1}: ${solution.runtimeType}');
       
       if (solution is Map<String, dynamic>) {
-        print('🔍 解決方案內容: ${solution.keys.toList()}');
+        print('🔍 Solution content: ${solution.keys.toList()}');
         
         try {
-          // 檢查是否有實際的 solutions 數據
+          // Check if there is actual solutions data
           List<dynamic> solutionsData = solution['solutions'] as List<dynamic>? ?? [];
-          print('🔍 檢查 solutions 數據: ${solutionsData.length} 個項目');
+          print('🔍 Check solutions data: ${solutionsData.length} items');
           
-          // 只處理有實際數據的班次
+          // Only process schedules with actual data
           if (solutionsData.isNotEmpty) {
-            // 檢查是否為有效的班次解決方案
+            // Check if it is a valid schedule solution
             bool hasRequiredFields = false;
             
-            // 檢查多種可能的結構
+            // Check multiple possible structures
             if (solution.containsKey('offers') && solution.containsKey('trains')) {
               hasRequiredFields = true;
-              print('✅ 找到標準結構 (offers + trains)');
+              print('✅ Found standard structure (offers + trains)');
             } else if (solution.containsKey('railway')) {
               hasRequiredFields = true;
-              print('✅ 找到 railway 結構');
+              print('✅ Found railway structure');
             } else if (solution.containsKey('carrier')) {
               hasRequiredFields = true;
-              print('✅ 找到 carrier 結構');
+              print('✅ Found carrier structure');
             } else {
-              print('❌ 未找到標準結構，嘗試直接解析');
-              hasRequiredFields = true; // 嘗試直接解析
+              print('❌ No standard structure found, try direct parsing');
+              hasRequiredFields = true; // Try direct parsing
             }
             
             if (hasRequiredFields) {
               final trainSolution = TrainSolution.fromJson(solution);
-              // 只有當 TrainSolution 有實際的 offers 或 trains 時才添加
+              // Only add when TrainSolution has actual offers or trains
               if (trainSolution.offers.isNotEmpty || trainSolution.trains.isNotEmpty) {
                 trainSolutions.add(trainSolution);
-                print('✅ 成功解析班次解決方案: ${trainSolution.carrierDescription} (${trainSolution.offers.length} offers, ${trainSolution.trains.length} trains)');
+                print('✅ Successfully parsed schedule solution: ${trainSolution.carrierDescription} (${trainSolution.offers.length} offers, ${trainSolution.trains.length} trains)');
               } else {
-                print('⚠️ 跳過空數據的班次解決方案: ${trainSolution.carrierDescription}');
+                print('⚠️ Skipping empty data schedule solution: ${trainSolution.carrierDescription}');
               }
             }
           } else {
-            print('⚠️ 跳過沒有 solutions 數據的班次');
+            print('⚠️ Skipping schedule without solutions data');
           }
         } catch (e) {
-          print('❌ 解析班次解決方案時發生錯誤: $e');
-          print('❌ 解決方案內容: $solution');
+          print('❌ Error occurred while parsing schedule solution: $e');
+          print('❌ Solution content: $solution');
         }
       } else {
-        print('❌ 解決方案不是 Map 類型: ${solution.runtimeType}');
+        print('❌ Solution is not Map type: ${solution.runtimeType}');
       }
     }
     
-    print('🎯 最終解析結果: ${trainSolutions.length} 個有效的班次解決方案');
+    print('🎯 Final parsing result: ${trainSolutions.length} valid schedule solutions');
     return trainSolutions;
   }
 
-  /// 導航到班次選擇頁面
+  /// Navigate to schedule selection page
   void _navigateToTrainSelection() {
     if (_trainSolutions.isEmpty) return;
     
@@ -638,7 +638,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 營運商標題
+          // Carrier title
           Row(
             children: [
               Text(
@@ -656,7 +656,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  '${solution.offers.length} 種票價',
+                  '${solution.offers.length} fare types',
                   style: TextStyle(
                     color: Theme.of(context).primaryColor,
                     fontSize: 12,
@@ -669,10 +669,10 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
           
           const SizedBox(height: 16),
           
-          // 火車班次列表
+          // Train schedule list
           if (solution.trains.isNotEmpty) ...[
             Text(
-              '🚂 火車班次',
+              '🚂 Train Schedule',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
@@ -688,11 +688,11 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
             const SizedBox(height: 16),
           ],
           
-          // 價格信息
+          // Price information
           Row(
             children: [
               Text(
-                '💰 價格範圍: ',
+                '💰 Price Range: ',
                 style: TextStyle(
                   color: Colors.grey.shade600,
                   fontSize: 14,
@@ -725,7 +725,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
       ),
       child: Row(
         children: [
-          // 車次信息
+          // Train number information
           Expanded(
             flex: 2,
             child: Column(
@@ -749,7 +749,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
             ),
           ),
           
-          // 出發信息
+          // Departure information
           Expanded(
             flex: 2,
             child: Column(
@@ -773,13 +773,13 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
             ),
           ),
           
-          // 箭頭
+          // Arrow
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 8),
             child: Icon(Icons.arrow_forward, size: 14, color: Colors.grey),
           ),
           
-          // 到達信息
+          // Arrival information
           Expanded(
             flex: 2,
             child: Column(
@@ -803,7 +803,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
             ),
           ),
           
-          // 時間和停靠站信息
+          // Time and stop information
           Expanded(
             flex: 1,
             child: Column(
@@ -819,7 +819,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                 ),
                 if (train.stops.isNotEmpty)
                   Text(
-                    '${train.stops.length} 站',
+                    '${train.stops.length} stops',
                     style: TextStyle(
                       color: Colors.grey.shade600,
                       fontSize: 10,
@@ -853,7 +853,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('班次 $index 詳細信息'),
+        title: Text('Schedule $index Details'),
         content: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -861,23 +861,23 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
             children: [
               if (solution is Map) ...[
                 if (solution.containsKey('from') && solution.containsKey('to'))
-                  _buildDetailRow('路線', '${solution['from']} → ${solution['to']}'),
+                  _buildDetailRow('Route', '${solution['from']} → ${solution['to']}'),
                 if (solution.containsKey('departure'))
-                  _buildDetailRow('出發時間', solution['departure']),
+                  _buildDetailRow('Departure Time', solution['departure']),
                 if (solution.containsKey('arrival'))
-                  _buildDetailRow('到達時間', solution['arrival']),
+                  _buildDetailRow('Arrival Time', solution['arrival']),
                 if (solution.containsKey('duration'))
-                  _buildDetailRow('行程時間', solution['duration']),
+                  _buildDetailRow('Duration', solution['duration']),
                 if (solution.containsKey('train_number'))
-                  _buildDetailRow('車次', solution['train_number']),
+                  _buildDetailRow('Train Number', solution['train_number']),
                 if (solution.containsKey('carrier'))
-                  _buildDetailRow('營運商', solution['carrier']),
+                  _buildDetailRow('Carrier', solution['carrier']),
                 if (solution.containsKey('price'))
-                  _buildDetailRow('價格', '€${solution['price']}'),
+                  _buildDetailRow('Price', '€${solution['price']}'),
               ],
               const SizedBox(height: 16),
               Text(
-                '原始數據:',
+                'Raw Data:',
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -904,7 +904,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('關閉'),
+            child: const Text('Close'),
           ),
         ],
       ),
@@ -936,7 +936,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('🚄 鐵路搜尋測試'),
+        title: const Text('🚄 Railway Search Test'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: SingleChildScrollView(

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import '../widgets/booking_form.dart';
 import 'my_train_tickets_page.dart';
 
-/// 主要票務預訂頁面
-/// 包含城堡資訊展示和票券預訂表單
+/// Main ticket booking page
+/// Contains castle information display and ticket booking form
 class TicketBookingPage extends StatefulWidget {
   const TicketBookingPage({super.key});
 
@@ -20,10 +20,10 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         elevation: 0,
         actions: [
-          // 我的火車票按鈕
+          // My train tickets button
           IconButton(
             icon: const Icon(Icons.confirmation_number),
-            tooltip: '我的火車票',
+            tooltip: 'My Train Tickets',
             onPressed: () {
               Navigator.push(
                 context,
@@ -33,10 +33,10 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
               );
             },
           ),
-          // 鐵路搜尋測試按鈕
+          // Railway search test button
           IconButton(
             icon: const Icon(Icons.train),
-            tooltip: '鐵路搜尋測試',
+            tooltip: 'Railway Search Test',
             onPressed: () {
               Navigator.pushNamed(context, '/rail-search-test');
             },
@@ -74,7 +74,7 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
     );
   }
 
-  /// 建立 Hero Section
+  /// Build Hero Section
   Widget _buildHeroSection() {
     return Container(
       width: double.infinity,

@@ -151,7 +151,7 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
     );
   }
 
-  /// 建立票券卡片
+  /// Build ticket card
   Widget _buildTicketCard(
     String orderId,
     OnlineConfirmationResponse confirmation,
@@ -161,150 +161,243 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
     final departureDate = DateTime.parse(order.departure);
     
     return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      elevation: 2,
+      margin: const EdgeInsets.only(bottom: 20),
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 標題行
-            Row(
-              children: [
-                Icon(
-                  Icons.train,
-                  color: Colors.blue.shade600,
-                  size: 24,
+            // Header section with route and status
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.blue.shade50, Colors.purple.shade50],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    '${order.from.localName} → ${order.to.localName}',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade600,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.train,
+                      color: Colors.white,
+                      size: 24,
                     ),
                   ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.green.shade100,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    '已確認',
-                    style: TextStyle(
-                      color: Colors.green.shade700,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${order.from.localName} → ${order.to.localName}',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Train ${order.railway.code}',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey.shade600,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-              ],
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade600,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Text(
+                      'Confirmed',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
             
+            const SizedBox(height: 20),
+            
+            // Trip information section
+            _buildSectionHeader('Trip Information', Icons.info_outline),
             const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.grey.shade200),
+              ),
+              child: Column(
+                children: [
+                  _buildEnhancedInfoRow(Icons.confirmation_number, 'PNR', order.pnr),
+                  const SizedBox(height: 12),
+                  _buildEnhancedInfoRow(Icons.calendar_today, 'Departure Date', DateFormat('yyyy-MM-dd').format(departureDate)),
+                  const SizedBox(height: 12),
+                  _buildEnhancedInfoRow(Icons.access_time, 'Departure Time', DateFormat('HH:mm').format(departureDate)),
+                ],
+              ),
+            ),
             
-            // 行程資訊
-            _buildInfoRow('🎫 PNR', order.pnr),
-            _buildInfoRow('🚂 列車', order.railway.code),
-            _buildInfoRow('📅 出發日期', DateFormat('yyyy-MM-dd').format(departureDate)),
-            _buildInfoRow('⏰ 出發時間', DateFormat('HH:mm').format(departureDate)),
-            
-            // 座位資訊
+            // Seat information
             if (order.reservations.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              const Divider(),
-              const Text(
-                '座位資訊',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
+              const SizedBox(height: 20),
+              _buildSectionHeader('Seat Information', Icons.event_seat),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.blue.shade200),
                 ),
-              ),
-              const SizedBox(height: 4),
-              ...order.reservations.map((reservation) => 
-                _buildInfoRow('🚂 ${reservation.trainName}', '車廂 ${reservation.car} 座位 ${reservation.seat}')
+                child: Column(
+                  children: order.reservations.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final reservation = entry.value;
+                    return Column(
+                      children: [
+                        if (index > 0) const SizedBox(height: 12),
+                        _buildEnhancedInfoRow(
+                          Icons.train, 
+                          reservation.trainName, 
+                          'Car ${reservation.car} Seat ${reservation.seat}'
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
               ),
             ],
             
-            // 乘客資訊
+            // Passenger information
             if (order.passengers.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              const Divider(),
-              const Text(
-                '乘客資訊',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
+              const SizedBox(height: 20),
+              _buildSectionHeader('Passenger Information', Icons.person),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.green.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.green.shade200),
                 ),
-              ),
-              const SizedBox(height: 4),
-              ...order.passengers.map((passenger) => 
-                _buildInfoRow('👤 乘客', '${passenger.firstName} ${passenger.lastName}')
+                child: Column(
+                  children: order.passengers.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final passenger = entry.value;
+                    return Column(
+                      children: [
+                        if (index > 0) const SizedBox(height: 12),
+                        _buildEnhancedInfoRow(
+                          Icons.person_outline, 
+                          'Passenger', 
+                          '${passenger.firstName} ${passenger.lastName}'
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
               ),
             ],
             
-            // 票券文件
+            // Ticket files
             if (ticketFiles != null && ticketFiles.tickets.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              const Divider(),
-              const Text(
-                '票券文件',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
-              ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 20),
+              _buildSectionHeader('Ticket Files', Icons.file_download),
+              const SizedBox(height: 12),
               Wrap(
-                spacing: 8,
-                runSpacing: 8,
+                spacing: 12,
+                runSpacing: 12,
                 children: ticketFiles.tickets.map((ticket) => 
-                  _buildTicketFileButton(ticket)
+                  _buildEnhancedTicketFileButton(ticket)
                 ).toList(),
               ),
             ],
             
-            // 登機資訊
+            // Check-in information
             if (confirmation.ticketCheckIns.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              const Divider(),
-              const Text(
-                '登機資訊',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
+              const SizedBox(height: 20),
+              _buildSectionHeader('Check-in Information', Icons.qr_code),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.orange.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.orange.shade200),
                 ),
-              ),
-              const SizedBox(height: 4),
-              ...confirmation.ticketCheckIns.map((checkIn) => 
-                _buildInfoRow('🔗 登機連結', '點擊查看'),
+                child: Column(
+                  children: confirmation.ticketCheckIns.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    return Column(
+                      children: [
+                        if (index > 0) const SizedBox(height: 12),
+                        _buildEnhancedInfoRow(Icons.link, 'Check-in Link', 'Click to view'),
+                      ],
+                    );
+                  }).toList(),
+                ),
               ),
             ],
             
-            const SizedBox(height: 12),
+            const SizedBox(height: 24),
             
-            // 操作按鈕
+            // Action buttons
             Row(
               children: [
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () => _showTicketDetails(orderId, confirmation, ticketFiles),
-                    icon: const Icon(Icons.info_outline),
-                    label: const Text('詳細資訊'),
+                    icon: const Icon(Icons.info_outline, size: 18),
+                    label: const Text('Details'),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      side: BorderSide(color: Colors.blue.shade300),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: () => _shareTicket(orderId, confirmation),
-                    icon: const Icon(Icons.share),
-                    label: const Text('分享'),
+                    icon: const Icon(Icons.share, size: 18),
+                    label: const Text('Share'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      backgroundColor: Colors.blue.shade600,
                       foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      elevation: 2,
                     ),
                   ),
                 ),
@@ -316,7 +409,74 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
     );
   }
 
-  /// 建立資訊行
+  /// Build section header
+  Widget _buildSectionHeader(String title, IconData icon) {
+    return Row(
+      children: [
+        Icon(
+          icon,
+          size: 20,
+          color: Colors.blue.shade600,
+        ),
+        const SizedBox(width: 8),
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.blue.shade700,
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Build enhanced info row
+  Widget _buildEnhancedInfoRow(IconData icon, String label, String value) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: Colors.blue.shade100,
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Icon(
+            icon,
+            size: 16,
+            color: Colors.blue.shade600,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey.shade600,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Build info row (legacy method for compatibility)
   Widget _buildInfoRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
@@ -347,7 +507,65 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
     );
   }
 
-  /// 建立票券文件按鈕
+  /// Build enhanced ticket file button
+  Widget _buildEnhancedTicketFileButton(TicketFile ticket) {
+    return InkWell(
+      onTap: () => _openTicketFile(ticket),
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: ticket.isPdfTicket 
+                ? [Colors.red.shade50, Colors.red.shade100]
+                : [Colors.blue.shade50, Colors.blue.shade100],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: ticket.isPdfTicket ? Colors.red.shade300 : Colors.blue.shade300,
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: ticket.isPdfTicket ? Colors.red.shade100 : Colors.blue.shade100,
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: ticket.isPdfTicket ? Colors.red.shade600 : Colors.blue.shade600,
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Icon(
+                ticket.isPdfTicket ? Icons.picture_as_pdf : Icons.phone_android,
+                size: 16,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              ticket.ticketTypeDisplayName,
+              style: TextStyle(
+                fontSize: 14,
+                color: ticket.isPdfTicket ? Colors.red.shade700 : Colors.blue.shade700,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Build ticket file button (legacy method for compatibility)
   Widget _buildTicketFileButton(TicketFile ticket) {
     return InkWell(
       onTap: () => _openTicketFile(ticket),
@@ -383,7 +601,7 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
     );
   }
 
-  /// 顯示票券詳細資訊
+  /// Show ticket details
   void _showTicketDetails(
     String orderId,
     OnlineConfirmationResponse confirmation,
@@ -392,21 +610,21 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('票券詳細資訊'),
+        title: const Text('Ticket Details'),
         content: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('訂單ID: $orderId'),
+              Text('Order ID: $orderId'),
               Text('PNR: ${confirmation.order.pnr}'),
-              Text('路線: ${confirmation.order.from.localName} → ${confirmation.order.to.localName}'),
-              Text('出發時間: ${confirmation.order.departure}'),
-              Text('支付價格: ${confirmation.paymentPrice.cents / 100} ${confirmation.paymentPrice.currency}'),
-              Text('收費價格: ${confirmation.chargingPrice.cents / 100} ${confirmation.chargingPrice.currency}'),
+              Text('Route: ${confirmation.order.from.localName} → ${confirmation.order.to.localName}'),
+              Text('Departure Time: ${confirmation.order.departure}'),
+              Text('Payment Price: ${confirmation.paymentPrice.cents / 100} ${confirmation.paymentPrice.currency}'),
+              Text('Charging Price: ${confirmation.chargingPrice.cents / 100} ${confirmation.chargingPrice.currency}'),
               if (ticketFiles != null) ...[
                 const SizedBox(height: 8),
-                const Text('票券文件:', style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text('Ticket Files:', style: TextStyle(fontWeight: FontWeight.bold)),
                 ...ticketFiles.tickets.map((ticket) => 
                   Text('• ${ticket.ticketTypeDisplayName}: ${ticket.file}')
                 ),
@@ -417,37 +635,37 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('關閉'),
+            child: const Text('Close'),
           ),
         ],
       ),
     );
   }
 
-  /// 分享票券
+  /// Share ticket
   void _shareTicket(String orderId, OnlineConfirmationResponse confirmation) {
     final order = confirmation.order;
     final shareText = '''
-🚂 火車票資訊
-路線: ${order.from.localName} → ${order.to.localName}
+🚂 Train Ticket Information
+Route: ${order.from.localName} → ${order.to.localName}
 PNR: ${order.pnr}
-出發時間: ${order.departure}
-訂單ID: $orderId
+Departure Time: ${order.departure}
+Order ID: $orderId
 ''';
 
     Clipboard.setData(ClipboardData(text: shareText));
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('票券資訊已複製到剪貼板'),
+        content: Text('Ticket information copied to clipboard'),
         backgroundColor: Colors.green,
       ),
     );
   }
 
-  /// 開啟票券文件
+  /// Open ticket file
   void _openTicketFile(TicketFile ticket) {
-    // 這裡可以實現實際的文件開啟邏輯
-    // 例如：使用 url_launcher 開啟 PDF 或顯示手機票券
+    // Here you can implement actual file opening logic
+    // For example: use url_launcher to open PDF or display mobile ticket
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -455,9 +673,9 @@ PNR: ${order.pnr}
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('文件類型: ${ticket.kind}'),
+            Text('File Type: ${ticket.kind}'),
             const SizedBox(height: 8),
-            Text('下載連結:'),
+            Text('Download Link:'),
             SelectableText(
               ticket.file,
               style: const TextStyle(fontSize: 12),
@@ -467,19 +685,19 @@ PNR: ${order.pnr}
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('關閉'),
+            child: const Text('Close'),
           ),
           ElevatedButton(
             onPressed: () {
               Clipboard.setData(ClipboardData(text: ticket.file));
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('下載連結已複製到剪貼板'),
+                  content: Text('Download link copied to clipboard'),
                   backgroundColor: Colors.green,
                 ),
               );
             },
-            child: const Text('複製連結'),
+            child: const Text('Copy Link'),
           ),
         ],
       ),

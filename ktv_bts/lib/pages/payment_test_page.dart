@@ -16,8 +16,8 @@ class _PaymentTestPageState extends State<PaymentTestPage> {
   String _result = '';
   PaymentResponse? _lastResponse;
 
-  // Hardcoded 測試參數
-  final String _testCustomerName = '張三';
+  // Hardcoded test parameters
+  final String _testCustomerName = 'John Doe';
   final bool _testIsAdult = true;
   final String _testTime = 'Morning';
 
@@ -31,11 +31,11 @@ class _PaymentTestPageState extends State<PaymentTestPage> {
     try {
       await _paymentService.initialize();
       setState(() {
-        _result = '✅ Stripe 服務初始化成功\n';
+        _result = '✅ Stripe service initialized successfully\n';
       });
     } catch (e) {
       setState(() {
-        _result = '❌ Stripe 服務初始化失敗: $e\n';
+        _result = '❌ Stripe service initialization failed: $e\n';
       });
     }
   }
@@ -43,50 +43,50 @@ class _PaymentTestPageState extends State<PaymentTestPage> {
   Future<void> _testCreatePaymentIntent() async {
     setState(() {
       _isLoading = true;
-      _result += '\n🔄 開始測試創建支付意圖...\n';
+      _result += '\n🔄 Starting test create payment intent...\n';
     });
 
     try {
-      // 創建測試支付請求
+      // Create test payment request
       final request = PaymentRequest(
         customerName: _testCustomerName,
         isAdult: _testIsAdult,
         time: _testTime,
         currency: 'EUR',
-        description: 'KTV 測試支付 - ${_testTime} 時段',
+        description: 'KTV Test Payment - ${_testTime} Session',
       );
 
-      _result += '📝 支付請求參數:\n';
-      _result += '  客戶姓名: ${request.customerName}\n';
-      _result += '  是否成人: ${request.isAdult}\n';
-      _result += '  時段: ${request.time}\n';
-      _result += '  金額: ${request.isAdult ? "20.0" : "0.0"} EUR\n';
-      _result += '  貨幣: ${request.currency}\n\n';
+      _result += '📝 Payment request parameters:\n';
+      _result += '  Customer Name: ${request.customerName}\n';
+      _result += '  Is Adult: ${request.isAdult}\n';
+      _result += '  Time Slot: ${request.time}\n';
+      _result += '  Amount: ${request.isAdult ? "20.0" : "0.0"} EUR\n';
+      _result += '  Currency: ${request.currency}\n\n';
 
-      // 調用我們的服務
+      // Call our service
       final response = await _paymentService.createPaymentIntent(request);
 
       setState(() {
         _lastResponse = response;
-        _result += '📊 Stripe API 響應:\n';
-        _result += '  成功: ${response.success}\n';
-        _result += '  支付意圖 ID: ${response.paymentIntentId ?? 'N/A'}\n';
-        _result += '  客戶端密鑰: ${response.clientSecret ?? 'N/A'}\n';
-        _result += '  狀態: ${response.status ?? 'N/A'}\n';
-        _result += '  金額: ${response.amount ?? 'N/A'} ${response.currency ?? 'N/A'}\n';
-        _result += '  錯誤訊息: ${response.errorMessage ?? 'N/A'}\n\n';
+        _result += '📊 Stripe API Response:\n';
+        _result += '  Success: ${response.success}\n';
+        _result += '  Payment Intent ID: ${response.paymentIntentId ?? 'N/A'}\n';
+        _result += '  Client Secret: ${response.clientSecret ?? 'N/A'}\n';
+        _result += '  Status: ${response.status ?? 'N/A'}\n';
+        _result += '  Amount: ${response.amount ?? 'N/A'} ${response.currency ?? 'N/A'}\n';
+        _result += '  Error Message: ${response.errorMessage ?? 'N/A'}\n\n';
 
         if (response.success) {
-          _result += '✅ 支付意圖創建成功！\n';
-          _result += '💡 請檢查 Stripe Dashboard 確認是否收到支付意圖\n';
+          _result += '✅ Payment intent created successfully!\n';
+          _result += '💡 Please check Stripe Dashboard to confirm if payment intent was received\n';
           _result += '🔗 Stripe Dashboard: https://dashboard.stripe.com/test/payments\n';
         } else {
-          _result += '❌ 支付意圖創建失敗\n';
+          _result += '❌ Payment intent creation failed\n';
         }
       });
     } catch (e) {
       setState(() {
-        _result += '❌ 發生錯誤: $e\n';
+        _result += '❌ Error occurred: $e\n';
       });
     } finally {
       setState(() {
@@ -98,23 +98,23 @@ class _PaymentTestPageState extends State<PaymentTestPage> {
   Future<void> _testConfirmPayment() async {
     if (_lastResponse?.paymentIntentId == null) {
       setState(() {
-        _result += '\n❌ 沒有可用的支付意圖 ID，請先創建支付意圖\n';
+        _result += '\n❌ No available payment intent ID, please create payment intent first\n';
       });
       return;
     }
 
     setState(() {
       _isLoading = true;
-      _result += '\n🔄 開始測試確認支付...\n';
+      _result += '\n🔄 Starting test confirm payment...\n';
     });
 
     try {
-      // 使用測試支付方式 ID (這是 Stripe 提供的測試 ID)
-      const testPaymentMethodId = 'pm_card_visa'; // Stripe 測試用 Visa 卡
+      // Use test payment method ID (this is Stripe provided test ID)
+      const testPaymentMethodId = 'pm_card_visa'; // Stripe test Visa card
 
-      _result += '📝 確認支付參數:\n';
-      _result += '  支付意圖 ID: ${_lastResponse!.paymentIntentId}\n';
-      _result += '  支付方式 ID: $testPaymentMethodId\n\n';
+      _result += '📝 Confirm payment parameters:\n';
+      _result += '  Payment Intent ID: ${_lastResponse!.paymentIntentId}\n';
+      _result += '  Payment Method ID: $testPaymentMethodId\n\n';
 
       final response = await _paymentService.confirmPayment(
         paymentIntentId: _lastResponse!.paymentIntentId!,
@@ -122,24 +122,24 @@ class _PaymentTestPageState extends State<PaymentTestPage> {
       );
 
       setState(() {
-        _result += '📊 支付確認響應:\n';
-        _result += '  成功: ${response.success}\n';
-        _result += '  支付意圖 ID: ${response.paymentIntentId ?? 'N/A'}\n';
-        _result += '  狀態: ${response.status ?? 'N/A'}\n';
-        _result += '  金額: ${response.amount ?? 'N/A'} ${response.currency ?? 'N/A'}\n';
-        _result += '  錯誤訊息: ${response.errorMessage ?? 'N/A'}\n\n';
+        _result += '📊 Payment confirmation response:\n';
+        _result += '  Success: ${response.success}\n';
+        _result += '  Payment Intent ID: ${response.paymentIntentId ?? 'N/A'}\n';
+        _result += '  Status: ${response.status ?? 'N/A'}\n';
+        _result += '  Amount: ${response.amount ?? 'N/A'} ${response.currency ?? 'N/A'}\n';
+        _result += '  Error Message: ${response.errorMessage ?? 'N/A'}\n\n';
 
         if (response.success) {
-          _result += '✅ 支付確認成功！\n';
-          _result += '💰 請檢查 Stripe Dashboard 確認是否真的收到錢\n';
+          _result += '✅ Payment confirmation successful!\n';
+          _result += '💰 Please check Stripe Dashboard to confirm if money was actually received\n';
           _result += '🔗 Stripe Dashboard: https://dashboard.stripe.com/test/payments\n';
         } else {
-          _result += '❌ 支付確認失敗\n';
+          _result += '❌ Payment confirmation failed\n';
         }
       });
     } catch (e) {
       setState(() {
-        _result += '❌ 發生錯誤: $e\n';
+        _result += '❌ Error occurred: $e\n';
       });
     } finally {
       setState(() {
@@ -151,14 +151,14 @@ class _PaymentTestPageState extends State<PaymentTestPage> {
   Future<void> _testGetPaymentStatus() async {
     if (_lastResponse?.paymentIntentId == null) {
       setState(() {
-        _result += '\n❌ 沒有可用的支付意圖 ID，請先創建支付意圖\n';
+        _result += '\n❌ No available payment intent ID, please create payment intent first\n';
       });
       return;
     }
 
     setState(() {
       _isLoading = true;
-      _result += '\n🔄 開始查詢支付狀態...\n';
+      _result += '\n🔄 Starting query payment status...\n';
     });
 
     try {
@@ -167,22 +167,22 @@ class _PaymentTestPageState extends State<PaymentTestPage> {
       );
 
       setState(() {
-        _result += '📊 支付狀態響應:\n';
-        _result += '  成功: ${response.success}\n';
-        _result += '  支付意圖 ID: ${response.paymentIntentId ?? 'N/A'}\n';
-        _result += '  狀態: ${response.status ?? 'N/A'}\n';
-        _result += '  金額: ${response.amount ?? 'N/A'} ${response.currency ?? 'N/A'}\n';
-        _result += '  錯誤訊息: ${response.errorMessage ?? 'N/A'}\n\n';
+        _result += '📊 Payment status response:\n';
+        _result += '  Success: ${response.success}\n';
+        _result += '  Payment Intent ID: ${response.paymentIntentId ?? 'N/A'}\n';
+        _result += '  Status: ${response.status ?? 'N/A'}\n';
+        _result += '  Amount: ${response.amount ?? 'N/A'} ${response.currency ?? 'N/A'}\n';
+        _result += '  Error Message: ${response.errorMessage ?? 'N/A'}\n\n';
 
         if (response.success) {
-          _result += '✅ 支付狀態查詢成功！\n';
+          _result += '✅ Payment status query successful!\n';
         } else {
-          _result += '❌ 支付狀態查詢失敗\n';
+          _result += '❌ Payment status query failed\n';
         }
       });
     } catch (e) {
       setState(() {
-        _result += '❌ 發生錯誤: $e\n';
+        _result += '❌ Error occurred: $e\n';
       });
     } finally {
       setState(() {
@@ -202,7 +202,7 @@ class _PaymentTestPageState extends State<PaymentTestPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Stripe 支付測試'),
+        title: const Text('Stripe Payment Test'),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
       ),
@@ -212,7 +212,7 @@ class _PaymentTestPageState extends State<PaymentTestPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-            // 測試參數顯示
+            // Test parameters display
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -220,31 +220,31 @@ class _PaymentTestPageState extends State<PaymentTestPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      '🧪 測試參數 (Hardcoded)',
+                      '🧪 Test Parameters (Hardcoded)',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Text('客戶姓名: $_testCustomerName'),
-                    Text('是否成人: ${_testIsAdult ? '是' : '否'}'),
-                    Text('時段: $_testTime'),
-                    Text('預期金額: ${_testIsAdult ? '20.0' : '0.0'} EUR'),
+                    Text('Customer Name: $_testCustomerName'),
+                    Text('Is Adult: ${_testIsAdult ? 'Yes' : 'No'}'),
+                    Text('Time Slot: $_testTime'),
+                    Text('Expected Amount: ${_testIsAdult ? '20.0' : '0.0'} EUR'),
                   ],
                 ),
               ),
             ),
             const SizedBox(height: 16),
 
-            // 測試按鈕
+            // Test buttons
             Row(
               children: [
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: _isLoading ? null : _testCreatePaymentIntent,
                     icon: const Icon(Icons.payment),
-                    label: const Text('創建支付意圖'),
+                    label: const Text('Create Payment Intent'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
                       foregroundColor: Colors.white,
@@ -256,7 +256,7 @@ class _PaymentTestPageState extends State<PaymentTestPage> {
                   child: ElevatedButton.icon(
                     onPressed: _isLoading ? null : _testConfirmPayment,
                     icon: const Icon(Icons.check_circle),
-                    label: const Text('確認支付'),
+                    label: const Text('Confirm Payment'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.orange,
                       foregroundColor: Colors.white,
@@ -272,7 +272,7 @@ class _PaymentTestPageState extends State<PaymentTestPage> {
                   child: ElevatedButton.icon(
                     onPressed: _isLoading ? null : _testGetPaymentStatus,
                     icon: const Icon(Icons.info),
-                    label: const Text('查詢狀態'),
+                    label: const Text('Query Status'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
                       foregroundColor: Colors.white,
@@ -284,7 +284,7 @@ class _PaymentTestPageState extends State<PaymentTestPage> {
                   child: ElevatedButton.icon(
                     onPressed: _clearResult,
                     icon: const Icon(Icons.clear),
-                    label: const Text('清除結果'),
+                    label: const Text('Clear Results'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.grey,
                       foregroundColor: Colors.white,
@@ -295,13 +295,13 @@ class _PaymentTestPageState extends State<PaymentTestPage> {
             ),
             const SizedBox(height: 16),
 
-            // 載入指示器
+            // Loading indicator
             if (_isLoading)
               const Center(
                 child: CircularProgressIndicator(),
               ),
 
-            // 結果顯示
+            // Results display
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -310,7 +310,7 @@ class _PaymentTestPageState extends State<PaymentTestPage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Text(
-                      '📋 測試結果',
+                      '📋 Test Results',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -321,7 +321,7 @@ class _PaymentTestPageState extends State<PaymentTestPage> {
                       height: 200,
                       child: SingleChildScrollView(
                         child: Text(
-                          _result.isEmpty ? '點擊按鈕開始測試...' : _result,
+                          _result.isEmpty ? 'Click button to start testing...' : _result,
                           style: const TextStyle(
                             fontFamily: 'monospace',
                             fontSize: 12,
@@ -334,7 +334,7 @@ class _PaymentTestPageState extends State<PaymentTestPage> {
               ),
             ),
 
-            // Stripe Dashboard 連結
+            // Stripe Dashboard links
             const SizedBox(height: 16),
             Card(
               color: Colors.blue.shade50,
@@ -344,18 +344,18 @@ class _PaymentTestPageState extends State<PaymentTestPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      '🔗 Stripe Dashboard 連結',
+                      '🔗 Stripe Dashboard Links',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 8),
-                    const Text('測試環境: https://dashboard.stripe.com/test/payments'),
-                    const Text('生產環境: https://dashboard.stripe.com/payments'),
+                    const Text('Test Environment: https://dashboard.stripe.com/test/payments'),
+                    const Text('Production Environment: https://dashboard.stripe.com/payments'),
                     const SizedBox(height: 8),
                     const Text(
-                      '💡 提示: 創建支付意圖後，請到 Stripe Dashboard 檢查是否真的收到支付意圖',
+                      '💡 Tip: After creating payment intent, please check Stripe Dashboard to confirm if payment intent was actually received',
                       style: TextStyle(
                         fontStyle: FontStyle.italic,
                         color: Colors.grey,

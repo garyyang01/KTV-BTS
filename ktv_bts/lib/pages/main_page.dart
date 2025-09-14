@@ -4,7 +4,7 @@ import '../widgets/content_display_widget.dart';
 import '../models/search_option.dart';
 import 'my_train_tickets_page.dart';
 
-/// 主頁面 - 統一的票券搜索和申請頁面
+/// Main Page - Unified ticket search and booking page
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
 
@@ -21,7 +21,7 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
-  /// 導航到我的票券頁面
+  /// Navigate to my tickets page
   void _navigateToMyTickets() {
     Navigator.push(
       context,
@@ -61,12 +61,12 @@ class _MainPageState extends State<MainPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 搜索區域
+              // Search section
               _buildSearchSection(),
               
               const SizedBox(height: 24),
               
-              // 內容區域
+              // Content area
               ContentDisplayWidget(
                 selectedOption: _selectedOption,
                 onClearSelection: _clearSelection,
@@ -78,7 +78,7 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  /// 建立搜索區域
+  /// Build search section
   Widget _buildSearchSection() {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -96,7 +96,7 @@ class _MainPageState extends State<MainPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 標題
+          // Title
           Row(
             children: [
               Icon(
@@ -118,7 +118,7 @@ class _MainPageState extends State<MainPage> {
           
           const SizedBox(height: 16),
           
-          // 搜索組件
+          // Search component
           SearchBarWidget(
             hintText: 'Type destination...',
             onSelectionChanged: (option) {
