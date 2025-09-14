@@ -1014,15 +1014,6 @@ class _PaymentPageState extends State<PaymentPage> {
                     response.paymentIntentId ?? 'Unknown',
                     style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
                   ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Client Secret:',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-                  ),
-                  Text(
-                    response.clientSecret ?? 'Unknown',
-                    style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
-                  ),
                 ],
               ),
             ),

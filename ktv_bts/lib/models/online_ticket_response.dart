@@ -55,11 +55,11 @@ class TicketFile {
   String get ticketTypeDisplayName {
     switch (kind) {
       case 'pdf_ticket':
-        return 'PDF 票券';
+        return 'PDF Ticket';
       case 'mobile_ticket':
-        return '手機票券';
+        return 'Mobile Ticket';
       default:
-        return '未知票券類型';
+        return 'Unknown Ticket Type';
     }
   }
 }

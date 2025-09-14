@@ -31,8 +31,8 @@ class RailSearchTestPage extends StatefulWidget {
 
 class _RailSearchTestPageState extends State<RailSearchTestPage> {
   final _formKey = GlobalKey<FormState>();
-  final _fromController = TextEditingController(text: 'ST_EMYR64OX'); // Munich train station code
-  final _toController = TextEditingController(text: 'ST_E7G93QNJ'); // Füssen train station code
+  final _fromController = TextEditingController(text: 'Munich Central Station'); // Munich train station name
+  final _toController = TextEditingController(text: 'Füssen Station'); // Füssen train station name
   final _dateController = TextEditingController();
   final _timeController = TextEditingController();
   final _adultController = TextEditingController(text: '1');
@@ -55,6 +55,19 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
     
     // Pre-fill form based on ticket information
     _initializeFormFromTicketInfo();
+  }
+
+  /// Convert station display name to station code
+  String _getStationCode(String stationName) {
+    switch (stationName.toLowerCase()) {
+      case 'munich central station':
+        return 'ST_EMYR64OX';
+      case 'füssen station':
+        return 'ST_E7G93QNJ';
+      default:
+        // If it's already a code, return as is
+        return stationName;
+    }
   }
 
   /// Initialize form based on ticket information
@@ -119,10 +132,14 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
     });
 
     try {
+      // Convert display names to station codes for API
+      final fromCode = _getStationCode(_fromController.text.trim());
+      final toCode = _getStationCode(_toController.text.trim());
+      
       // Create search criteria
       final criteria = RailSearchCriteria(
-        from: _fromController.text.trim(),
-        to: _toController.text.trim(),
+        from: fromCode,
+        to: toCode,
         date: _dateController.text.trim(),
         time: _timeController.text.trim(),
         adult: int.tryParse(_adultController.text) ?? 1,
@@ -133,7 +150,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
       );
 
       setState(() {
-        _statusMessage = 'Search criteria: ${criteria.from} → ${criteria.to}';
+        _statusMessage = 'Search criteria: ${_fromController.text.trim()} → ${_toController.text.trim()}';
       });
 
       // Execute search
@@ -292,11 +309,13 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                     child: TextFormField(
                       controller: _fromController,
                       decoration: const InputDecoration(
-                        labelText: 'From Munich Central Station (ST_EMYR64OX)',
-                        hintText: 'ST_EMYR64OX',
+                        labelText: 'From Munich Central Station',
+                        hintText: 'Munich Central Station',
                         border: OutlineInputBorder(),
-                        helperText: 'Munich to Füssen',
+                        helperText: 'Station Code: ST_EMYR64OX',
+                        prefixIcon: Icon(Icons.train),
                       ),
+                      readOnly: true, // Make it read-only since it's a fixed route
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return 'Please enter departure location';
@@ -306,17 +325,26 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  const Icon(Icons.arrow_forward),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade100,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(Icons.arrow_forward, color: Colors.blue.shade600),
+                  ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: TextFormField(
                       controller: _toController,
                       decoration: const InputDecoration(
-                        labelText: 'To Füssen Station (ST_E7G93QNJ)',
-                        hintText: 'ST_E7G93QNJ',
+                        labelText: 'To Füssen Station',
+                        hintText: 'Füssen Station',
                         border: OutlineInputBorder(),
-                        helperText: 'Füssen',
+                        helperText: 'Station Code: ST_E7G93QNJ',
+                        prefixIcon: Icon(Icons.location_on),
                       ),
+                      readOnly: true, // Make it read-only since it's a fixed route
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return 'Please enter destination';
@@ -936,7 +964,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('🚄 Railway Search Test'),
+        title: const Text('🚄 Railway Search'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: SingleChildScrollView(
