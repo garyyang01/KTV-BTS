@@ -10,6 +10,7 @@ import '../models/search_option.dart';
 import '../pages/payment_page.dart';
 import '../pages/rail_search_test_page.dart';
 import '../services/ip_verification_service.dart';
+import '../utils/ticket_id_generator.dart';
 
 /// 預訂表單組件
 /// 包含所有票券預訂所需的輸入欄位
@@ -501,6 +502,26 @@ class _BookingFormState extends State<BookingForm> {
   TicketRequest _createTicketRequest() {
     final ticketInfoList = <TicketInfo>[];
     
+    // 獲取景點資訊
+    final attractionId = widget.selectedAttraction?.id;
+    final attractionName = widget.selectedAttraction?.name ?? 'Neuschwanstein Castle';
+    
+    // 根據景點設定出發地和目的地
+    String fromLocation, toLocation;
+    switch (attractionId) {
+      case 'neuschwanstein':
+        fromLocation = 'Munich Central';
+        toLocation = 'Füssen';
+        break;
+      case 'uffizi':
+        fromLocation = 'Milano Centrale';
+        toLocation = 'Florence SMN';
+        break;
+      default:
+        fromLocation = 'Munich Central';
+        toLocation = 'Füssen';
+    }
+    
     for (var ticket in _tickets) {
       final familyName = ticket['familyNameController'].text.trim();
       final givenName = ticket['givenNameController'].text.trim();
@@ -517,13 +538,26 @@ class _BookingFormState extends State<BookingForm> {
       final arrivalTime = DateFormat('yyyy-MM-dd').format(selectedDate);
       final price = isAdult ? _getAdultPrice().toDouble() : _getChildPrice().toDouble();
       
+      // 生成隨機ID
+      final ticketId = TicketIdGenerator.generateTicketId();
+      
       ticketInfoList.add(TicketInfo(
+        id: ticketId,
         familyName: familyName,
         givenName: givenName,
         isAdult: isAdult,
         session: session,
         arrivalTime: arrivalTime,
         price: price,
+        type: 'Entrance', // 門票類型
+        entranceName: attractionName,
+        bundleName: '', // 目前為空
+        from: fromLocation,
+        to: toLocation,
+        phone: '', // 門票不需要電話資訊
+        passportNumber: '', // 門票不需要護照資訊
+        birthDate: '', // 門票不需要出生日期
+        gender: '', // 門票不需要性別資訊
       ));
     }
     
