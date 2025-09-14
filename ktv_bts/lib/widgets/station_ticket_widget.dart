@@ -59,7 +59,16 @@ class _StationTicketWidgetState extends State<StationTicketWidget> {
     
     // 設置默認時間為上午9點
     _selectedTime = const TimeOfDay(hour: 9, minute: 0);
-    _departureTimeController.text = _selectedTime!.format(context);
+    // 不在 initState 中使用 context，延遲到 build 方法中設置
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 在這裡安全地使用 context
+    if (_selectedTime != null && _departureTimeController.text.isEmpty) {
+      _departureTimeController.text = _selectedTime!.format(context);
+    }
   }
 
   @override

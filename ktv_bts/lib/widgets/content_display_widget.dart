@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/search_option.dart';
+import 'station_ticket_widget.dart';
+import 'attraction_ticket_widget.dart';
 
 /// 內容顯示組件 - 根據搜索選擇動態顯示不同的票券申請區塊
 class ContentDisplayWidget extends StatefulWidget {
@@ -203,22 +205,8 @@ class _ContentDisplayWidgetState extends State<ContentDisplayWidget>
   Widget _buildStationContent() {
     return Container(
       key: const ValueKey('station'),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 選中的車站資訊
-          _buildSelectedOptionInfo(),
-          
-          const SizedBox(height: 20),
-          
-          // 車站票券預覽
-          _buildStationTicketPreview(),
-          
-          const SizedBox(height: 20),
-          
-          // 開始預訂按鈕
-          _buildBookingButton('Book Train Tickets'),
-        ],
+      child: StationTicketWidget(
+        selectedStation: widget.selectedOption,
       ),
     );
   }
@@ -227,228 +215,12 @@ class _ContentDisplayWidgetState extends State<ContentDisplayWidget>
   Widget _buildAttractionContent() {
     return Container(
       key: const ValueKey('attraction'),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 選中的景點資訊
-          _buildSelectedOptionInfo(),
-          
-          const SizedBox(height: 20),
-          
-          // 景點門票預覽
-          _buildAttractionTicketPreview(),
-          
-          const SizedBox(height: 20),
-          
-          // 開始預訂按鈕
-          _buildBookingButton('Book Attraction Tickets'),
-        ],
+      child: AttractionTicketWidget(
+        selectedAttraction: widget.selectedOption,
       ),
     );
   }
 
-  /// 建立選中選項資訊
-  Widget _buildSelectedOptionInfo() {
-    final option = widget.selectedOption!;
-    
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: option.type == SearchOptionType.station 
-            ? Colors.blue.shade50 
-            : Colors.orange.shade50,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: option.type == SearchOptionType.station 
-              ? Colors.blue.shade200 
-              : Colors.orange.shade200,
-        ),
-      ),
-      child: Row(
-        children: [
-          Text(
-            option.icon,
-            style: const TextStyle(fontSize: 32),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  option.name,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  option.description,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: option.type == SearchOptionType.station
-                        ? Colors.blue.shade100
-                        : Colors.orange.shade100,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    option.type == SearchOptionType.station ? 'Train Station' : 'Tourist Attraction',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: option.type == SearchOptionType.station
-                          ? Colors.blue.shade700
-                          : Colors.orange.shade700,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// 建立車站票券預覽
-  Widget _buildStationTicketPreview() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.train, color: Colors.blue.shade600, size: 20),
-              const SizedBox(width: 8),
-              const Text(
-                'Train Ticket Features',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          _buildFeatureItem(Icons.route, 'Multiple destination options'),
-          _buildFeatureItem(Icons.schedule, 'Flexible departure times'),
-          _buildFeatureItem(Icons.people, 'Adult and child tickets'),
-          _buildFeatureItem(Icons.confirmation_number, 'Instant booking confirmation'),
-        ],
-      ),
-    );
-  }
-
-  /// 建立景點門票預覽
-  Widget _buildAttractionTicketPreview() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.local_activity, color: Colors.orange.shade600, size: 20),
-              const SizedBox(width: 8),
-              const Text(
-                'Attraction Ticket Features',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          _buildFeatureItem(Icons.access_time, 'Morning and afternoon sessions'),
-          _buildFeatureItem(Icons.family_restroom, 'Family-friendly pricing'),
-          _buildFeatureItem(Icons.calendar_today, 'Flexible date selection'),
-          _buildFeatureItem(Icons.email, 'Email confirmation'),
-        ],
-      ),
-    );
-  }
-
-  /// 建立功能項目
-  Widget _buildFeatureItem(IconData icon, String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            size: 16,
-            color: Colors.grey.shade600,
-          ),
-          const SizedBox(width: 8),
-          Text(
-            text,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade700,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// 建立預訂按鈕
-  Widget _buildBookingButton(String text) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () {
-          // TODO: 導航到對應的預訂頁面
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Opening $text for ${widget.selectedOption!.name}'),
-              backgroundColor: Colors.green.shade600,
-            ),
-          );
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: widget.selectedOption!.type == SearchOptionType.station
-              ? Colors.blue.shade600
-              : Colors.orange.shade600,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-        child: Text(
-          text,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-    );
-  }
 
   /// 建立快速選擇建議
   Widget _buildQuickSelections() {
