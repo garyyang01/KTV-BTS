@@ -75,6 +75,14 @@ class StripePaymentService implements IStripePaymentService {
       // Calculate amount based on KTV pricing logic
       final amount = _calculateAmount(request);
       
+      // Debug: Print amount calculation details
+      print('🔍 Stripe PaymentIntent Amount Calculation:');
+      print('  - request.amount: ${request.amount}');
+      print('  - request.ticketRequest: ${request.ticketRequest != null ? "exists" : "null"}');
+      print('  - request.isAdult: ${request.isAdult}');
+      print('  - calculated amount: $amount');
+      print('  - amount in cents: ${(amount * 100).round()}');
+      
       final headers = {
         'Authorization': 'Bearer $_secretKey',
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -293,6 +301,11 @@ class StripePaymentService implements IStripePaymentService {
 
   /// Calculate KTV booking amount based on ticket request
   double _calculateAmount(PaymentRequest request) {
+    // If amount is explicitly set (e.g., for train tickets), use it
+    if (request.amount > 0) {
+      return request.amount;
+    }
+    
     // If ticketRequest is provided, calculate from ticket info
     if (request.ticketRequest != null) {
       return request.ticketRequest!.totalAmount;

@@ -225,7 +225,7 @@ class _PaymentPageState extends State<PaymentPage> {
           isAdult: widget.paymentRequest.isAdult,
           session: widget.paymentRequest.time,
           arrivalTime: DateTime.now().add(const Duration(days: 1)).toIso8601String().split('T')[0], // Tomorrow
-          price: widget.paymentRequest.isAdult ? 19.0 : 0.0,
+          price: widget.paymentRequest.amount,
         ),
       ],
     );
@@ -268,7 +268,11 @@ class _PaymentPageState extends State<PaymentPage> {
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(); // Close dialog
-              Navigator.of(context).pop(); // Return to previous page
+              // 跳轉到首頁
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                '/',
+                (route) => false,
+              );
             },
             child: const Text('OK'),
           ),
@@ -328,7 +332,11 @@ class _PaymentPageState extends State<PaymentPage> {
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(); // Close dialog
-              Navigator.of(context).pop(); // Return to previous page
+              // 跳轉到首頁
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                '/',
+                (route) => false,
+              );
             },
             child: const Text('Done'),
           ),
@@ -411,8 +419,23 @@ class _PaymentPageState extends State<PaymentPage> {
                     Text('Customer Name: ${widget.paymentRequest.customerName}'),
                     Text('Ticket Type: ${widget.paymentRequest.isAdult ? 'Adult' : 'Child'}'),
                     Text('Time Slot: ${widget.paymentRequest.time}'),
-                    Text('Amount: ${widget.paymentRequest.isAdult ? '19.0' : '0.0'} EUR'),
+                    Text('Amount: ${widget.paymentRequest.amount.toStringAsFixed(2)} ${widget.paymentRequest.currency}'),
                     Text('Description: ${widget.paymentRequest.description}'),
+                    
+                    // 如果是火車票，顯示額外的火車資訊
+                    if (widget.paymentRequest.time == 'Train Journey') ...[
+                      const SizedBox(height: 8),
+                      const Divider(),
+                      const Text(
+                        '🚄 Train Details',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text('Journey: ${widget.paymentRequest.description}'),
+                    ],
                   ],
                 ),
               ),

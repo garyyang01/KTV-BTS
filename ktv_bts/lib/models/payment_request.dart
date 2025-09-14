@@ -1,4 +1,5 @@
 import 'ticket_request.dart';
+import 'train_solution.dart';
 
 /// Payment request model for KTV booking
 class PaymentRequest {
@@ -45,6 +46,37 @@ class PaymentRequest {
       ticketRequest: json['ticket_request'] != null 
           ? TicketRequest.fromJson(json['ticket_request'] as Map<String, dynamic>)
           : null,
+    );
+  }
+
+  /// 創建火車票專用的 PaymentRequest
+  factory PaymentRequest.forTrainTicket({
+    required String customerName,
+    required TrainInfo train,
+    required TrainOffer offer,
+    required TrainService service,
+  }) {
+    final amount = service.price.cents / 100.0; // 將 cents 轉換為 EUR
+    final description = '火車票 - ${train.number} (${train.from.localName} → ${train.to.localName})';
+    
+    // Debug: Print train ticket price details
+    print('🚄 Train Ticket PaymentRequest Creation:');
+    print('  - service.price.cents: ${service.price.cents}');
+    print('  - service.price.currency: ${service.price.currency}');
+    print('  - service.price.formattedPrice: ${service.price.formattedPrice}');
+    print('  - calculated amount: $amount');
+    print('  - train.number: ${train.number}');
+    print('  - offer.description: ${offer.description}');
+    print('  - service.description: ${service.description}');
+    
+    return PaymentRequest(
+      customerName: customerName,
+      isAdult: true, // 火車票預設為成人票
+      time: 'Train Journey', // 火車行程時間
+      amount: amount,
+      currency: service.price.currency,
+      description: description,
+      ticketRequest: null, // 火車票不需要 TicketRequest
     );
   }
 
