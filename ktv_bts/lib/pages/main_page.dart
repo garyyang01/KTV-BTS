@@ -109,39 +109,6 @@ class _MainPageState extends State<MainPage> {
               });
             },
           ),
-          
-          const SizedBox(height: 16),
-          
-          // 搜索按鈕
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: _selectedOption != null ? () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Selected: ${_selectedOption!.name}'),
-                    backgroundColor: Colors.green,
-                  ),
-                );
-              } : null,
-              icon: const Icon(Icons.search),
-              label: const Text(
-                'Search',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue.shade600,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-            ),
-          ),
         ],
       ),
     );
