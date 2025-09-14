@@ -23,6 +23,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
   SearchOption? _selectedOption;
   late FocusNode _focusNode;
   List<SearchResult> _searchResults = [];
+  TextEditingController? _fieldTextEditingController;
 
   @override
   void initState() {
@@ -73,6 +74,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
       _selectedOption = null;
     });
     _textEditingController.clear();
+    _fieldTextEditingController?.clear();
     _updateSearchResults('');
     widget.onSelectionChanged(null);
   }
@@ -109,6 +111,9 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
             FocusNode fieldFocusNode,
             VoidCallback onFieldSubmitted,
           ) {
+            // 保存 fieldTextEditingController 的引用
+            _fieldTextEditingController = fieldTextEditingController;
+            
             // 同步控制器
             if (_textEditingController.text != fieldTextEditingController.text) {
               _textEditingController.text = fieldTextEditingController.text;
@@ -229,7 +234,53 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
             AutocompleteOnSelected<SearchOption> onSelected,
             Iterable<SearchOption> options,
           ) {
-            return _buildOptionsView(context, onSelected, options.toList());
+            return Align(
+              alignment: Alignment.topLeft,
+              child: Material(
+                elevation: 12.0,
+                borderRadius: BorderRadius.circular(20),
+                shadowColor: Colors.blue.withOpacity(0.2),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Colors.blue.withOpacity(0.1),
+                      width: 1,
+                    ),
+                  ),
+                  constraints: BoxConstraints(
+                    maxHeight: 350,
+                    maxWidth: MediaQuery.of(context).size.width - 32,
+                  ),
+                  child: options.isEmpty
+                      ? _buildNoResultsView()
+                      : ListView.separated(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shrinkWrap: true,
+                          itemCount: options.length,
+                          separatorBuilder: (context, index) => Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 16),
+                            height: 1,
+                            color: Colors.grey.shade200,
+                          ),
+                          itemBuilder: (context, index) {
+                            final option = options.elementAt(index);
+                            final searchResult = _searchResults.firstWhere(
+                              (result) => result.option.id == option.id,
+                              orElse: () => SearchResult(
+                                option: option,
+                                matchingKeywords: [],
+                                relevanceScore: 0.0,
+                              ),
+                            );
+                            
+                            return _buildOptionTile(option, searchResult, onSelected);
+                          },
+                        ),
+                ),
+              ),
+            );
           },
           
           onSelected: _selectOption,
@@ -251,57 +302,6 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
     );
   }
 
-  /// 建立選項視圖
-  Widget _buildOptionsView(
-    BuildContext context,
-    AutocompleteOnSelected<SearchOption> onSelected,
-    List<SearchOption> options,
-  ) {
-    return Material(
-      elevation: 12.0,
-      borderRadius: BorderRadius.circular(20),
-      shadowColor: Colors.blue.withOpacity(0.2),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: Colors.blue.withOpacity(0.1),
-            width: 1,
-          ),
-        ),
-        constraints: BoxConstraints(
-          maxHeight: 350,
-          maxWidth: MediaQuery.of(context).size.width - 32,
-        ),
-        child: options.isEmpty
-            ? _buildNoResultsView()
-            : ListView.separated(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shrinkWrap: true,
-                itemCount: options.length,
-                separatorBuilder: (context, index) => Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
-                  height: 1,
-                  color: Colors.grey.shade200,
-                ),
-                itemBuilder: (context, index) {
-                  final option = options[index];
-                  final searchResult = _searchResults.firstWhere(
-                    (result) => result.option.id == option.id,
-                    orElse: () => SearchResult(
-                      option: option,
-                      matchingKeywords: [],
-                      relevanceScore: 0.0,
-                    ),
-                  );
-                  
-                  return _buildOptionTile(option, searchResult, onSelected);
-                },
-              ),
-      ),
-    );
-  }
 
   /// 建立選項磁貼
   Widget _buildOptionTile(

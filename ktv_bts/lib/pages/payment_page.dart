@@ -872,9 +872,15 @@ class _PaymentPageState extends State<PaymentPage> {
     final ticketSession = widget.paymentRequest.time;
     final departureTime = _getDepartureTime(ticketSession);
     
+    // Get attraction name and train route from description
+    final attractionName = _getAttractionName();
+    final trainRoute = _getTrainRoute();
+    
     print('🚄 Ticket date: $ticketDate');
     print('🚄 Ticket session: $ticketSession');
     print('🚄 Departure time: $departureTime');
+    print('🚄 Attraction name: $attractionName');
+    print('🚄 Train route: $trainRoute');
     
     showDialog(
       context: context,
@@ -898,9 +904,9 @@ class _PaymentPageState extends State<PaymentPage> {
               ),
             ),
             const SizedBox(height: 12),
-            const Text(
-              'Do you also need to book train tickets to Neuschwanstein Castle?',
-              style: TextStyle(fontSize: 14),
+            Text(
+              'Do you also need to book train tickets to $attractionName?',
+              style: const TextStyle(fontSize: 14),
             ),
             const SizedBox(height: 8),
             Container(
@@ -921,7 +927,7 @@ class _PaymentPageState extends State<PaymentPage> {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text('Start：Munich Central → Füssen', style: const TextStyle(fontSize: 12)),
+                  Text('Start：$trainRoute', style: const TextStyle(fontSize: 12)),
                   Text('Date：$ticketDate', style: const TextStyle(fontSize: 12)),
                   Text('Time：$departureTime', style: const TextStyle(fontSize: 12)),
                   Text('Session：${ticketSession == "Morning" ? "Morning" : "Afternoon"}', style: const TextStyle(fontSize: 12)),
@@ -972,6 +978,28 @@ class _PaymentPageState extends State<PaymentPage> {
   String _getDepartureTime(String session) {
     // Whether Morning or Afternoon, train ticket time is set to 12:00
     return '12:00';
+  }
+
+  /// Get attraction name from description
+  String _getAttractionName() {
+    final description = widget.paymentRequest.description ?? '';
+    if (description.contains('Uffizi Gallery')) {
+      return 'Uffizi Gallery';
+    } else if (description.contains('Neuschwanstein Castle')) {
+      return 'Neuschwanstein Castle';
+    }
+    return 'Neuschwanstein Castle'; // Default
+  }
+
+  /// Get train route based on attraction
+  String _getTrainRoute() {
+    final description = widget.paymentRequest.description ?? '';
+    if (description.contains('Uffizi Gallery')) {
+      return 'Milano Centrale → Florence SMN';
+    } else if (description.contains('Neuschwanstein Castle')) {
+      return 'Munich Central → Füssen';
+    }
+    return 'Munich Central → Füssen'; // Default
   }
 
   /// Show 3DS authentication dialog
@@ -1083,6 +1111,19 @@ class _PaymentPageState extends State<PaymentPage> {
     final ticketDate = _getTicketDate();
     final ticketSession = widget.paymentRequest.time;
 
+    // Get station information based on attraction
+    final attractionName = _getAttractionName();
+    String departureStation;
+    String destinationStation;
+    
+    if (attractionName == 'Uffizi Gallery') {
+      departureStation = 'Milano Centrale';
+      destinationStation = 'Florence SMN';
+    } else {
+      departureStation = 'Munich Central Station';
+      destinationStation = 'Füssen Station';
+    }
+
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => RailSearchTestPage(
@@ -1090,6 +1131,8 @@ class _PaymentPageState extends State<PaymentPage> {
           ticketDate: ticketDate,
           ticketSession: ticketSession,
           originalTicketRequest: widget.paymentRequest,
+          departureStation: departureStation,
+          destinationStation: destinationStation,
         ),
       ),
     );

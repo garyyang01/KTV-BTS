@@ -117,7 +117,7 @@ class _MainPageState extends State<MainPage> {
                 ),
                 const SizedBox(width: 8),
                 const Text(
-                  'KTV Travel Booking',
+                  'Ticket Trip Booking',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
@@ -325,7 +325,7 @@ class _MainPageState extends State<MainPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Welcome to KTV Travel!',
+                      'Welcome to Ticket Trip Travel!',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,

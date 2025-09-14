@@ -104,33 +104,64 @@ class _BookingFormState extends State<BookingForm> {
 
   /// 處理表單提交
   void _handleSubmit() async {
+    print('=== 開始處理表單提交 ===');
+    
     if (!_formKey.currentState!.validate()) {
+      print('表單驗證失敗');
+      print('Email: "${_emailController.text}"');
+      for (int i = 0; i < _tickets.length; i++) {
+        final ticket = _tickets[i];
+        print('票券 ${i + 1}:');
+        print('  Family Name: "${ticket['familyNameController'].text}"');
+        print('  Given Name: "${ticket['givenNameController'].text}"');
+        print('  Selected Date: ${ticket['selectedDate']}');
+        print('  Selected Session: ${ticket['selectedSession']}');
+      }
       return;
     }
+    print('表單驗證通過');
 
     // 驗證所有票券都有選擇日期
     for (int i = 0; i < _tickets.length; i++) {
+      print('檢查票券 ${i + 1} 的日期: ${_tickets[i]['selectedDate']}');
       if (_tickets[i]['selectedDate'] == null) {
+        print('票券 ${i + 1} 沒有選擇日期');
         _showErrorSnackBar('Please select an arrival date for ticket ${i + 1}');
         return;
       }
     }
+    print('所有票券日期驗證通過');
 
     // 在用戶選擇票種後，進行 IP 驗證檢查
+    print('開始 IP 驗證...');
     final isIpAuthorized = await _ipVerificationService.verifyUserIp();
+    print('IP 驗證結果: $isIpAuthorized');
     if (!isIpAuthorized) {
+      print('IP 驗證失敗，顯示阻擋對話框');
       _showIpBlockedDialog();
       return;
     }
+    print('IP 驗證通過');
 
     // 創建 TicketRequest 物件
-    final ticketRequest = _createTicketRequest();
+    print('創建 TicketRequest...');
+    try {
+      final ticketRequest = _createTicketRequest();
+      print('TicketRequest 創建成功');
 
-    // 創建 PaymentRequest 物件
-    final paymentRequest = _createPaymentRequest(ticketRequest);
+      // 創建 PaymentRequest 物件
+      print('創建 PaymentRequest...');
+      final paymentRequest = _createPaymentRequest(ticketRequest);
+      print('PaymentRequest 創建成功');
 
-    // 顯示火車票預訂對話框
-    _showTrainBookingDialog(paymentRequest);
+      // 顯示火車票預訂對話框
+      print('顯示火車票預訂對話框...');
+      _showTrainBookingDialog(paymentRequest);
+      print('=== 表單提交處理完成 ===');
+    } catch (e) {
+      print('創建請求時發生錯誤: $e');
+      _showErrorSnackBar('Error creating booking request: $e');
+    }
   }
 
   /// 顯示錯誤訊息
@@ -390,7 +421,7 @@ class _BookingFormState extends State<BookingForm> {
       case 'neuschwanstein':
         return 'Munich → Füssen';
       case 'uffizi':
-        return 'Munich → Florence';
+        return 'Milano Centrale → Florence SMN';
       default:
         return 'Munich → Füssen'; // 預設為 Neuschwanstein Castle 的路線
     }
@@ -408,6 +439,25 @@ class _BookingFormState extends State<BookingForm> {
     final firstName = ticketInfos.isNotEmpty ? ticketInfos.first.givenName : '';
     final lastName = ticketInfos.isNotEmpty ? ticketInfos.first.familyName : '';
     
+    // 根據景點獲取車站資訊
+    final attractionId = widget.selectedAttraction?.id;
+    String departureStation;
+    String destinationStation;
+    
+    switch (attractionId) {
+      case 'neuschwanstein':
+        departureStation = 'Munich Central Station';
+        destinationStation = 'Füssen Station';
+        break;
+      case 'uffizi':
+        departureStation = 'Milano Centrale';
+        destinationStation = 'Florence SMN';
+        break;
+      default:
+        departureStation = 'Munich Central Station';
+        destinationStation = 'Füssen Station';
+    }
+    
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => RailSearchTestPage(
@@ -418,6 +468,8 @@ class _BookingFormState extends State<BookingForm> {
           passengerEmail: email,
           passengerFirstName: firstName,
           passengerLastName: lastName,
+          departureStation: departureStation,
+          destinationStation: destinationStation,
         ),
       ),
     );
@@ -453,7 +505,14 @@ class _BookingFormState extends State<BookingForm> {
       final givenName = ticket['givenNameController'].text.trim();
       final isAdult = ticket['isAdult'] as bool;
       final session = ticket['selectedSession'] as String;
-      final selectedDate = ticket['selectedDate'] as DateTime;
+      final selectedDate = ticket['selectedDate'] as DateTime?;
+      
+      // 確保日期不為 null
+      if (selectedDate == null) {
+        print('錯誤：票券日期為 null');
+        throw Exception('Ticket date cannot be null');
+      }
+      
       final arrivalTime = DateFormat('yyyy-MM-dd').format(selectedDate);
       final price = isAdult ? _getAdultPrice().toDouble() : _getChildPrice().toDouble();
       
