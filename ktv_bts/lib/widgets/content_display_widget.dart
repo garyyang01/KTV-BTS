@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../models/search_option.dart';
 import 'station_ticket_widget.dart';
 import 'attraction_ticket_widget.dart';
@@ -69,18 +70,24 @@ class _ContentDisplayWidgetState extends State<ContentDisplayWidget>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: isDark ? Colors.black.withOpacity(0.3) : Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
+        border: Border.all(
+          color: isDark ? Colors.blue.withOpacity(0.3) : Colors.transparent,
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,12 +126,12 @@ class _ContentDisplayWidgetState extends State<ContentDisplayWidget>
           size: 24,
         ),
         const SizedBox(width: 8),
-        const Text(
-          'Ticket Application',
+        Text(
+          AppLocalizations.of(context)!.ticketApplication,
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
+            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
           ),
         ),
         const Spacer(),
@@ -135,7 +142,7 @@ class _ContentDisplayWidgetState extends State<ContentDisplayWidget>
               Icons.refresh,
               color: Colors.grey.shade600,
             ),
-            tooltip: 'Clear selection',
+            tooltip: AppLocalizations.of(context)!.clearSelection,
           ),
       ],
     );
@@ -172,10 +179,10 @@ class _ContentDisplayWidgetState extends State<ContentDisplayWidget>
           const SizedBox(height: 16),
           
           Text(
-            'Select a destination to start booking',
+            AppLocalizations.of(context)!.selectDestinationToStartBooking,
             style: TextStyle(
               fontSize: 18,
-              color: Colors.grey.shade600,
+              color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.grey.shade600,
               fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.center,
@@ -184,10 +191,10 @@ class _ContentDisplayWidgetState extends State<ContentDisplayWidget>
           const SizedBox(height: 8),
           
           Text(
-            'Use the search box above to find trains or attractions',
+            AppLocalizations.of(context)!.useSearchBoxAbove,
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey.shade500,
+              color: Theme.of(context).brightness == Brightness.dark ? Colors.white60 : Colors.grey.shade500,
             ),
             textAlign: TextAlign.center,
           ),
@@ -224,21 +231,23 @@ class _ContentDisplayWidgetState extends State<ContentDisplayWidget>
 
   /// 建立快速選擇建議
   Widget _buildQuickSelections() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     final quickOptions = [
-      {'icon': '🚉', 'name': 'Munich Central', 'type': 'Station'},
-      {'icon': '🏰', 'name': 'Neuschwanstein Castle', 'type': 'Attraction'},
-      {'icon': '🎨', 'name': 'Uffizi Gallery', 'type': 'Attraction'},
+      {'icon': '🚉', 'name': AppLocalizations.of(context)!.munichCentral, 'type': 'Station'},
+      {'icon': '🏰', 'name': AppLocalizations.of(context)!.neuschwansteinCastle, 'type': 'Attraction'},
+      {'icon': '🎨', 'name': AppLocalizations.of(context)!.uffiziGallery, 'type': 'Attraction'},
     ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Popular destinations:',
+          AppLocalizations.of(context)!.popularDestinations,
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: Colors.grey.shade600,
+            color: isDark ? Colors.white70 : Colors.grey.shade600,
           ),
         ),
         const SizedBox(height: 8),
@@ -249,9 +258,11 @@ class _ContentDisplayWidgetState extends State<ContentDisplayWidget>
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
+                color: isDark ? const Color(0xFF2A2A2A) : Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.grey.shade300),
+                border: Border.all(
+                  color: isDark ? Colors.grey.shade600 : Colors.grey.shade300,
+                ),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -265,7 +276,7 @@ class _ContentDisplayWidgetState extends State<ContentDisplayWidget>
                     option['name']!,
                     style: TextStyle(
                       fontSize: 12,
-                      color: Colors.grey.shade700,
+                      color: isDark ? Colors.white70 : Colors.grey.shade700,
                     ),
                   ),
                 ],

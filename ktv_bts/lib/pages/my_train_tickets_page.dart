@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../services/ticket_storage_service.dart';
 import '../models/online_confirmation_response.dart';
 import '../models/online_ticket_response.dart';
@@ -71,7 +72,11 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
+            colors: Theme.of(context).brightness == Brightness.dark ? [
+              const Color(0xFF1A1A2E),
+              const Color(0xFF16213E),
+              const Color(0xFF0F3460),
+            ] : [
               Colors.blue.shade50,
               Colors.purple.shade50,
               Colors.orange.shade50,
@@ -100,9 +105,9 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                const Text(
-                  'My Train Tickets',
-                  style: TextStyle(
+                Text(
+                  AppLocalizations.of(context)!.myTrainTickets,
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
                     color: Colors.white,
@@ -135,7 +140,7 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
                 ),
                 child: IconButton(
                   icon: const Icon(Icons.refresh, color: Colors.white),
-                  tooltip: 'Reload',
+                  tooltip: AppLocalizations.of(context)!.reload,
                   onPressed: _loadTicketData,
                 ),
               ),
@@ -146,11 +151,13 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
                   child: Container(
                     padding: const EdgeInsets.all(40),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.blue.withOpacity(0.1),
+                          color: Theme.of(context).brightness == Brightness.dark 
+                              ? Colors.black.withOpacity(0.3) 
+                              : Colors.blue.withOpacity(0.1),
                           blurRadius: 20,
                           offset: const Offset(0, 8),
                         ),
@@ -174,11 +181,13 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
                         ),
                         const SizedBox(height: 20),
                         Text(
-                          'Loading your tickets...',
+                          AppLocalizations.of(context)!.loadingYourTickets,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: Colors.blue.shade700,
+                            color: Theme.of(context).brightness == Brightness.dark 
+                                ? Colors.blue.shade400 
+                                : Colors.blue.shade700,
                           ),
                         ),
                       ],
@@ -200,17 +209,21 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
         margin: const EdgeInsets.all(20),
         padding: const EdgeInsets.all(40),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.blue.withOpacity(0.1),
+              color: Theme.of(context).brightness == Brightness.dark 
+                  ? Colors.black.withOpacity(0.3) 
+                  : Colors.blue.withOpacity(0.1),
               blurRadius: 20,
               offset: const Offset(0, 8),
             ),
           ],
           border: Border.all(
-            color: Colors.blue.withOpacity(0.1),
+            color: Theme.of(context).brightness == Brightness.dark 
+                ? Colors.blue.withOpacity(0.3) 
+                : Colors.blue.withOpacity(0.1),
             width: 1,
           ),
         ),
@@ -233,19 +246,23 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
             ),
             const SizedBox(height: 24),
             Text(
-              'No Train Tickets Yet',
+              AppLocalizations.of(context)!.noTrainTicketsYet,
               style: TextStyle(
                 fontSize: 24,
-                color: Colors.blue.shade700,
+                color: Theme.of(context).brightness == Brightness.dark 
+                    ? Colors.blue.shade400 
+                    : Colors.blue.shade700,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 12),
             Text(
-              'Train ticket information will be displayed here after purchase',
+              AppLocalizations.of(context)!.trainTicketInfoWillBeDisplayed,
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.grey.shade600,
+                color: Theme.of(context).brightness == Brightness.dark 
+                    ? Colors.white70 
+                    : Colors.grey.shade600,
                 height: 1.4,
               ),
               textAlign: TextAlign.center,
@@ -268,9 +285,9 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
               child: ElevatedButton.icon(
                 onPressed: () => Navigator.pop(context),
                 icon: const Icon(Icons.search, color: Colors.white),
-                label: const Text(
-                  'Search Train Tickets',
-                  style: TextStyle(
+                label: Text(
+                  AppLocalizations.of(context)!.searchTrainTickets,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -366,10 +383,12 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
                       children: [
                         Text(
                           '${order.from.localName} → ${order.to.localName}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                            color: Theme.of(context).brightness == Brightness.dark 
+                                ? Colors.white 
+                                : Colors.black87,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -377,7 +396,9 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
                           'Train ${order.railway.code}',
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.grey.shade600,
+                            color: Theme.of(context).brightness == Brightness.dark 
+                                ? Colors.white70 
+                                : Colors.grey.shade600,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -390,9 +411,9 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
                       color: Colors.green.shade600,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const Text(
-                      'Confirmed',
-                      style: TextStyle(
+                    child: Text(
+                      AppLocalizations.of(context)!.confirmed,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -406,22 +427,28 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
             const SizedBox(height: 20),
             
             // Trip information section
-            _buildSectionHeader('Trip Information', Icons.info_outline),
+            _buildSectionHeader(AppLocalizations.of(context)!.tripInformation, Icons.info_outline),
             const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.grey.shade50,
+                color: Theme.of(context).brightness == Brightness.dark 
+                    ? const Color(0xFF2A2A2A) 
+                    : Colors.grey.shade50,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade200),
+                border: Border.all(
+                  color: Theme.of(context).brightness == Brightness.dark 
+                      ? Colors.grey.shade600 
+                      : Colors.grey.shade200,
+                ),
               ),
               child: Column(
                 children: [
-                  _buildEnhancedInfoRow(Icons.confirmation_number, 'PNR', order.pnr),
+                  _buildEnhancedInfoRow(Icons.confirmation_number, AppLocalizations.of(context)!.pnrLabel, order.pnr),
                   const SizedBox(height: 12),
-                  _buildEnhancedInfoRow(Icons.calendar_today, 'Departure Date', DateFormat('yyyy-MM-dd').format(departureDate)),
+                  _buildEnhancedInfoRow(Icons.calendar_today, AppLocalizations.of(context)!.departureDate, DateFormat('yyyy-MM-dd').format(departureDate)),
                   const SizedBox(height: 12),
-                  _buildEnhancedInfoRow(Icons.access_time, 'Departure Time', DateFormat('HH:mm').format(departureDate)),
+                  _buildEnhancedInfoRow(Icons.access_time, AppLocalizations.of(context)!.departureTime, DateFormat('HH:mm').format(departureDate)),
                 ],
               ),
             ),
@@ -429,15 +456,21 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
             // Seat information
             if (order.reservations.isNotEmpty) ...[
               const SizedBox(height: 20),
-              _buildSectionHeader('Seat Information', Icons.event_seat),
+              _buildSectionHeader(AppLocalizations.of(context)!.seatInformation, Icons.event_seat),
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.blue.shade200),
+              decoration: BoxDecoration(
+                color: Theme.of(context).brightness == Brightness.dark 
+                    ? Colors.blue.shade900.withOpacity(0.3) 
+                    : Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: Theme.of(context).brightness == Brightness.dark 
+                      ? Colors.blue.shade600 
+                      : Colors.blue.shade200,
                 ),
+              ),
                 child: Column(
                   children: order.reservations.asMap().entries.map((entry) {
                     final index = entry.key;
@@ -448,7 +481,7 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
                         _buildEnhancedInfoRow(
                           Icons.train, 
                           reservation.trainName, 
-                          'Car ${reservation.car} Seat ${reservation.seat}'
+                          '${AppLocalizations.of(context)!.car} ${reservation.car} ${AppLocalizations.of(context)!.seat} ${reservation.seat}'
                         ),
                       ],
                     );
@@ -460,15 +493,21 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
             // Passenger information
             if (order.passengers.isNotEmpty) ...[
               const SizedBox(height: 20),
-              _buildSectionHeader('Passenger Information', Icons.person),
+              _buildSectionHeader(AppLocalizations.of(context)!.passengerInformation, Icons.person),
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.green.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.green.shade200),
+              decoration: BoxDecoration(
+                color: Theme.of(context).brightness == Brightness.dark 
+                    ? Colors.green.shade900.withOpacity(0.3) 
+                    : Colors.green.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: Theme.of(context).brightness == Brightness.dark 
+                      ? Colors.green.shade600 
+                      : Colors.green.shade200,
                 ),
+              ),
                 child: Column(
                   children: order.passengers.asMap().entries.map((entry) {
                     final index = entry.key;
@@ -478,7 +517,7 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
                         if (index > 0) const SizedBox(height: 12),
                         _buildEnhancedInfoRow(
                           Icons.person_outline, 
-                          'Passenger', 
+                          AppLocalizations.of(context)!.passenger, 
                           '${passenger.firstName} ${passenger.lastName}'
                         ),
                       ],
@@ -491,7 +530,7 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
             // Ticket files
             if (ticketFiles != null && ticketFiles.tickets.isNotEmpty) ...[
               const SizedBox(height: 20),
-              _buildSectionHeader('Ticket Files', Icons.file_download),
+              _buildSectionHeader(AppLocalizations.of(context)!.ticketFiles, Icons.file_download),
               const SizedBox(height: 12),
               Wrap(
                 spacing: 12,
@@ -505,22 +544,28 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
             // Check-in information
             if (confirmation.ticketCheckIns.isNotEmpty) ...[
               const SizedBox(height: 20),
-              _buildSectionHeader('Check-in Information', Icons.qr_code),
+              _buildSectionHeader(AppLocalizations.of(context)!.checkInInformation, Icons.qr_code),
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.orange.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.orange.shade200),
+              decoration: BoxDecoration(
+                color: Theme.of(context).brightness == Brightness.dark 
+                    ? Colors.orange.shade900.withOpacity(0.3) 
+                    : Colors.orange.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: Theme.of(context).brightness == Brightness.dark 
+                      ? Colors.orange.shade600 
+                      : Colors.orange.shade200,
                 ),
+              ),
                 child: Column(
                   children: confirmation.ticketCheckIns.asMap().entries.map((entry) {
                     final index = entry.key;
                     return Column(
                       children: [
                         if (index > 0) const SizedBox(height: 12),
-                        _buildEnhancedInfoRow(Icons.link, 'Check-in Link', 'Click to view'),
+                        _buildEnhancedInfoRow(Icons.link, AppLocalizations.of(context)!.checkInLink, AppLocalizations.of(context)!.clickToView),
                       ],
                     );
                   }).toList(),
@@ -537,7 +582,7 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
                   child: OutlinedButton.icon(
                     onPressed: () => _showTicketDetails(orderId, confirmation, ticketFiles),
                     icon: const Icon(Icons.info_outline, size: 18),
-                    label: const Text('Details'),
+                    label: Text(AppLocalizations.of(context)!.details),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       side: BorderSide(color: Colors.blue.shade300),
@@ -552,7 +597,7 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
                   child: ElevatedButton.icon(
                     onPressed: () => _shareTicket(orderId, confirmation),
                     icon: const Icon(Icons.share, size: 18),
-                    label: const Text('Share'),
+                    label: Text(AppLocalizations.of(context)!.share),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue.shade600,
                       foregroundColor: Colors.white,
@@ -619,17 +664,21 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
                 label,
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.grey.shade600,
+                  color: Theme.of(context).brightness == Brightness.dark 
+                      ? Colors.white70 
+                      : Colors.grey.shade600,
                   fontWeight: FontWeight.w500,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 value,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+                  color: Theme.of(context).brightness == Brightness.dark 
+                      ? Colors.white 
+                      : Colors.black87,
                 ),
               ),
             ],
@@ -715,7 +764,7 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
             ),
             const SizedBox(width: 8),
             Text(
-              ticket.ticketTypeDisplayName,
+              ticket.isPdfTicket ? AppLocalizations.of(context)!.pdfTicket : AppLocalizations.of(context)!.mobileTicket,
               style: TextStyle(
                 fontSize: 14,
                 color: ticket.isPdfTicket ? Colors.red.shade700 : Colors.blue.shade700,
@@ -751,7 +800,7 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
             ),
             const SizedBox(width: 4),
             Text(
-              ticket.ticketTypeDisplayName,
+              ticket.isPdfTicket ? AppLocalizations.of(context)!.pdfTicket : AppLocalizations.of(context)!.mobileTicket,
               style: TextStyle(
                 fontSize: 12,
                 color: ticket.isPdfTicket ? Colors.red.shade700 : Colors.blue.shade700,
@@ -773,23 +822,23 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Ticket Details'),
+        title: Text(AppLocalizations.of(context)!.ticketDetails),
         content: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Order ID: $orderId'),
-              Text('PNR: ${confirmation.order.pnr}'),
-              Text('Route: ${confirmation.order.from.localName} → ${confirmation.order.to.localName}'),
-              Text('Departure Time: ${confirmation.order.departure}'),
-              Text('Payment Price: ${confirmation.paymentPrice.cents / 100} ${confirmation.paymentPrice.currency}'),
-              Text('Charging Price: ${confirmation.chargingPrice.cents / 100} ${confirmation.chargingPrice.currency}'),
+              Text('${AppLocalizations.of(context)!.orderId}: $orderId'),
+              Text('${AppLocalizations.of(context)!.pnr}: ${confirmation.order.pnr}'),
+              Text('${AppLocalizations.of(context)!.route}: ${confirmation.order.from.localName} → ${confirmation.order.to.localName}'),
+              Text('${AppLocalizations.of(context)!.departureTime}: ${confirmation.order.departure}'),
+              Text('${AppLocalizations.of(context)!.paymentPrice}: ${confirmation.paymentPrice.cents / 100} ${confirmation.paymentPrice.currency}'),
+              Text('${AppLocalizations.of(context)!.chargingPrice}: ${confirmation.chargingPrice.cents / 100} ${confirmation.chargingPrice.currency}'),
               if (ticketFiles != null) ...[
                 const SizedBox(height: 8),
-                const Text('Ticket Files:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('${AppLocalizations.of(context)!.ticketFiles}:', style: const TextStyle(fontWeight: FontWeight.bold)),
                 ...ticketFiles.tickets.map((ticket) => 
-                  Text('• ${ticket.ticketTypeDisplayName}: ${ticket.file}')
+                  Text('• ${ticket.isPdfTicket ? AppLocalizations.of(context)!.pdfTicket : AppLocalizations.of(context)!.mobileTicket}: ${ticket.file}')
                 ),
               ],
             ],
@@ -798,7 +847,7 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            child: Text(AppLocalizations.of(context)!.close),
           ),
         ],
       ),
@@ -818,8 +867,8 @@ Order ID: $orderId
 
     Clipboard.setData(ClipboardData(text: shareText));
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Ticket information copied to clipboard'),
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.ticketInfoCopied),
         backgroundColor: Colors.green,
       ),
     );
@@ -832,13 +881,13 @@ Order ID: $orderId
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(ticket.ticketTypeDisplayName),
+        title: Text(ticket.isPdfTicket ? AppLocalizations.of(context)!.pdfTicket : AppLocalizations.of(context)!.mobileTicket),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('File Type: ${ticket.kind}'),
+            Text('${AppLocalizations.of(context)!.fileType}: ${ticket.kind}'),
             const SizedBox(height: 8),
-            Text('Download Link:'),
+            Text('${AppLocalizations.of(context)!.downloadLink}:'),
             SelectableText(
               ticket.file,
               style: const TextStyle(fontSize: 12),
@@ -848,19 +897,19 @@ Order ID: $orderId
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            child: Text(AppLocalizations.of(context)!.close),
           ),
           ElevatedButton(
             onPressed: () {
               Clipboard.setData(ClipboardData(text: ticket.file));
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Download link copied to clipboard'),
+                SnackBar(
+                  content: Text(AppLocalizations.of(context)!.downloadLinkCopied),
                   backgroundColor: Colors.green,
                 ),
               );
             },
-            child: const Text('Copy Link'),
+            child: Text(AppLocalizations.of(context)!.copyLink),
           ),
         ],
       ),
