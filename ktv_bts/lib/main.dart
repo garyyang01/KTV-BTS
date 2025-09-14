@@ -3,6 +3,7 @@ import 'services/email_service.dart';
 import 'pages/payment_test_page.dart';
 import 'pages/payment_page.dart';
 import 'pages/ticket_booking_page.dart';
+import 'pages/main_page.dart';
 import 'pages/payment_confirmation_page.dart';
 import 'pages/rail_search_test_page.dart';
 import 'models/payment_request.dart';
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const TicketBookingPage(),
+      home: const MainPage(),
       routes: {
         '/payment-test': (context) => const PaymentTestPage(),
         '/payment': (context) {
@@ -41,6 +42,7 @@ class MyApp extends StatelessWidget {
         },
         '/payment-confirmation': (context) => const PaymentConfirmationPage(),
         '/rail-search-test': (context) => const RailSearchTestPage(),
+        '/legacy-ticket-booking': (context) => const TicketBookingPage(),
         '/legacy-landing': (context) => const LandingPage(),
       },
     );
