@@ -48,6 +48,9 @@ dependencies:
   # Email packages
   mailer: ^6.0.1
   enough_mail: ^2.1.6
+  
+  # Local storage
+  shared_preferences: ^2.2.2
   flutter_local_notifications: ^17.2.2
   
   # UI and date formatting packages

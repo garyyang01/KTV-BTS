@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/booking_form.dart';
+import 'my_train_tickets_page.dart';
 
 /// 主要票務預訂頁面
 /// 包含城堡資訊展示和票券預訂表單
@@ -19,6 +20,19 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         elevation: 0,
         actions: [
+          // 我的火車票按鈕
+          IconButton(
+            icon: const Icon(Icons.confirmation_number),
+            tooltip: '我的火車票',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const MyTrainTicketsPage(),
+                ),
+              );
+            },
+          ),
           // 鐵路搜尋測試按鈕
           IconButton(
             icon: const Icon(Icons.train),
