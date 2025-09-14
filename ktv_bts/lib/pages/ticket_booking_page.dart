@@ -18,6 +18,16 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
         title: const Text('Neuschwanstein Castle Tickets'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         elevation: 0,
+        actions: [
+          // 鐵路搜尋測試按鈕
+          IconButton(
+            icon: const Icon(Icons.train),
+            tooltip: '鐵路搜尋測試',
+            onPressed: () {
+              Navigator.pushNamed(context, '/rail-search-test');
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(

@@ -4,6 +4,7 @@ import 'pages/payment_test_page.dart';
 import 'pages/payment_page.dart';
 import 'pages/ticket_booking_page.dart';
 import 'pages/payment_confirmation_page.dart';
+import 'pages/rail_search_test_page.dart';
 import 'models/payment_request.dart';
 
 void main() async {
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
           return PaymentPage(paymentRequest: args);
         },
         '/payment-confirmation': (context) => const PaymentConfirmationPage(),
+        '/rail-search-test': (context) => const RailSearchTestPage(),
         '/legacy-landing': (context) => const LandingPage(),
       },
     );
