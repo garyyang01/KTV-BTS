@@ -535,6 +535,8 @@
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             transition: var(--transition-smooth);
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .form-group input:focus,
@@ -584,8 +586,168 @@
         }
 
         .cheap-highlight {
-            color: var(--forest-green);
+            color: var(--florentine-green);
             font-weight: 600;
+        }
+
+        /* Travel Guide Section */
+        .travel-guide {
+            padding: var(--section-padding);
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .guide-container {
+            background: var(--glass-light);
+            border-radius: var(--border-radius-2xl);
+            padding: 48px;
+            max-width: 1200px;
+            margin: 0 auto;
+            border: 1px solid var(--glass-border-light);
+            box-shadow: 0 20px 60px var(--shadow-medium);
+        }
+
+        .route-info h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            color: var(--text-primary);
+            text-align: center;
+        }
+
+        .route-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 32px;
+        }
+
+        .route-card {
+            background: var(--glass-ultra-light);
+            border: 1px solid var(--glass-border-light);
+            border-radius: var(--border-radius-xl);
+            padding: 24px;
+            transition: var(--transition-smooth);
+        }
+
+        .route-card:hover {
+            background: var(--glass-medium);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px var(--shadow-light);
+        }
+
+        .route-card.highlight {
+            background: linear-gradient(135deg, var(--renaissance-gold) 0%, var(--marble-white) 100%);
+            border: 2px solid var(--tuscan-red);
+        }
+
+        .route-card h4 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .station-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .station-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--glass-light);
+            border-radius: var(--border-radius-md);
+            border: 1px solid var(--glass-border-light);
+        }
+
+        .station-item.intermediate {
+            background: var(--glass-ultra-light);
+            font-style: italic;
+            opacity: 0.8;
+        }
+
+        .station-code {
+            background: var(--tuscan-red);
+            color: var(--text-light);
+            padding: 4px 8px;
+            border-radius: var(--border-radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            font-family: monospace;
+        }
+
+        .station-name {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .route-arrow {
+            text-align: center;
+            font-size: 20px;
+            color: var(--tuscan-red);
+            margin: 4px 0;
+        }
+
+        .route-details,
+        .walking-guide {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .detail-item,
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px;
+            background: var(--glass-ultra-light);
+            border-radius: var(--border-radius-sm);
+            border: 1px solid var(--glass-border-light);
+        }
+
+        .step-number {
+            background: var(--florentine-green);
+            color: var(--text-light);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .icon {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .walking-time {
+            margin-top: 16px;
+            padding: 12px;
+            background: var(--florentine-green);
+            color: var(--text-light);
+            border-radius: var(--border-radius-md);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tip-highlight {
+            margin-top: 16px;
+            padding: 12px;
+            background: var(--tuscan-red);
+            color: var(--text-light);
+            border-radius: var(--border-radius-md);
+            font-weight: 600;
+            text-align: center;
         }
 
         /* Trust Builders */
@@ -803,17 +965,36 @@
             }
 
             .calculator-container,
+            .guide-container,
             .magnet-card {
                 padding: 32px 24px;
             }
 
-            .calculator-form {
+            .calculator-form,
+            .route-grid {
                 grid-template-columns: 1fr;
             }
 
             .features-grid,
             .testimonials-grid {
                 grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media (max-width: 480px) {
+            .guide-container {
+                padding: 24px 16px;
+                margin: 0 8px;
+            }
+
+            .route-card h4 {
+                font-size: 16px;
+            }
+
+            .route-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
             }
         }
 
@@ -881,6 +1062,7 @@
             <div class="nav-center">
                 <ul class="nav-links">
                     <li><a href="#features" data-lang="nav-features">Features</a></li>
+                    <li><a href="#travel-guide" data-lang="nav-travel">Travel Guide</a></li>
                     <li><a href="#calculator" data-lang="nav-pricing">Pricing</a></li>
                     <li><a href="#testimonials" data-lang="nav-reviews">Reviews</a></li>
                     <li><a href="#download" data-lang="nav-download">Download</a></li>
@@ -951,6 +1133,85 @@
                     <div class="feature-icon">🔒</div>
                     <h3 data-lang="feature-3-title">Secure Payment</h3>
                     <p data-lang="feature-3-desc">Your payment information is protected with bank-level security and PCI-DSS compliance.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Travel Guide Section -->
+    <section class="travel-guide" id="travel-guide">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-lang="travel-guide-title">How to Reach Uffizi Galleries by Train</h2>
+                <p data-lang="travel-guide-subtitle">Plan your journey to Florence and visit the world's most famous Renaissance art collection</p>
+            </div>
+            <div class="guide-container">
+                <div class="route-info">
+                    <h3 data-lang="route-info-title">🚂 Train Route Information</h3>
+                    <div class="route-grid">
+                        <div class="route-card">
+                            <h4 data-lang="from-milan-title">From Milan</h4>
+                            <div class="station-list">
+                                <div class="station-item">
+                                    <span class="station-code">ST_L6NN3P6K</span>
+                                    <span class="station-name" data-lang="milan-station">Milano Centrale</span>
+                                </div>
+                                <div class="route-arrow">↓</div>
+                                <div class="station-item intermediate">
+                                    <span class="station-name" data-lang="intermediate-stations">Bologna Centrale (Optional stop)</span>
+                                </div>
+                                <div class="route-arrow">↓</div>
+                                <div class="station-item">
+                                    <span class="station-code">ST_DKRRM9Q4</span>
+                                    <span class="station-name" data-lang="florence-station">Firenze Santa Maria Novella</span>
+                                </div>
+                            </div>
+                            <div class="route-details">
+                                <div class="detail-item">
+                                    <span class="icon">⏱️</span>
+                                    <span data-lang="duration">Journey Time: ~2 hours</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="icon">🚄</span>
+                                    <span data-lang="train-type">High-Speed Trains Available</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="route-card">
+                            <h4 data-lang="from-florence-station-title">From Florence Station to Uffizi</h4>
+                            <div class="walking-guide">
+                                <div class="step-item">
+                                    <span class="step-number">1</span>
+                                    <span data-lang="step-1">Exit Firenze Santa Maria Novella station</span>
+                                </div>
+                                <div class="step-item">
+                                    <span class="step-number">2</span>
+                                    <span data-lang="step-2">Walk towards Via de' Panzani (5 minutes)</span>
+                                </div>
+                                <div class="step-item">
+                                    <span class="step-number">3</span>
+                                    <span data-lang="step-3">Continue to Via dei Cerretani</span>
+                                </div>
+                                <div class="step-item">
+                                    <span class="step-number">4</span>
+                                    <span data-lang="step-4">Head towards Duomo and then to Uffizi Gallery</span>
+                                </div>
+                                <div class="walking-time">
+                                    <span class="icon">🚶‍♂️</span>
+                                    <span data-lang="walking-time">Total walking time: ~15-20 minutes</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="route-card highlight">
+                            <h4 data-lang="booking-tip-title">💡 Pro Tip</h4>
+                            <p data-lang="booking-tip">Book your Uffizi Gallery tickets in advance! The museum is extremely popular and often sells out, especially during peak tourist season (April-October).</p>
+                            <div class="tip-highlight">
+                                <span data-lang="advance-booking">🎫 Advance booking highly recommended</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1131,6 +1392,7 @@
             'en': {
                 'nav-features': 'Features',
                 'nav-pricing': 'Pricing',
+                'nav-trains': 'Trains',
                 'nav-reviews': 'Reviews',
                 'nav-download': 'Download',
                 'nav-cta': 'Download Now',
@@ -1191,7 +1453,26 @@
                 'footer-terms': 'Terms of Service',
                 'footer-contact-title': 'Contact',
                 'footer-chat': 'Live Chat',
-                'footer-rights': 'All rights reserved.'
+                'footer-rights': 'All rights reserved.',
+                'travel-guide-title': 'How to Reach Uffizi Galleries by Train',
+                'travel-guide-subtitle': 'Plan your journey to Florence and visit the world\'s most famous Renaissance art collection',
+                'route-info-title': 'Train Route Information',
+                'from-milan-title': 'From Milan',
+                'milan-station': 'Milano Centrale',
+                'intermediate-stations': 'Bologna Centrale (Optional stop)',
+                'florence-station': 'Firenze Santa Maria Novella',
+                'duration': 'Journey Time: ~2 hours',
+                'train-type': 'High-Speed Trains Available',
+                'from-florence-station-title': 'From Florence Station to Uffizi',
+                'step-1': 'Exit Firenze Santa Maria Novella station',
+                'step-2': 'Walk towards Via de\' Panzani (5 minutes)',
+                'step-3': 'Continue to Via dei Cerretani',
+                'step-4': 'Head towards Duomo and then to Uffizi Gallery',
+                'walking-time': 'Total walking time: ~15-20 minutes',
+                'booking-tip-title': 'Pro Tip',
+                'booking-tip': 'Book your Uffizi Gallery tickets in advance! The museum is extremely popular and often sells out, especially during peak tourist season (April-October).',
+                'advance-booking': 'Advance booking highly recommended',
+                'nav-travel': 'Travel Guide'
             },
             'zh-tw': {
                 'nav-features': '特色',
@@ -1256,7 +1537,26 @@
                 'footer-terms': '服務條款',
                 'footer-contact-title': '聯繫',
                 'footer-chat': '即時聊天',
-                'footer-rights': '版權所有。'
+                'footer-rights': '版權所有。',
+                'travel-guide-title': '如何搭火車前往烏菲齊美術館',
+                'travel-guide-subtitle': '規劃您的佛羅倫薩之行，參觀世界最著名的文藝復興藝術珍藏',
+                'route-info-title': '火車路線資訊',
+                'from-milan-title': '從米蘭出發',
+                'milan-station': '米蘭中央車站',
+                'intermediate-stations': '波隆娘中央車站（可選停靠站）',
+                'florence-station': '佛羅倫薩新圣母大殿車站',
+                'duration': '旅程時間：約 2 小時',
+                'train-type': '可搭乘高速火車',
+                'from-florence-station-title': '從佛羅倫薩車站到烏菲齊美術館',
+                'step-1': '離開佛羅倫薩新圣母大殿車站',
+                'step-2': '向 Via de\' Panzani 方向步行（5分鐘）',
+                'step-3': '繼續到 Via dei Cerretani',
+                'step-4': '往大教堂方向，然後前往烏菲齊美術館',
+                'walking-time': '總步行時間：約15-20分鐘',
+                'booking-tip-title': '專業建議',
+                'booking-tip': '請提前預訂烏菲齊美術館門票！該美術館非常受歡迎，經常售罄，尤其在旅遊旺季（4月-10月）期間。',
+                'advance-booking': '強烈建議提前預訂',
+                'nav-travel': '交通指南'
             },
             'vi': {
                 'nav-features': 'Tính năng',
@@ -1600,8 +1900,19 @@
             document.body.style.background = `linear-gradient(${gradientAngle}deg, #E3F2FD 0%, #BBDEFB 50%, #90CAF9 100%)`;
         }, 100);
 
-        // Initialize calculator and set default language
+        // Add cache-busting parameters to download links
+        function addCacheBuster() {
+            const downloadLinks = document.querySelectorAll('a[href*="releases"], a[href*=".apk"], a[href*=".pdf"]');
+            downloadLinks.forEach(link => {
+                const url = new URL(link.href);
+                url.searchParams.set('v', Math.random().toString(36).substring(7));
+                link.href = url.toString();
+            });
+        }
+
+        // Initialize calculator, add cache busters, and set default language
         calculatePrice();
+        addCacheBuster();
         changeLanguage('en');
     </script>
 </body>
