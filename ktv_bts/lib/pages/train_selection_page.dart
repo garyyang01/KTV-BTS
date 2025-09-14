@@ -7,10 +7,12 @@ import 'payment_page.dart';
 /// 火車班次選擇頁面
 class TrainSelectionPage extends StatefulWidget {
   final List<TrainSolution> solutions;
+  final PaymentRequest? originalTicketRequest; // 原始門票支付請求（用於組合支付）
 
   const TrainSelectionPage({
     super.key,
     required this.solutions,
+    this.originalTicketRequest,
   });
 
   @override
@@ -777,13 +779,25 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
     final offer = solution.offers[selectedOfferIndex!];
     final service = offer.services[selectedServiceIndex!];
     
-    // 創建火車票專用的 PaymentRequest
-    final paymentRequest = PaymentRequest.forTrainTicket(
-      customerName: 'Train Passenger', // 這裡可以從用戶輸入獲取
-      train: train,
-      offer: offer,
-      service: service,
-    );
+    PaymentRequest paymentRequest;
+    
+    if (widget.originalTicketRequest != null) {
+      // 創建組合支付（門票+火車票）的 PaymentRequest
+      paymentRequest = PaymentRequest.forCombinedPayment(
+        originalTicketRequest: widget.originalTicketRequest!,
+        train: train,
+        offer: offer,
+        service: service,
+      );
+    } else {
+      // 創建火車票專用的 PaymentRequest
+      paymentRequest = PaymentRequest.forTrainTicket(
+        customerName: 'Train Passenger', // 這裡可以從用戶輸入獲取
+        train: train,
+        offer: offer,
+        service: service,
+      );
+    }
     
     // 導航到支付頁面
     Navigator.push(
