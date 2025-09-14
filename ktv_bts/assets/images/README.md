@@ -1,16 +1,21 @@
 # Images Assets
 
-This folder contains all image assets used in the KTV-BTS (Neuschwanstein Castle Ticket Booking System) application.
+This folder contains all image assets used in the KTV-BTS (Uffizi Galleries Ticket Booking System) application.
 
 ## Current Images
 
-### `neuschwanstein_castle.png`
-- **Description**: Beautiful panoramic view of Neuschwanstein Castle with lake reflection
+### `uffizi_galleries.png`
+- **Description**: Beautiful view of the Uffizi Galleries building in Florence
 - **Usage**: Hero section background image on the ticket booking page
 - **Dimensions**: Optimized for web display (high resolution)
-- **Source**: High-quality stock photo featuring the castle from Marienbrücke viewpoint
+- **Source**: High-quality photo from Wikimedia Commons
 - **Format**: PNG
 - **Features**: Lossless compression, better quality for detailed images
+
+### `neuschwanstein_castle.png` (Legacy)
+- **Description**: Beautiful panoramic view of Neuschwanstein Castle with lake reflection
+- **Usage**: Previously used for castle ticket booking (now replaced by Uffizi)
+- **Status**: Kept for reference, may be removed in future updates
 
 ## Adding New Images
 

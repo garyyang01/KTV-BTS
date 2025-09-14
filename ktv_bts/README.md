@@ -1,6 +1,6 @@
-# ktv_bts
+# Uffizi Galleries Ticket Booking System
 
-A new Flutter project.
+A Flutter application for booking tickets to the Uffizi Galleries in Florence, Italy.
 
 ## Getting Started
 

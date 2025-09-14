@@ -11,7 +11,7 @@ class PriceDisplay extends StatelessWidget {
   });
 
   /// 計算單張票價
-  int getTicketPrice(bool isAdult) => isAdult ? 19 : 1;
+  int getTicketPrice(bool isAdult) => isAdult ? 24 : 0;
   
   /// 計算總價
   int get totalPrice {
@@ -61,7 +61,7 @@ class PriceDisplay extends StatelessWidget {
                   style: const TextStyle(fontSize: 16),
                 ),
                 Text(
-                  '€${adultCount * 19}',
+                  '€${adultCount * 24}',
                   style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),
               ],
@@ -79,8 +79,8 @@ class PriceDisplay extends StatelessWidget {
                   style: const TextStyle(fontSize: 16),
                 ),
                 Text(
-                  '€${childCount * 1}',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  'Free',
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.green),
                 ),
               ],
             ),

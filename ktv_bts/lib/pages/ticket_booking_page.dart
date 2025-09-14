@@ -15,7 +15,7 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Neuschwanstein Castle Tickets'),
+        title: const Text('Uffizi Galleries Tickets'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         elevation: 0,
       ),
@@ -85,7 +85,7 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.asset(
-                  'assets/images/neuschwanstein_castle.png',
+                  'assets/images/uffizi_galleries.png',
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
@@ -99,13 +99,13 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
-                            Icons.castle,
+                            Icons.museum,
                             size: 80,
                             color: Colors.grey,
                           ),
                           SizedBox(height: 8),
                           Text(
-                            'Neuschwanstein Castle',
+                            'Uffizi Galleries',
                             style: TextStyle(
                               color: Colors.grey,
                               fontSize: 16,
@@ -130,7 +130,7 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
             
             // Main Title
             const Text(
-              'Visit Neuschwanstein Castle – Your Fairytale Awaits',
+              'Visit Uffizi Galleries – Renaissance Art Awaits',
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
@@ -142,7 +142,7 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
             
             // Subtitle
             const Text(
-              'Skip the lines and secure your spot at Germany\'s most magical castle.',
+              'Skip the lines and secure your spot at Florence\'s most prestigious art museum.',
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.black54,

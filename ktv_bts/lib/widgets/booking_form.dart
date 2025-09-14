@@ -155,7 +155,7 @@ class _BookingFormState extends State<BookingForm> {
       final session = ticket['selectedSession'] as String;
       final selectedDate = ticket['selectedDate'] as DateTime;
       final arrivalTime = DateFormat('yyyy-MM-dd').format(selectedDate);
-      final price = isAdult ? 19.0 : 1.0; // 成人19歐元，兒童1歐元
+      final price = isAdult ? 24.0 : 0.0; // 成人24歐元，兒童免費
       
       ticketInfoList.add(TicketInfo(
         familyName: familyName,
@@ -298,7 +298,7 @@ class _BookingFormState extends State<BookingForm> {
             child: Column(
               children: [
                 RadioListTile<bool>(
-                  title: const Text('Adult (19 EUR)'),
+                  title: const Text('Adult (24 EUR)'),
                   subtitle: const Text('18 years and above'),
                   value: true,
                   groupValue: ticket['isAdult'],
@@ -309,7 +309,7 @@ class _BookingFormState extends State<BookingForm> {
                   },
                 ),
                 RadioListTile<bool>(
-                  title: const Text('Under 18 (1 EUR)'),
+                  title: const Text('Under 18 (Free)'),
                   subtitle: const Text('Under 18 years old'),
                   value: false,
                   groupValue: ticket['isAdult'],

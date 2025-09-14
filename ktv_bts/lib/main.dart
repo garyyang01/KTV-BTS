@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Neuschwanstein Castle Tickets',
+      title: 'Uffizi Galleries Tickets',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
@@ -69,7 +69,7 @@ class _LandingPageState extends State<LandingPage> {
       isAdult: _isAdult,
       time: _selectedTime,
       currency: 'EUR',
-      description: '新天鵝堡門票 - $_selectedTime 時段',
+      description: 'Uffizi Galleries Ticket - $_selectedTime Session',
     );
 
     // 導航到支付頁面
@@ -89,7 +89,7 @@ class _LandingPageState extends State<LandingPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('新天鵝堡門票系統'),
+        title: const Text('Uffizi Galleries Tickets'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -100,7 +100,7 @@ class _LandingPageState extends State<LandingPage> {
             children: <Widget>[
               const Center(
                 child: Icon(
-                  Icons.castle,
+                  Icons.museum,
                   size: 80,
                   color: Colors.purple,
                 ),
@@ -108,7 +108,7 @@ class _LandingPageState extends State<LandingPage> {
               const SizedBox(height: 20),
               const Center(
                 child: Text(
-                  '新天鵝堡門票申請',
+                  'Uffizi Galleries Tickets',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
               ),
@@ -118,13 +118,13 @@ class _LandingPageState extends State<LandingPage> {
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(
-                  labelText: '姓名（必須與護照相同）',
+                  labelText: 'Name (must match passport)',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.person),
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return '請輸入姓名';
+                    return 'Please enter your name';
                   }
                   return null;
                 },
@@ -132,13 +132,13 @@ class _LandingPageState extends State<LandingPage> {
               const SizedBox(height: 20),
 
               // 成人/兒童選擇
-              const Text('票種選擇', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              const Text('Ticket Type', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               const SizedBox(height: 10),
               Row(
                 children: [
                   Expanded(
                     child: RadioListTile<bool>(
-                      title: const Text('成人票'),
+                      title: const Text('Adult'),
                       value: true,
                       groupValue: _isAdult,
                       onChanged: (bool? value) {
@@ -150,7 +150,7 @@ class _LandingPageState extends State<LandingPage> {
                   ),
                   Expanded(
                     child: RadioListTile<bool>(
-                      title: const Text('兒童票'),
+                      title: const Text('Under 18'),
                       value: false,
                       groupValue: _isAdult,
                       onChanged: (bool? value) {
@@ -165,7 +165,7 @@ class _LandingPageState extends State<LandingPage> {
               const SizedBox(height: 20),
 
               // 時間選擇
-              const Text('時間選擇', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              const Text('Time Selection', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               const SizedBox(height: 10),
               DropdownButtonFormField<String>(
                 value: _selectedTime,
@@ -193,7 +193,7 @@ class _LandingPageState extends State<LandingPage> {
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 50),
                 ),
-                child: const Text('申請門票', style: TextStyle(fontSize: 18)),
+                child: const Text('Book Tickets', style: TextStyle(fontSize: 18)),
               ),
               const SizedBox(height: 16),
               OutlinedButton(
@@ -201,7 +201,7 @@ class _LandingPageState extends State<LandingPage> {
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 50),
                 ),
-                child: const Text('🧪 開發者測試頁面', style: TextStyle(fontSize: 16)),
+                child: const Text('🧪 Developer Test Page', style: TextStyle(fontSize: 16)),
               ),
             ],
           ),
