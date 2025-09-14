@@ -90,7 +90,11 @@ class PaymentRequest {
     String? passengerGender,
   }) {
     final amount = service.price.cents / 100.0; // 將 cents 轉換為 EUR
-    final description = '火車票 - ${train.number} (慕尼黑 → 福森)';
+    
+    // 根據火車路線動態生成描述
+    final fromStation = train.from.localName;
+    final toStation = train.to.localName;
+    final description = 'Train Ticket - ${train.number} ($fromStation → $toStation)';
     
     // Debug: Print train ticket price details
     print('🚄 Train Ticket PaymentRequest Creation:');
@@ -99,6 +103,7 @@ class PaymentRequest {
     print('  - service.price.formattedPrice: ${service.price.formattedPrice}');
     print('  - calculated amount: $amount');
     print('  - train.number: ${train.number}');
+    print('  - train route: $fromStation → $toStation');
     print('  - offer.description: ${offer.description}');
     print('  - service.description: ${service.description}');
     
@@ -142,12 +147,28 @@ class PaymentRequest {
     final trainAmount = service.price.cents / 100.0;
     final totalAmount = originalTicketRequest.amount + trainAmount;
     
-    final description = '新天鵝堡門票 + 火車票 - ${train.number} (慕尼黑 → 福森)';
+    // 根據景點和火車路線動態生成描述
+    String attractionName;
+    String trainRoute;
+    
+    // 從原始門票請求的描述中判斷景點
+    final originalDescription = originalTicketRequest.description ?? '';
+    if (originalDescription.contains('Uffizi Gallery')) {
+      attractionName = 'Uffizi Gallery';
+      trainRoute = 'Milano Centrale → Florence SMN';
+    } else {
+      attractionName = 'Neuschwanstein Castle';
+      trainRoute = 'Munich → Füssen';
+    }
+    
+    final description = '$attractionName Ticket + Train Ticket - ${train.number} ($trainRoute)';
     
     print('🎫🚄 Combined PaymentRequest Creation:');
     print('  - Original ticket amount: ${originalTicketRequest.amount}');
     print('  - Train ticket amount: $trainAmount');
     print('  - Total amount: $totalAmount');
+    print('  - Attraction: $attractionName');
+    print('  - Train route: $trainRoute');
     
     return PaymentRequest(
       customerName: customerName ?? originalTicketRequest.customerName,
