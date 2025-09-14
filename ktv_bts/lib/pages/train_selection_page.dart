@@ -61,108 +61,224 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('🚄 Select Train Schedule'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.all(16),
-                children: [
-                  // Passenger Information Form
-                  _buildPassengerInfoForm(),
-                  const SizedBox(height: 16),
-                  
-                  // Train Schedule Selection
-                  ...widget.solutions.asMap().entries.map((entry) {
-                    final index = entry.key;
-                    final solution = entry.value;
-                    return _buildSolutionCard(solution, index);
-                  }).toList(),
-                ],
-              ),
-            ),
-            
-            // Confirm Button
-            Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.3),
-                  spreadRadius: 1,
-                  blurRadius: 5,
-                  offset: const Offset(0, -3),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.blue.shade50,
+              Colors.purple.shade50,
+              Colors.orange.shade50,
+            ],
+            stops: const [0.0, 0.5, 1.0],
+          ),
+        ),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.blue.shade400, Colors.purple.shade400],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.train,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                const Text(
+                  'Select Train Schedule',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.white,
+                  ),
                 ),
               ],
             ),
-            child: SafeArea(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (selectedSolutionIndex != null && selectedTrainIndex != null && selectedServiceIndex != null)
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: Theme.of(context).primaryColor.withOpacity(0.3),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.check_circle,
-                            color: Theme.of(context).primaryColor,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              'Selected: ${widget.solutions[selectedSolutionIndex!].trains[selectedTrainIndex!].number} - ${widget.solutions[selectedSolutionIndex!].offers[selectedOfferIndex!].services[selectedServiceIndex!].description}',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: Theme.of(context).primaryColor,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: _canProceed() ? _confirmSelection : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).primaryColor,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: Text(
-                        _canProceed() ? 'Confirm Selection' : 'Please select train and fare',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            centerTitle: true,
+            flexibleSpace: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.blue.shade600,
+                    Colors.purple.shade600,
+                    Colors.orange.shade600,
+                  ],
+                ),
               ),
             ),
           ),
-          ],
+          body: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView(
+                    padding: const EdgeInsets.all(16),
+                    children: [
+                      // Passenger Information Form
+                      _buildPassengerInfoForm(),
+                      const SizedBox(height: 20),
+                      
+                      // Train Schedule Selection
+                      ...widget.solutions.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final solution = entry.value;
+                        return _buildSolutionCard(solution, index);
+                      }).toList(),
+                    ],
+                  ),
+                ),
+                
+                // Confirm Button
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.white.withOpacity(0.95),
+                        Colors.blue.shade50.withOpacity(0.9),
+                      ],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.blue.withOpacity(0.1),
+                        blurRadius: 20,
+                        offset: const Offset(0, -5),
+                      ),
+                    ],
+                    border: Border(
+                      top: BorderSide(
+                        color: Colors.blue.withOpacity(0.1),
+                        width: 1,
+                      ),
+                    ),
+                  ),
+                  child: SafeArea(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (selectedSolutionIndex != null && selectedTrainIndex != null && selectedServiceIndex != null)
+                          Container(
+                            margin: const EdgeInsets.only(bottom: 16),
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [Colors.green.shade50, Colors.blue.shade50],
+                              ),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: Colors.green.withOpacity(0.3),
+                                width: 2,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.green.withOpacity(0.1),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.green.shade600,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: const Icon(
+                                    Icons.check_circle,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Selected Train',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey.shade600,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        '${widget.solutions[selectedSolutionIndex!].trains[selectedTrainIndex!].number} - ${widget.solutions[selectedSolutionIndex!].offers[selectedOfferIndex!].services[selectedServiceIndex!].description}',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.green.shade700,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: _canProceed() ? _confirmSelection : null,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: _canProceed() 
+                                  ? Colors.blue.shade600 
+                                  : Colors.grey.shade400,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 18),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              elevation: _canProceed() ? 4 : 0,
+                              shadowColor: Colors.blue.withOpacity(0.3),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                if (_canProceed()) ...[
+                                  const Icon(Icons.confirmation_number, size: 20),
+                                  const SizedBox(width: 8),
+                                ],
+                                Text(
+                                  _canProceed() ? 'Confirm Selection' : 'Please select train and fare',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -826,21 +942,64 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
 
   /// Build Passenger Information Form
   Widget _buildPassengerInfoForm() {
-    return Card(
-      elevation: 2,
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.blue.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+        border: Border.all(
+          color: Colors.blue.withOpacity(0.1),
+          width: 1,
+        ),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              '👤 Passenger Information',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.blue.shade50, Colors.purple.shade50],
+                ),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.blue.shade400, Colors.purple.shade400],
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.person,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'Passenger Information',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             
             // Name Fields
             Row(
@@ -848,9 +1007,24 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
                 Expanded(
                   child: TextFormField(
                     controller: _firstNameController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'First Name *',
-                      border: OutlineInputBorder(),
+                      labelStyle: TextStyle(color: Colors.grey.shade600),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.blue.shade400, width: 2),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey.shade50,
+                      prefixIcon: Icon(Icons.person_outline, color: Colors.blue.shade400),
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
@@ -864,9 +1038,24 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
                 Expanded(
                   child: TextFormField(
                     controller: _lastNameController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Last Name *',
-                      border: OutlineInputBorder(),
+                      labelStyle: TextStyle(color: Colors.grey.shade600),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.blue.shade400, width: 2),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey.shade50,
+                      prefixIcon: Icon(Icons.person_outline, color: Colors.blue.shade400),
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
@@ -883,9 +1072,24 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
             // Contact Information
             TextFormField(
               controller: _emailController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Email *',
-                border: OutlineInputBorder(),
+                labelStyle: TextStyle(color: Colors.grey.shade600),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.blue.shade400, width: 2),
+                ),
+                filled: true,
+                fillColor: Colors.grey.shade50,
+                prefixIcon: Icon(Icons.email_outlined, color: Colors.blue.shade400),
               ),
               keyboardType: TextInputType.emailAddress,
               validator: (value) {
@@ -902,9 +1106,24 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
             
             TextFormField(
               controller: _phoneController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Phone Number *',
-                border: OutlineInputBorder(),
+                labelStyle: TextStyle(color: Colors.grey.shade600),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.blue.shade400, width: 2),
+                ),
+                filled: true,
+                fillColor: Colors.grey.shade50,
+                prefixIcon: Icon(Icons.phone_outlined, color: Colors.blue.shade400),
               ),
               keyboardType: TextInputType.phone,
               validator: (value) {
@@ -922,9 +1141,24 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
                 Expanded(
                   child: TextFormField(
                     controller: _passportController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Passport Number *',
-                      border: OutlineInputBorder(),
+                      labelStyle: TextStyle(color: Colors.grey.shade600),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.blue.shade400, width: 2),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey.shade50,
+                      prefixIcon: Icon(Icons.badge_outlined, color: Colors.blue.shade400),
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
@@ -938,9 +1172,24 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
                 Expanded(
                   child: TextFormField(
                     controller: _birthdateController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Birthdate (YYYY-MM-DD) *',
-                      border: OutlineInputBorder(),
+                      labelStyle: TextStyle(color: Colors.grey.shade600),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.blue.shade400, width: 2),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey.shade50,
+                      prefixIcon: Icon(Icons.calendar_today_outlined, color: Colors.blue.shade400),
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
@@ -960,9 +1209,24 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
             // Gender Selection
             DropdownButtonFormField<String>(
               value: _selectedGender,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Gender *',
-                border: OutlineInputBorder(),
+                labelStyle: TextStyle(color: Colors.grey.shade600),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.blue.shade400, width: 2),
+                ),
+                filled: true,
+                fillColor: Colors.grey.shade50,
+                prefixIcon: Icon(Icons.person_outline, color: Colors.blue.shade400),
               ),
               items: const [
                 DropdownMenuItem(value: 'male', child: Text('Male')),

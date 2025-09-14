@@ -71,9 +71,9 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
   void _clearSelection() {
     setState(() {
       _selectedOption = null;
-      _textEditingController.clear();
-      _updateSearchResults('');
     });
+    _textEditingController.clear();
+    _updateSearchResults('');
     widget.onSelectionChanged(null);
   }
 
@@ -132,31 +132,32 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                 ),
                 
                 // 後綴圖標
-                suffixIcon: _selectedOption != null
+                suffixIcon: (_selectedOption != null || _textEditingController.text.isNotEmpty)
                     ? Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           // 選中狀態指示器
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            margin: const EdgeInsets.only(right: 8),
-                            decoration: BoxDecoration(
-                              color: _selectedOption!.type == SearchOptionType.station
-                                  ? Colors.blue.shade100
-                                  : Colors.orange.shade100,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              _selectedOption!.type == SearchOptionType.station ? 'Station' : 'Attraction',
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w500,
+                          if (_selectedOption != null)
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              margin: const EdgeInsets.only(right: 8),
+                              decoration: BoxDecoration(
                                 color: _selectedOption!.type == SearchOptionType.station
-                                    ? Colors.blue.shade700
-                                    : Colors.orange.shade700,
+                                    ? Colors.blue.shade100
+                                    : Colors.orange.shade100,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                _selectedOption!.type == SearchOptionType.station ? 'Station' : 'Attraction',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w500,
+                                  color: _selectedOption!.type == SearchOptionType.station
+                                      ? Colors.blue.shade700
+                                      : Colors.orange.shade700,
+                                ),
                               ),
                             ),
-                          ),
                           // 清除按鈕
                           IconButton(
                             icon: const Icon(Icons.clear, color: Colors.grey),
@@ -169,7 +170,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                 
                 // 邊框樣式
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide.none,
                 ),
                 
@@ -177,7 +178,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                 filled: true,
                 fillColor: _selectedOption != null 
                     ? Colors.green.shade50 
-                    : Colors.grey.shade100,
+                    : Colors.white,
                 
                 // 內邊距
                 contentPadding: const EdgeInsets.symmetric(
@@ -187,12 +188,29 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                 
                 // 焦點邊框
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide(
                     color: _selectedOption != null 
                         ? Colors.green.shade400 
                         : Colors.blue.shade400,
                     width: 2,
+                  ),
+                ),
+                
+                // 錯誤邊框
+                errorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(color: Colors.red.shade400, width: 2),
+                ),
+                
+                // 啟用邊框
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(
+                    color: _selectedOption != null 
+                        ? Colors.green.shade300 
+                        : Colors.grey.shade300,
+                    width: 1,
                   ),
                 ),
               ),
@@ -239,41 +257,48 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
     AutocompleteOnSelected<SearchOption> onSelected,
     List<SearchOption> options,
   ) {
-    return Align(
-      alignment: Alignment.topLeft,
-      child: Material(
-        elevation: 8.0,
-        borderRadius: BorderRadius.circular(12),
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxHeight: 300,
-            maxWidth: MediaQuery.of(context).size.width - 32,
+    return Material(
+      elevation: 12.0,
+      borderRadius: BorderRadius.circular(20),
+      shadowColor: Colors.blue.withOpacity(0.2),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: Colors.blue.withOpacity(0.1),
+            width: 1,
           ),
-          child: options.isEmpty
-              ? _buildNoResultsView()
-              : ListView.separated(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  shrinkWrap: true,
-                  itemCount: options.length,
-                  separatorBuilder: (context, index) => Divider(
-                    height: 1,
-                    color: Colors.grey.shade200,
-                  ),
-                  itemBuilder: (context, index) {
-                    final option = options[index];
-                    final searchResult = _searchResults.firstWhere(
-                      (result) => result.option.id == option.id,
-                      orElse: () => SearchResult(
-                        option: option,
-                        matchingKeywords: [],
-                        relevanceScore: 0.0,
-                      ),
-                    );
-                    
-                    return _buildOptionTile(option, searchResult, onSelected);
-                  },
-                ),
         ),
+        constraints: BoxConstraints(
+          maxHeight: 350,
+          maxWidth: MediaQuery.of(context).size.width - 16,
+        ),
+        child: options.isEmpty
+            ? _buildNoResultsView()
+            : ListView.separated(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shrinkWrap: true,
+                itemCount: options.length,
+                separatorBuilder: (context, index) => Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  height: 1,
+                  color: Colors.grey.shade200,
+                ),
+                itemBuilder: (context, index) {
+                  final option = options[index];
+                  final searchResult = _searchResults.firstWhere(
+                    (result) => result.option.id == option.id,
+                    orElse: () => SearchResult(
+                      option: option,
+                      matchingKeywords: [],
+                      relevanceScore: 0.0,
+                    ),
+                  );
+                  
+                  return _buildOptionTile(option, searchResult, onSelected);
+                },
+              ),
       ),
     );
   }
@@ -286,24 +311,46 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
   ) {
     return InkWell(
       onTap: () => onSelected(option),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade50,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: Colors.grey.shade200,
+            width: 1,
+          ),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // 主要信息行
             Row(
               children: [
-                // 圖標
-                Text(
-                  option.icon,
-                  style: const TextStyle(fontSize: 20),
+                // 圖標容器
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: option.type == SearchOptionType.station
+                          ? [Colors.blue.shade400, Colors.blue.shade600]
+                          : [Colors.orange.shade400, Colors.orange.shade600],
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    option.icon,
+                    style: const TextStyle(fontSize: 18, color: Colors.white),
+                  ),
                 ),
                 
                 const SizedBox(width: 12),
                 
                 // 名稱和描述
                 Expanded(
+                  flex: 3,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -314,39 +361,55 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                           fontSize: 16,
                           color: Colors.black87,
                         ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                       ),
                       
-                      const SizedBox(height: 2),
+                      const SizedBox(height: 4),
                       
                       Text(
                         option.description,
                         style: TextStyle(
                           fontSize: 13,
                           color: Colors.grey.shade600,
+                          height: 1.2,
                         ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
                       ),
                     ],
                   ),
                 ),
                 
+                const SizedBox(width: 8),
+                
                 // 類型標籤
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  constraints: const BoxConstraints(minWidth: 80),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
-                    color: option.type == SearchOptionType.station
-                        ? Colors.blue.shade100
-                        : Colors.orange.shade100,
-                    borderRadius: BorderRadius.circular(6),
+                    gradient: LinearGradient(
+                      colors: option.type == SearchOptionType.station
+                          ? [Colors.blue.shade100, Colors.blue.shade200]
+                          : [Colors.orange.shade100, Colors.orange.shade200],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: option.type == SearchOptionType.station
+                          ? Colors.blue.shade300
+                          : Colors.orange.shade300,
+                    ),
                   ),
                   child: Text(
                     option.type == SearchOptionType.station ? 'Station' : 'Attraction',
                     style: TextStyle(
-                      fontSize: 11,
+                      fontSize: 12,
                       color: option.type == SearchOptionType.station
                           ? Colors.blue.shade800
                           : Colors.orange.shade800,
                       fontWeight: FontWeight.w600,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ],
@@ -397,24 +460,33 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
   /// 建立無結果視圖
   Widget _buildNoResultsView() {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(32),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            Icons.search_off,
-            size: 48,
-            color: Colors.grey.shade400,
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.grey.shade100, Colors.grey.shade200],
+              ),
+              borderRadius: BorderRadius.circular(50),
+            ),
+            child: Icon(
+              Icons.search_off,
+              size: 40,
+              color: Colors.grey.shade500,
+            ),
           ),
           
-          const SizedBox(height: 12),
+          const SizedBox(height: 20),
           
           Text(
             'No destinations found',
             style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey.shade600,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey.shade700,
             ),
           ),
           
@@ -424,19 +496,55 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
             'Try searching with different keywords',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey.shade500,
+              color: Colors.grey.shade600,
+              height: 1.3,
             ),
+            textAlign: TextAlign.center,
           ),
           
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           
           // 建議關鍵字
-          Text(
-            'Try: Munich, Florence, Castle, Gallery',
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.blue.shade600,
-              fontStyle: FontStyle.italic,
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.blue.shade50,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.blue.shade200),
+            ),
+            child: Column(
+              children: [
+                Text(
+                  'Try these popular destinations:',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.blue.shade700,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 4,
+                  children: ['Munich', 'Florence', 'Castle', 'Gallery'].map((keyword) {
+                    return Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.shade100,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        keyword,
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.blue.shade700,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
             ),
           ),
         ],
