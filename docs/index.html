@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Uffizi Galleries Ticket App</title>
+    <title>Ticketrip - ALL About Travel Ticket</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -386,6 +386,84 @@
             background: var(--glass-medium);
             transform: translateY(-3px) scale(1.02);
             box-shadow: 0 12px 32px var(--shadow-light);
+        }
+
+        /* Tour Packages */
+        .tour-packages {
+            padding: var(--section-padding);
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .packages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 32px;
+            margin-top: 64px;
+        }
+
+        .package-card {
+            background: var(--glass-light);
+            border-radius: var(--border-radius-xl);
+            overflow: hidden;
+            transition: var(--transition-smooth);
+            border: 1px solid var(--glass-border-light);
+            position: relative;
+        }
+
+        .package-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            background: var(--glass-medium);
+            box-shadow: 0 24px 64px var(--shadow-medium);
+        }
+
+        .package-image {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .package-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition-smooth);
+        }
+
+        .package-card:hover .package-image img {
+            transform: scale(1.1);
+        }
+
+        .package-content {
+            padding: 24px;
+        }
+
+        .package-location {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--tuscan-red);
+            margin-bottom: 12px;
+        }
+
+        .package-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+
+        .package-card p {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .package-price {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--florentine-green);
+            text-align: right;
         }
 
         /* Value Proposition */
@@ -1055,14 +1133,14 @@
     <header class="header" id="header">
         <nav class="nav container">
             <a href="#" class="logo">
-                <span>🎨</span>
-                <span>Uffizi Galleries Ticket App</span>
+                <img src="./logo.png" alt="Ticketrip Logo" style="width: 32px; height: 32px; border-radius: 8px;" />
+                <span>Ticketrip - ALL About Travel Ticket</span>
             </a>
 
             <div class="nav-center">
                 <ul class="nav-links">
                     <li><a href="#features" data-lang="nav-features">Features</a></li>
-                    <li><a href="#travel-guide" data-lang="nav-travel">Travel Guide</a></li>
+                    <li><a href="#packages" data-lang="nav-packages">Tours</a></li>
                     <li><a href="#calculator" data-lang="nav-pricing">Pricing</a></li>
                     <li><a href="#testimonials" data-lang="nav-reviews">Reviews</a></li>
                     <li><a href="#download" data-lang="nav-download">Download</a></li>
@@ -1083,7 +1161,7 @@
                 </div>
             </div>
 
-            <a href="#download" class="cta-button" data-lang="nav-cta">Download Now</a>
+            <a href="https://github.com/garyyang01/KTV-BTS/releases/download/APP/app-release.apk" class="cta-button" data-lang="nav-cta">Download Now</a>
         </nav>
     </header>
 
@@ -1091,21 +1169,11 @@
     <section class="hero">
         <div class="container">
             <div class="hero-content">
-                <h1 class="fade-in-up" data-lang="hero-title">Experience the Renaissance Art at Uffizi Galleries</h1>
-                <p class="hero-subtitle fade-in-up stagger-1" data-lang="hero-subtitle">The most convenient way to book your Uffizi Galleries tickets.<br>Children enter free - adults just €24!</p>
+                <h1 class="fade-in-up" data-lang="hero-title">Travel at Ease!</h1>
+                <p class="hero-subtitle fade-in-up stagger-1" data-lang="hero-subtitle">Your one-stop platform for European travel tickets and experiences.<br>Book trains, attractions, and tours with ease!</p>
                 <div class="hero-buttons fade-in-up stagger-2">
                     <a href="#calculator" class="hero-button primary-button" data-lang="hero-calc">Calculate Price</a>
                     <a href="#features" class="hero-button secondary-button" data-lang="hero-learn">Learn More</a>
-                </div>
-                <div class="download-section fade-in-up stagger-3">
-                    <a href="https://github.com/garyyang01/KTV-BTS/releases/download/APP/app-release.apk" class="download-link">
-                        <span>📱</span>
-                        <span data-lang="download-app">Download App</span>
-                    </a>
-                    <a href="https://github.com/garyyang01/KTV-BTS/releases" class="download-link">
-                        <span>📋</span>
-                        <span data-lang="view-releases">View All Releases</span>
-                    </a>
                 </div>
             </div>
         </div>
@@ -1115,24 +1183,102 @@
     <section class="value-prop" id="features">
         <div class="container">
             <div class="section-header">
-                <h2 data-lang="features-title">Why Choose Our App?</h2>
-                <p data-lang="features-subtitle">Fast, secure, and the most affordable way to visit Uffizi Galleries</p>
+                <h2 data-lang="features-title">Why Choose Ticketrip?</h2>
+                <p data-lang="features-subtitle">Fast, secure, and the most affordable way to book your European travel experiences</p>
             </div>
             <div class="features-grid">
                 <div class="feature-card fade-in-up">
                     <div class="feature-icon">💰</div>
-                    <h3 data-lang="feature-1-title">Cheapest Prices</h3>
-                    <p data-lang="feature-1-desc">Children enter completely free! Adults pay just €24 - competitive pricing for world-class Renaissance art.</p>
+                    <h3 data-lang="feature-1-title">Best Prices</h3>
+                    <p data-lang="feature-1-desc">Compare prices across multiple providers to find the best deals on trains, attractions, and tours throughout Europe.</p>
                 </div>
                 <div class="feature-card fade-in-up stagger-1">
                     <div class="feature-icon">⚡</div>
-                    <h3 data-lang="feature-2-title">Instant Confirmation</h3>
-                    <p data-lang="feature-2-desc">Get immediate booking confirmation with your tickets delivered instantly to your phone.</p>
+                    <h3 data-lang="feature-2-title">Instant Booking</h3>
+                    <p data-lang="feature-2-desc">Book trains, attractions, and experiences instantly with immediate confirmation and mobile tickets.</p>
                 </div>
                 <div class="feature-card fade-in-up stagger-2">
-                    <div class="feature-icon">🔒</div>
-                    <h3 data-lang="feature-3-title">Secure Payment</h3>
-                    <p data-lang="feature-3-desc">Your payment information is protected with bank-level security and PCI-DSS compliance.</p>
+                    <div class="feature-icon">🚄</div>
+                    <h3 data-lang="feature-3-title">Seamless Travel</h3>
+                    <p data-lang="feature-3-desc">Plan your entire European journey with integrated train bookings, attraction tickets, and local experiences.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tour Packages Section -->
+    <section class="tour-packages" id="packages">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-lang="packages-title">Popular Tour Packages</h2>
+                <p data-lang="packages-subtitle">Discover amazing travel experiences across Europe</p>
+            </div>
+            <div class="packages-grid">
+                <div class="package-card fade-in-up">
+                    <div class="package-image">
+                        <img src="https://sematicweb.detie.cn/content/W__37747155.jpg" alt="Rome Tour" />
+                    </div>
+                    <div class="package-content">
+                        <div class="package-location">🇮🇹 Venice</div>
+                        <h3>Rome Independent Tour from Venice by High-Speed Train</h3>
+                        <p>A new Sightseeing tour with daily departure from Venice by round trip high speed train. Includes ticket to hop-op hop-off bus and a tour of the Vatican and Sistine Chapel with an expert guide.</p>
+                        <div class="package-price">€232</div>
+                    </div>
+                </div>
+                <div class="package-card fade-in-up stagger-1">
+                    <div class="package-image">
+                        <img src="https://sematicweb.detie.cn/content/W__27626748.jpg" alt="Milan Turin Tour" />
+                    </div>
+                    <div class="package-content">
+                        <div class="package-location">🇮🇹 Turin</div>
+                        <h3>Milan Super Saver: Turin and Milan One-Day Highlights Tour</h3>
+                        <p>Visit two of northern Italy's top cities in a single day. From Milan, travel to Turin by high-speed train, and see sights such as Piazza San Carlo. Includes chocolate and gelato tasting.</p>
+                        <div class="package-price">€155</div>
+                    </div>
+                </div>
+                <div class="package-card fade-in-up stagger-2">
+                    <div class="package-image">
+                        <img src="https://sematicweb.detie.cn/content/W__102809767.jpg" alt="Chartres Cathedral Tour" />
+                    </div>
+                    <div class="package-content">
+                        <div class="package-location">🇫🇷 Chartres</div>
+                        <h3>Chartres and Its Cathedral: 5-Hour Tour from Paris</h3>
+                        <p>Visit the town of Chartres with a private driver and guide. The main attraction is Chartres Cathedral, a UNESCO World Heritage site famous for its French Gothic architecture.</p>
+                        <div class="package-price">€131</div>
+                    </div>
+                </div>
+                <div class="package-card fade-in-up">
+                    <div class="package-image">
+                        <img src="https://sematicweb.detie.cn/content/W__107643576.jpg" alt="London Theater" />
+                    </div>
+                    <div class="package-content">
+                        <div class="package-location">🇬🇧 London</div>
+                        <h3>The Mousetrap Theater Show in London</h3>
+                        <p>Be part of theater history with a ticket to 'The Mousetrap' at St Martin's Theatre. Based on Agatha Christie's story, this murder mystery has been running for over 60 years.</p>
+                        <div class="package-price">€70</div>
+                    </div>
+                </div>
+                <div class="package-card fade-in-up stagger-1">
+                    <div class="package-image">
+                        <img src="https://sematicweb.detie.cn/content/N__313349354.jpg" alt="London Rock Tour" />
+                    </div>
+                    <div class="package-content">
+                        <div class="package-location">🇬🇧 London</div>
+                        <h3>London Rock Music Bohemian Soho and North London Tour</h3>
+                        <p>Hit the bohemian neighborhoods including Soho and Camden Town as you delve into the city's rock 'n' roll past. Features The Beatles, Madness, The Clash and Jimmy Page.</p>
+                        <div class="package-price">€41</div>
+                    </div>
+                </div>
+                <div class="package-card fade-in-up stagger-2">
+                    <div class="package-image">
+                        <img src="https://sematicweb.detie.cn/content/N__353640561.jpg" alt="DDR Museum Berlin" />
+                    </div>
+                    <div class="package-content">
+                        <div class="package-location">🇩🇪 Berlin</div>
+                        <h3>Skip the line: DDR Museum Berlin</h3>
+                        <p>Experience life in socialist East Germany with a trip to Berlin's award-winning DDR Museum. Interactive exhibits include authentic Trabi car and replicated East German apartment.</p>
+                        <div class="package-price">€12</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1142,12 +1288,12 @@
     <section class="travel-guide" id="travel-guide">
         <div class="container">
             <div class="section-header">
-                <h2 data-lang="travel-guide-title">How to Reach Uffizi Galleries by Train</h2>
-                <p data-lang="travel-guide-subtitle">Plan your journey to Florence and visit the world's most famous Renaissance art collection</p>
+                <h2 data-lang="travel-guide-title">European Train Travel Made Easy</h2>
+                <p data-lang="travel-guide-subtitle">Discover how easy it is to travel across Europe by train and reach amazing destinations</p>
             </div>
             <div class="guide-container">
                 <div class="route-info">
-                    <h3 data-lang="route-info-title">🚂 Train Route Information</h3>
+                    <h3 data-lang="route-info-title">🚂 Popular European Routes</h3>
                     <div class="route-grid">
                         <div class="route-card">
                             <h4 data-lang="from-milan-title">From Milan</h4>
@@ -1179,34 +1325,34 @@
                         </div>
 
                         <div class="route-card">
-                            <h4 data-lang="from-florence-station-title">From Florence Station to Uffizi</h4>
+                            <h4 data-lang="from-station-title">From Train Station to City Center</h4>
                             <div class="walking-guide">
                                 <div class="step-item">
                                     <span class="step-number">1</span>
-                                    <span data-lang="step-1">Exit Firenze Santa Maria Novella station</span>
+                                    <span data-lang="step-1">Exit the main train station</span>
                                 </div>
                                 <div class="step-item">
                                     <span class="step-number">2</span>
-                                    <span data-lang="step-2">Walk towards Via de' Panzani (5 minutes)</span>
+                                    <span data-lang="step-2">Look for city center signs or tourist information</span>
                                 </div>
                                 <div class="step-item">
                                     <span class="step-number">3</span>
-                                    <span data-lang="step-3">Continue to Via dei Cerretani</span>
+                                    <span data-lang="step-3">Take public transport or walk to main attractions</span>
                                 </div>
                                 <div class="step-item">
                                     <span class="step-number">4</span>
-                                    <span data-lang="step-4">Head towards Duomo and then to Uffizi Gallery</span>
+                                    <span data-lang="step-4">Use our app to navigate to your booked attractions</span>
                                 </div>
                                 <div class="walking-time">
                                     <span class="icon">🚶‍♂️</span>
-                                    <span data-lang="walking-time">Total walking time: ~15-20 minutes</span>
+                                    <span data-lang="walking-time">Average travel time: ~15-30 minutes</span>
                                 </div>
                             </div>
                         </div>
 
                         <div class="route-card highlight">
                             <h4 data-lang="booking-tip-title">💡 Pro Tip</h4>
-                            <p data-lang="booking-tip">Book your Uffizi Gallery tickets in advance! The museum is extremely popular and often sells out, especially during peak tourist season (April-October).</p>
+                            <p data-lang="booking-tip">Book your European attraction tickets and train journeys in advance! Popular destinations often sell out, especially during peak tourist season (April-October).</p>
                             <div class="tip-highlight">
                                 <span data-lang="advance-booking">🎫 Advance booking highly recommended</span>
                             </div>
@@ -1226,6 +1372,13 @@
             </div>
             <div class="calculator-container">
                 <form class="calculator-form" id="priceCalculator">
+                    <div class="form-group">
+                        <label for="attraction" data-lang="calc-attraction">Attraction</label>
+                        <select id="attraction" name="attraction">
+                            <option value="neuschwanstein">Neuschwanstein Castle</option>
+                            <option value="uffizi">Uffizi Galleries</option>
+                        </select>
+                    </div>
                     <div class="form-group">
                         <label for="adults" data-lang="calc-adults">Adults (18+ years)</label>
                         <input type="number" id="adults" name="adults" min="0" value="2">
@@ -1250,9 +1403,9 @@
                 </form>
                 <div class="price-display">
                     <h3 data-lang="calc-total">Total Cost</h3>
-                    <div class="total-price" id="totalPrice">€48</div>
+                    <div class="total-price" id="totalPrice">€38</div>
                     <div class="price-breakdown">
-                        <div><span data-lang="calc-adult-tickets">Adult tickets:</span> <span id="adultTotal">€48</span> (2 × €24)</div>
+                        <div><span data-lang="calc-adult-tickets">Adult tickets:</span> <span id="adultTotal">€38</span> (2 × €19)</div>
                         <div class="cheap-highlight"><span data-lang="calc-child-tickets">Child tickets:</span> <span id="childTotal">€0</span> (Free!)</div>
                     </div>
                 </div>
@@ -1294,17 +1447,17 @@
             <div class="testimonials-grid">
                 <div class="testimonial-card fade-in-up">
                     <div class="stars">★★★★★</div>
-                    <p class="testimonial-text" data-lang="testimonial-1">"The booking process was incredibly simple and the child pricing saved us so much money! Even at €1 per child, it's still cheaper than other sites."</p>
+                    <p class="testimonial-text" data-lang="testimonial-1">"The booking process was incredibly simple and we saved so much money on our European trip! The integrated train and attraction bookings made planning effortless."</p>
                     <div class="testimonial-author" data-lang="testimonial-author-1">- Sarah Johnson, United States</div>
                 </div>
                 <div class="testimonial-card fade-in-up stagger-1">
                     <div class="stars">★★★★★</div>
-                    <p class="testimonial-text" data-lang="testimonial-2">"User-friendly interface and lightning-fast payment process. Showing the digital tickets at the entrance was seamless and convenient."</p>
+                    <p class="testimonial-text" data-lang="testimonial-2">"User-friendly interface and lightning-fast payment process. Having all our tickets in one app - trains, museums, tours - made our trip so much easier."</p>
                     <div class="testimonial-author" data-lang="testimonial-author-2">- Marco Rossi, Italy</div>
                 </div>
                 <div class="testimonial-card fade-in-up stagger-2">
                     <div class="stars">★★★★★</div>
-                    <p class="testimonial-text" data-lang="testimonial-3">"Customer service responded quickly to our questions. The entire castle experience was fantastic. Highly recommend to anyone visiting Germany!"</p>
+                    <p class="testimonial-text" data-lang="testimonial-3">"Customer service responded quickly to our questions. The tour packages were amazing and great value. Highly recommend to anyone traveling in Europe!"</p>
                     <div class="testimonial-author" data-lang="testimonial-author-3">- Emma Thompson, United Kingdom</div>
                 </div>
             </div>
@@ -1316,9 +1469,9 @@
         <div class="container">
             <div class="magnet-card">
                 <div class="magnet-icon">📋</div>
-                <h3 class="magnet-title" data-lang="magnet-title">Free Castle Guide</h3>
-                <p class="magnet-description" data-lang="magnet-desc">Download our exclusive "Top 5 Castle Viewpoints" guide and make the most of your visit to Neuschwanstein Castle.</p>
-                <a href="https://github.com/garyyang01/KTV-BTS/releases/download/APP/castle-guide.pdf" class="download-button" data-lang="magnet-cta">Download Free Guide</a>
+                <h3 class="magnet-title" data-lang="magnet-title">Free Travel Guide</h3>
+                <p class="magnet-description" data-lang="magnet-desc">Download our comprehensive "European Train Travel Guide" and discover the best routes, tips, and destinations across Europe.</p>
+                <a href="https://github.com/garyyang01/KTV-BTS/releases/download/APP/travel-guide.pdf" class="download-button" data-lang="magnet-cta">Download Free Guide</a>
             </div>
         </div>
     </section>
@@ -1334,10 +1487,6 @@
                 <a href="https://github.com/garyyang01/KTV-BTS/releases/download/APP/app-release.apk" class="download-link">
                     <span>📱</span>
                     <span data-lang="download-latest">Download Latest Version</span>
-                </a>
-                <a href="https://github.com/garyyang01/KTV-BTS" class="download-link">
-                    <span>⭐</span>
-                    <span data-lang="view-source">View Source Code</span>
                 </a>
             </div>
         </div>
@@ -1396,20 +1545,20 @@
                 'nav-reviews': 'Reviews',
                 'nav-download': 'Download',
                 'nav-cta': 'Download Now',
-                'hero-title': 'Experience the Renaissance Art at Uffizi Galleries',
-                'hero-subtitle': 'The most convenient way to book your Uffizi Galleries tickets.<br>Children enter free - adults just €24!',
+                'hero-title': 'Travel at Ease!',
+                'hero-subtitle': 'Your one-stop platform for European travel tickets and experiences.<br>Book trains, attractions, and tours with ease!',
                 'hero-calc': 'Calculate Price',
                 'hero-learn': 'Learn More',
                 'download-app': 'Download App',
                 'view-releases': 'View All Releases',
-                'features-title': 'Why Choose Our App?',
-                'features-subtitle': 'Fast, secure, and the most affordable way to visit Uffizi Galleries',
-                'feature-1-title': 'Cheapest Prices',
-                'feature-1-desc': 'Children enter completely free! Adults pay just €24 - competitive pricing for world-class Renaissance art.',
-                'feature-2-title': 'Instant Confirmation',
-                'feature-2-desc': 'Get immediate booking confirmation with your tickets delivered instantly to your phone.',
-                'feature-3-title': 'Secure Payment',
-                'feature-3-desc': 'Your payment information is protected with bank-level security and PCI-DSS compliance.',
+                'features-title': 'Why Choose Ticketrip?',
+                'features-subtitle': 'Fast, secure, and the most affordable way to book your European travel experiences',
+                'feature-1-title': 'Best Prices',
+                'feature-1-desc': 'Compare prices across multiple providers to find the best deals on trains, attractions, and tours throughout Europe.',
+                'feature-2-title': 'Instant Booking',
+                'feature-2-desc': 'Book trains, attractions, and experiences instantly with immediate confirmation and mobile tickets.',
+                'feature-3-title': 'Seamless Travel',
+                'feature-3-desc': 'Plan your entire European journey with integrated train bookings, attraction tickets, and local experiences.',
                 'calc-title': 'Price Calculator',
                 'calc-subtitle': 'Calculate your total cost with our transparent pricing - no hidden fees',
                 'calc-adults': 'Adults (18+ years)',
@@ -1426,14 +1575,14 @@
                 'trust-secure': 'PCI-DSS Secure',
                 'testimonials-title': 'What Our Customers Say',
                 'testimonials-subtitle': 'Real experiences from travelers who used our app',
-                'testimonial-1': '"The booking process was incredibly simple and the child pricing saved us so much money! Even at €1 per child, it\'s still cheaper than other sites."',
+                'testimonial-1': '"The booking process was incredibly simple and we saved so much money on our European trip! The integrated train and attraction bookings made planning effortless."',
                 'testimonial-author-1': '- Sarah Johnson, United States',
-                'testimonial-2': '"User-friendly interface and lightning-fast payment process. Showing the digital tickets at the entrance was seamless and convenient."',
+                'testimonial-2': '"User-friendly interface and lightning-fast payment process. Having all our tickets in one app - trains, museums, tours - made our trip so much easier."',
                 'testimonial-author-2': '- Marco Rossi, Italy',
-                'testimonial-3': '"Customer service responded quickly to our questions. The entire castle experience was fantastic. Highly recommend to anyone visiting Germany!"',
+                'testimonial-3': '"Customer service responded quickly to our questions. The tour packages were amazing and great value. Highly recommend to anyone traveling in Europe!"',
                 'testimonial-author-3': '- Emma Thompson, United Kingdom',
-                'magnet-title': 'Free Art Guide',
-                'magnet-desc': 'Download our exclusive "Top 5 Must-See Masterpieces" guide and make the most of your visit to Uffizi Galleries.',
+                'magnet-title': 'Free Travel Guide',
+                'magnet-desc': 'Download our comprehensive "European Train Travel Guide" and discover the best routes, tips, and destinations across Europe.',
                 'magnet-cta': 'Download Free Guide',
                 'download-title': 'Download Our App Today',
                 'download-subtitle': 'Get the latest version directly from our GitHub repository',
@@ -1454,25 +1603,29 @@
                 'footer-contact-title': 'Contact',
                 'footer-chat': 'Live Chat',
                 'footer-rights': 'All rights reserved.',
-                'travel-guide-title': 'How to Reach Uffizi Galleries by Train',
-                'travel-guide-subtitle': 'Plan your journey to Florence and visit the world\'s most famous Renaissance art collection',
-                'route-info-title': 'Train Route Information',
+                'travel-guide-title': 'European Train Travel Made Easy',
+                'travel-guide-subtitle': 'Discover how easy it is to travel across Europe by train and reach amazing destinations',
+                'route-info-title': 'Popular European Routes',
                 'from-milan-title': 'From Milan',
                 'milan-station': 'Milano Centrale',
                 'intermediate-stations': 'Bologna Centrale (Optional stop)',
                 'florence-station': 'Firenze Santa Maria Novella',
                 'duration': 'Journey Time: ~2 hours',
                 'train-type': 'High-Speed Trains Available',
-                'from-florence-station-title': 'From Florence Station to Uffizi',
-                'step-1': 'Exit Firenze Santa Maria Novella station',
-                'step-2': 'Walk towards Via de\' Panzani (5 minutes)',
-                'step-3': 'Continue to Via dei Cerretani',
-                'step-4': 'Head towards Duomo and then to Uffizi Gallery',
-                'walking-time': 'Total walking time: ~15-20 minutes',
+                'from-station-title': 'From Train Station to City Center',
+                'step-1': 'Exit the main train station',
+                'step-2': 'Look for city center signs or tourist information',
+                'step-3': 'Take public transport or walk to main attractions',
+                'step-4': 'Use our app to navigate to your booked attractions',
+                'walking-time': 'Average travel time: ~15-30 minutes',
                 'booking-tip-title': 'Pro Tip',
-                'booking-tip': 'Book your Uffizi Gallery tickets in advance! The museum is extremely popular and often sells out, especially during peak tourist season (April-October).',
+                'booking-tip': 'Book your European attraction tickets and train journeys in advance! Popular destinations often sell out, especially during peak tourist season (April-October).',
                 'advance-booking': 'Advance booking highly recommended',
-                'nav-travel': 'Travel Guide'
+                'nav-travel': 'Travel Guide',
+                'nav-packages': 'Tours',
+                'packages-title': 'Popular Tour Packages',
+                'packages-subtitle': 'Discover amazing travel experiences across Europe',
+                'calc-attraction': 'Attraction'
             },
             'zh-tw': {
                 'nav-features': '特色',
@@ -1538,23 +1691,23 @@
                 'footer-contact-title': '聯繫',
                 'footer-chat': '即時聊天',
                 'footer-rights': '版權所有。',
-                'travel-guide-title': '如何搭火車前往烏菲齊美術館',
-                'travel-guide-subtitle': '規劃您的佛羅倫薩之行，參觀世界最著名的文藝復興藝術珍藏',
-                'route-info-title': '火車路線資訊',
+                'travel-guide-title': '歐洲火車旅遊攻略',
+                'travel-guide-subtitle': '發現如何輕鬆搭乘火車遊覽歐洲，抵達精彩目的地',
+                'route-info-title': '熱門歐洲路線',
                 'from-milan-title': '從米蘭出發',
                 'milan-station': '米蘭中央車站',
                 'intermediate-stations': '波隆娘中央車站（可選停靠站）',
                 'florence-station': '佛羅倫薩新圣母大殿車站',
                 'duration': '旅程時間：約 2 小時',
                 'train-type': '可搭乘高速火車',
-                'from-florence-station-title': '從佛羅倫薩車站到烏菲齊美術館',
-                'step-1': '離開佛羅倫薩新圣母大殿車站',
-                'step-2': '向 Via de\' Panzani 方向步行（5分鐘）',
-                'step-3': '繼續到 Via dei Cerretani',
-                'step-4': '往大教堂方向，然後前往烏菲齊美術館',
-                'walking-time': '總步行時間：約15-20分鐘',
+                'from-station-title': '從火車站到市中心',
+                'step-1': '離開主要火車站',
+                'step-2': '尋找市中心指標或旅遊諮詢處',
+                'step-3': '搭乘大眾運輸或步行至主要景點',
+                'step-4': '使用我們的應用程式導航至您預訂的景點',
+                'walking-time': '平均旅行時間：約15-30分鐘',
                 'booking-tip-title': '專業建議',
-                'booking-tip': '請提前預訂烏菲齊美術館門票！該美術館非常受歡迎，經常售罄，尤其在旅遊旺季（4月-10月）期間。',
+                'booking-tip': '請提前預訂歐洲景點門票和火車行程！熱門目的地經常售罄，尤其在旅遊旺季（4月-10月）期間。',
                 'advance-booking': '強烈建議提前預訂',
                 'nav-travel': '交通指南'
             },
@@ -1796,10 +1949,16 @@
 
         // Price Calculator Functionality
         function calculatePrice() {
+            const attraction = document.getElementById('attraction').value;
             const adults = parseInt(document.getElementById('adults').value) || 0;
             const children = parseInt(document.getElementById('children').value) || 0;
-            const adultPrice = 24; // €24 per adult
-            const childPrice = 0;  // Free for children
+
+            // Set prices based on attraction
+            let adultPrice = 19; // Default Neuschwanstein
+            if (attraction === 'uffizi') {
+                adultPrice = 21;
+            }
+            const childPrice = 0;  // Free for children at both venues
 
             const adultTotal = adults * adultPrice;
             const childTotal = children * childPrice;
@@ -1820,6 +1979,7 @@
         }
 
         // Add event listeners for calculator inputs
+        document.getElementById('attraction').addEventListener('change', calculatePrice);
         document.getElementById('adults').addEventListener('input', calculatePrice);
         document.getElementById('children').addEventListener('input', calculatePrice);
 
