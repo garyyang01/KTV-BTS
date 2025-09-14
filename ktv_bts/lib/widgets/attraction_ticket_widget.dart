@@ -115,23 +115,6 @@ class _AttractionTicketWidgetState extends State<AttractionTicketWidget>
             color: Colors.black87,
           ),
         ),
-        const Spacer(),
-        if (widget.selectedAttraction != null)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.orange.shade100,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              widget.selectedAttraction!.name,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: Colors.orange.shade700,
-              ),
-            ),
-          ),
       ],
     );
   }
@@ -432,7 +415,7 @@ class _AttractionTicketWidgetState extends State<AttractionTicketWidget>
         const SizedBox(height: 16),
         
         // 整合現有的 BookingForm
-        const BookingForm(),
+        BookingForm(selectedAttraction: widget.selectedAttraction),
       ],
     );
   }

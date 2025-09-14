@@ -19,6 +19,14 @@ class RailSearchTestPage extends StatefulWidget {
   final String? passengerEmail; // Email from homepage
   final String? passengerFirstName; // First name from homepage
   final String? passengerLastName; // Last name from homepage
+  
+  // New parameters from StationTicketWidget
+  final String? departureStation; // Departure station from ticket widget
+  final String? destinationStation; // Destination station from ticket widget
+  final String? departureDate; // Departure date from ticket widget
+  final String? departureTime; // Departure time from ticket widget
+  final int? adultCount; // Adult count from ticket widget
+  final int? childCount; // Child count from ticket widget
 
   const RailSearchTestPage({
     super.key,
@@ -29,6 +37,12 @@ class RailSearchTestPage extends StatefulWidget {
     this.passengerEmail,
     this.passengerFirstName,
     this.passengerLastName,
+    this.departureStation,
+    this.destinationStation,
+    this.departureDate,
+    this.departureTime,
+    this.adultCount,
+    this.childCount,
   });
 
   @override
@@ -37,12 +51,12 @@ class RailSearchTestPage extends StatefulWidget {
 
 class _RailSearchTestPageState extends State<RailSearchTestPage> {
   final _formKey = GlobalKey<FormState>();
-  final _fromController = TextEditingController(text: 'Munich Central Station'); // Munich train station name
-  final _toController = TextEditingController(text: 'Füssen Station'); // Füssen train station name
-  final _dateController = TextEditingController();
-  final _timeController = TextEditingController();
-  final _adultController = TextEditingController(text: '1');
-  final _childController = TextEditingController(text: '0');
+  late final TextEditingController _fromController;
+  late final TextEditingController _toController;
+  late final TextEditingController _dateController;
+  late final TextEditingController _timeController;
+  late final TextEditingController _adultController;
+  late final TextEditingController _childController;
   final _juniorController = TextEditingController(text: '0');
   final _seniorController = TextEditingController(text: '0');
   final _infantController = TextEditingController(text: '0');
@@ -59,6 +73,26 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
     super.initState();
     _railService = RailBookingService.defaultInstance();
     
+    // Initialize controllers with passed parameters or defaults
+    _fromController = TextEditingController(
+      text: widget.departureStation ?? 'Munich Central Station'
+    );
+    _toController = TextEditingController(
+      text: widget.destinationStation ?? 'Füssen Station'
+    );
+    _dateController = TextEditingController(
+      text: widget.departureDate ?? ''
+    );
+    _timeController = TextEditingController(
+      text: widget.departureTime ?? ''
+    );
+    _adultController = TextEditingController(
+      text: (widget.adultCount ?? 1).toString()
+    );
+    _childController = TextEditingController(
+      text: (widget.childCount ?? 0).toString()
+    );
+    
     // Pre-fill form based on ticket information
     _initializeFormFromTicketInfo();
   }
@@ -66,10 +100,15 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
   /// Convert station display name to station code
   String _getStationCode(String stationName) {
     switch (stationName.toLowerCase()) {
+      case 'munich central':
       case 'munich central station':
         return 'ST_EMYR64OX';
       case 'füssen station':
         return 'ST_E7G93QNJ';
+      case 'milano centrale':
+        return 'ST_L2330P6O';
+      case 'florence smn':
+        return 'ST_DKRRM9Q4';
       default:
         // If it's already a code, return as is
         return stationName;
@@ -299,7 +338,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'Route: Munich → Füssen',
+                        'Route: ${_fromController.text} → ${_toController.text}',
                         style: TextStyle(
                           color: Colors.blue.shade700,
                           fontWeight: FontWeight.w500,
@@ -317,12 +356,11 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                   Expanded(
                     child: TextFormField(
                       controller: _fromController,
-                      decoration: const InputDecoration(
-                        labelText: 'From Munich Central Station',
-                        hintText: 'Munich Central Station',
-                        border: OutlineInputBorder(),
-                        helperText: 'Station Code: ST_EMYR64OX',
-                        prefixIcon: Icon(Icons.train),
+                      decoration: InputDecoration(
+                        labelText: 'From ${_fromController.text}',
+                        hintText: _fromController.text,
+                        border: const OutlineInputBorder(),
+                        prefixIcon: const Icon(Icons.train),
                       ),
                       readOnly: true, // Make it read-only since it's a fixed route
                       validator: (value) {
@@ -346,12 +384,11 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                   Expanded(
                     child: TextFormField(
                       controller: _toController,
-                      decoration: const InputDecoration(
-                        labelText: 'To Füssen Station',
-                        hintText: 'Füssen Station',
-                        border: OutlineInputBorder(),
-                        helperText: 'Station Code: ST_E7G93QNJ',
-                        prefixIcon: Icon(Icons.location_on),
+                      decoration: InputDecoration(
+                        labelText: 'To ${_toController.text}',
+                        hintText: _toController.text,
+                        border: const OutlineInputBorder(),
+                        prefixIcon: const Icon(Icons.location_on),
                       ),
                       readOnly: true, // Make it read-only since it's a fixed route
                       validator: (value) {
@@ -631,13 +668,16 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
           children: [
             Row(
               children: [
-                Text(
-                  '🚄 Search Results (${_trainSolutions.length} schedule options)',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Text(
+                    '🚄 Search Results (${_trainSolutions.length} schedule options)',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                const Spacer(),
+                const SizedBox(width: 8),
                 ElevatedButton.icon(
                   onPressed: _navigateToTrainSelection,
                   icon: const Icon(Icons.arrow_forward),

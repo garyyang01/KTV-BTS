@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import '../models/search_option.dart';
+import '../pages/rail_search_test_page.dart';
 
 /// 車站票券組件 - 火車票申請表單
 class StationTicketWidget extends StatefulWidget {
@@ -129,28 +130,32 @@ class _StationTicketWidgetState extends State<StationTicketWidget> {
           size: 24,
         ),
         const SizedBox(width: 8),
-        const Text(
-          'Train Ticket Booking',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
+        Expanded(
+          child: Text(
+            'Train Ticket Booking',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
           ),
         ),
-        const Spacer(),
         if (widget.selectedStation != null)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.blue.shade100,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              'From: ${widget.selectedStation!.name}',
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: Colors.blue.shade700,
+          Flexible(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade100,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                'From: ${widget.selectedStation!.name}',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.blue.shade700,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ),
@@ -385,6 +390,7 @@ class _StationTicketWidgetState extends State<StationTicketWidget> {
         ),
         
         Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
               onPressed: count > minValue ? () => onChanged(count - 1) : null,
@@ -488,9 +494,48 @@ class _StationTicketWidgetState extends State<StationTicketWidget> {
     }
   }
 
+  /// 車站配對關係
+  Map<String, String> get _stationPairs => {
+    'Munich Central': 'Füssen Station',
+    'Füssen Station': 'Munich Central',
+    'Milano Centrale': 'Florence SMN',
+    'Florence SMN': 'Milano Centrale',
+  };
+
+  /// 車站代碼映射
+  Map<String, String> get _stationCodes => {
+    'Munich Central': 'ST_EMYR64OX',
+    'Füssen Station': 'ST_E7G93QNJ',
+    'Milano Centrale': 'ST_L2330P6O',
+    'Florence SMN': 'ST_DKRRM9Q4',
+  };
+
+  /// 獲取可選擇的車站列表
+  List<SearchOption> _getAvailableStations(bool isDeparture) {
+    final allStations = SearchOptions.stations;
+    
+    if (isDeparture) {
+      // 出發地：顯示所有配對車站
+      return allStations.where((station) => _stationPairs.containsKey(station.name)).toList();
+    } else {
+      // 目的地：根據已選擇的出發地來過濾
+      final selectedDeparture = _departureController.text.trim();
+      if (selectedDeparture.isEmpty) {
+        return []; // 如果沒有選擇出發地，不顯示任何目的地
+      }
+      
+      final pairedDestination = _stationPairs[selectedDeparture];
+      if (pairedDestination == null) {
+        return []; // 如果出發地沒有配對，不顯示任何目的地
+      }
+      
+      return allStations.where((station) => station.name == pairedDestination).toList();
+    }
+  }
+
   /// 顯示車站選擇器
   void _showStationPicker(bool isDeparture) {
-    final stations = SearchOptions.stations;
+    final availableStations = _getAvailableStations(isDeparture);
     
     showModalBottomSheet(
       context: context,
@@ -509,21 +554,38 @@ class _StationTicketWidgetState extends State<StationTicketWidget> {
             
             const SizedBox(height: 16),
             
-            ...stations.map((station) => ListTile(
-              leading: Text(station.icon, style: const TextStyle(fontSize: 24)),
-              title: Text(station.name),
-              subtitle: Text(station.description),
-              onTap: () {
-                setState(() {
-                  if (isDeparture) {
-                    _departureController.text = station.name;
-                  } else {
-                    _destinationController.text = station.name;
-                  }
-                });
-                Navigator.pop(context);
-              },
-            )),
+            if (availableStations.isEmpty)
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  isDeparture 
+                    ? 'Please select a departure station first'
+                    : 'No available destinations for the selected departure station',
+                  style: TextStyle(
+                    color: Colors.grey.shade600,
+                    fontSize: 14,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              )
+            else
+              ...availableStations.map((station) => ListTile(
+                leading: Text(station.icon, style: const TextStyle(fontSize: 24)),
+                title: Text(station.name),
+                subtitle: Text(station.description),
+                onTap: () {
+                  setState(() {
+                    if (isDeparture) {
+                      _departureController.text = station.name;
+                      // 清空目的地選擇，讓用戶重新選擇配對的目的地
+                      _destinationController.clear();
+                    } else {
+                      _destinationController.text = station.name;
+                    }
+                  });
+                  Navigator.pop(context);
+                },
+              )),
           ],
         ),
       ),
@@ -532,11 +594,25 @@ class _StationTicketWidgetState extends State<StationTicketWidget> {
 
   /// 交換出發地和目的地
   void _swapStations() {
-    final temp = _departureController.text;
-    setState(() {
-      _departureController.text = _destinationController.text;
-      _destinationController.text = temp;
-    });
+    final departureText = _departureController.text.trim();
+    final destinationText = _destinationController.text.trim();
+    
+    // 檢查是否為有效的配對
+    if (_stationPairs.containsKey(departureText) && 
+        _stationPairs[departureText] == destinationText) {
+      setState(() {
+        _departureController.text = destinationText;
+        _destinationController.text = departureText;
+      });
+    } else {
+      // 如果不是有效配對，顯示提示
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Only paired stations can be swapped'),
+          backgroundColor: Colors.orange.shade600,
+        ),
+      );
+    }
   }
 
   /// 處理搜索
@@ -550,24 +626,30 @@ class _StationTicketWidgetState extends State<StationTicketWidget> {
     });
 
     try {
-      // 模擬搜索延遲
-      await Future.delayed(const Duration(seconds: 2));
+      // 獲取選擇的車站信息
+      final departureStation = _departureController.text.trim();
+      final destinationStation = _destinationController.text.trim();
+      final departureDate = _departureDateController.text.trim();
+      final departureTime = _departureTimeController.text.trim();
       
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Searching trains from ${_departureController.text} to ${_destinationController.text}',
-            ),
-            backgroundColor: Colors.green.shade600,
+      // 跳轉到火車票搜尋頁面，傳遞選擇的信息
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => RailSearchTestPage(
+            departureStation: departureStation,
+            destinationStation: destinationStation,
+            departureDate: departureDate,
+            departureTime: departureTime,
+            adultCount: _adultCount,
+            childCount: _childCount,
           ),
-        );
-      }
+        ),
+      );
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Search failed: $e'),
+            content: Text('Navigation failed: $e'),
             backgroundColor: Colors.red.shade600,
           ),
         );

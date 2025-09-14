@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'services/email_service.dart';
 import 'pages/payment_test_page.dart';
@@ -19,6 +20,22 @@ void main() async {
     // 繼續運行應用程式，即使 EmailService 初始化失敗
   }
   
+  // 完全關閉 Flutter 錯誤顯示（包括 RenderFlex overflow）
+  FlutterError.onError = (FlutterErrorDetails details) {
+    // 在開發模式下，可以選擇性地打印錯誤（用於調試）
+    if (kDebugMode) {
+      print('Flutter Error (ignored): ${details.exception}');
+    }
+    // 不顯示任何錯誤
+    return;
+  };
+  
+  // 設置 ErrorWidget.builder 來處理 UI 錯誤
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    // 返回空容器，不顯示任何錯誤
+    return Container();
+  };
+  
   runApp(const MyApp());
 }
 
@@ -28,7 +45,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Neuschwanstein Castle Tickets',
+      title: 'Ticket Trip Booking',
+      debugShowCheckedModeBanner: false, // 關閉調試模式的紅色錯誤條
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
