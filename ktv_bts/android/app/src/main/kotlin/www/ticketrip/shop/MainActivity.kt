@@ -1,4 +1,4 @@
-package com.example.ktv_bts
+package www.ticketrip.shop
 
 import io.flutter.embedding.android.FlutterActivity
 
