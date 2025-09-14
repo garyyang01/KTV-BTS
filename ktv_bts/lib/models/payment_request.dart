@@ -10,6 +10,12 @@ class PaymentRequest {
   final String currency; // Fixed to EUR
   final String? description;
   final TicketRequest? ticketRequest; // New field for ticket request
+  
+  // 火車票相關字段（用於組合支付）
+  final TrainInfo? trainInfo;
+  final TrainOffer? trainOffer;
+  final TrainService? trainService;
+  final double? trainTicketAmount; // 火車票金額
 
   const PaymentRequest({
     required this.customerName,
@@ -19,6 +25,10 @@ class PaymentRequest {
     this.currency = 'EUR', // Fixed to EUR
     this.description,
     this.ticketRequest,
+    this.trainInfo,
+    this.trainOffer,
+    this.trainService,
+    this.trainTicketAmount,
   });
 
   /// Convert to JSON for API requests
@@ -57,7 +67,7 @@ class PaymentRequest {
     required TrainService service,
   }) {
     final amount = service.price.cents / 100.0; // 將 cents 轉換為 EUR
-    final description = '火車票 - ${train.number} (${train.from.localName} → ${train.to.localName})';
+    final description = '火車票 - ${train.number} (慕尼黑 → 福森)';
     
     // Debug: Print train ticket price details
     print('🚄 Train Ticket PaymentRequest Creation:');
@@ -77,8 +87,52 @@ class PaymentRequest {
       currency: service.price.currency,
       description: description,
       ticketRequest: null, // 火車票不需要 TicketRequest
+      trainInfo: train,
+      trainOffer: offer,
+      trainService: service,
+      trainTicketAmount: amount,
     );
   }
+
+  /// 創建組合支付（門票+火車票）的 PaymentRequest
+  factory PaymentRequest.forCombinedPayment({
+    required PaymentRequest originalTicketRequest,
+    required TrainInfo train,
+    required TrainOffer offer,
+    required TrainService service,
+  }) {
+    final trainAmount = service.price.cents / 100.0;
+    final totalAmount = originalTicketRequest.amount + trainAmount;
+    
+    final description = '新天鵝堡門票 + 火車票 - ${train.number} (慕尼黑 → 福森)';
+    
+    print('🎫🚄 Combined PaymentRequest Creation:');
+    print('  - Original ticket amount: ${originalTicketRequest.amount}');
+    print('  - Train ticket amount: $trainAmount');
+    print('  - Total amount: $totalAmount');
+    
+    return PaymentRequest(
+      customerName: originalTicketRequest.customerName,
+      isAdult: originalTicketRequest.isAdult,
+      time: originalTicketRequest.time,
+      amount: totalAmount,
+      currency: originalTicketRequest.currency,
+      description: description,
+      ticketRequest: originalTicketRequest.ticketRequest,
+      trainInfo: train,
+      trainOffer: offer,
+      trainService: service,
+      trainTicketAmount: trainAmount,
+    );
+  }
+
+  /// 檢查是否為組合支付（包含火車票）
+  bool get isCombinedPayment => trainInfo != null && trainTicketAmount != null;
+
+  /// 獲取門票金額（不含火車票）
+  double get ticketOnlyAmount => isCombinedPayment 
+      ? amount - (trainTicketAmount ?? 0.0)
+      : amount;
 
   @override
   String toString() {

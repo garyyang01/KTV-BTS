@@ -82,6 +82,7 @@ class StripePaymentService implements IStripePaymentService {
       print('  - request.isAdult: ${request.isAdult}');
       print('  - calculated amount: $amount');
       print('  - amount in cents: ${(amount * 100).round()}');
+      print('  - 3DS enabled: request_three_d_secure = any');
       
       final headers = {
         'Authorization': 'Bearer $_secretKey',
@@ -97,6 +98,7 @@ class StripePaymentService implements IStripePaymentService {
         'metadata[time]': request.time,
         'automatic_payment_methods[enabled]': 'true',
         'automatic_payment_methods[allow_redirects]': 'never',
+        'payment_method_options[card][request_three_d_secure]': 'any',
       };
 
       final response = await http.post(
@@ -191,6 +193,11 @@ class StripePaymentService implements IStripePaymentService {
     required String paymentMethodId,
   }) async {
     try {
+      print('🔒 Confirming payment with 3DS enabled');
+      print('  - PaymentIntent ID: $paymentIntentId');
+      print('  - PaymentMethod ID: $paymentMethodId');
+      print('  - 3DS enabled: request_three_d_secure = any');
+      
       // For now, we'll use the server-side confirmation approach
       // This maintains compatibility with the existing flow
       final headers = {
@@ -200,6 +207,7 @@ class StripePaymentService implements IStripePaymentService {
 
       final body = {
         'payment_method': paymentMethodId,
+        'payment_method_options[card][request_three_d_secure]': 'any',
       };
 
       final response = await http.post(
@@ -210,15 +218,41 @@ class StripePaymentService implements IStripePaymentService {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        return PaymentResponse.success(
-          paymentIntentId: data['id'],
-          clientSecret: data['client_secret'],
-          status: data['status'],
-          amount: (data['amount'] as num).toDouble() / 100, // Convert from cents
-          currency: data['currency'].toString().toUpperCase(),
-        );
+        final status = data['status'] as String;
+        
+        print('🔒 Payment confirmation response:');
+        print('  - Status: $status');
+        print('  - PaymentIntent ID: ${data['id']}');
+        
+        // Check if 3DS authentication is required
+        if (status == 'requires_action' || status == 'requires_source_action') {
+          print('🔒 3DS authentication required');
+          return PaymentResponse.failure(
+            errorMessage: '3DS_AUTHENTICATION_REQUIRED',
+            requiresAction: true,
+            clientSecret: data['client_secret'],
+            paymentIntentId: data['id'],
+          );
+        } else if (status == 'succeeded') {
+          print('🔒 Payment succeeded without 3DS challenge');
+          return PaymentResponse.success(
+            paymentIntentId: data['id'],
+            clientSecret: data['client_secret'],
+            status: status,
+            amount: (data['amount'] as num).toDouble() / 100, // Convert from cents
+            currency: data['currency'].toString().toUpperCase(),
+          );
+        } else {
+          print('🔒 Payment status: $status');
+          return PaymentResponse.failure(
+            errorMessage: 'Payment status: $status',
+            paymentIntentId: data['id'],
+          );
+        }
       } else {
         final errorData = json.decode(response.body);
+        print('🔒 Payment confirmation failed: ${response.statusCode}');
+        print('🔒 Error: ${errorData['error']?['message']}');
         return PaymentResponse.failure(
           errorMessage: errorData['error']?['message'] ?? 'Payment confirmation failed',
         );

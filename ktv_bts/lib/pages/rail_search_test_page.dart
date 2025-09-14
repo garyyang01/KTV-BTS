@@ -4,13 +4,26 @@ import '../services/rail_booking_service.dart';
 import '../models/rail_search_criteria.dart';
 import '../models/rail_api_response.dart';
 import '../models/train_solution.dart';
+import '../models/ticket_info.dart';
+import '../models/payment_request.dart';
 import '../widgets/rail_solution_card.dart';
 import 'train_selection_page.dart';
 
 /// 鐵路搜尋測試頁面
 /// 提供 UI 介面來測試 G2Rail API 搜尋功能
 class RailSearchTestPage extends StatefulWidget {
-  const RailSearchTestPage({super.key});
+  final List<TicketInfo>? ticketInfos; // 從門票資訊帶入的乘客資料
+  final String? ticketDate; // 從門票資訊帶入的日期
+  final String? ticketSession; // 從門票資訊帶入的時段
+  final PaymentRequest? originalTicketRequest; // 原始門票支付請求（用於組合支付）
+
+  const RailSearchTestPage({
+    super.key,
+    this.ticketInfos,
+    this.ticketDate,
+    this.ticketSession,
+    this.originalTicketRequest,
+  });
 
   @override
   State<RailSearchTestPage> createState() => _RailSearchTestPageState();
@@ -18,10 +31,10 @@ class RailSearchTestPage extends StatefulWidget {
 
 class _RailSearchTestPageState extends State<RailSearchTestPage> {
   final _formKey = GlobalKey<FormState>();
-  final _fromController = TextEditingController(text: 'ST_LX225YVP');
-  final _toController = TextEditingController(text: 'ST_E7GGGP8J');
+  final _fromController = TextEditingController(text: 'ST_EMYR64OX'); // 慕尼黑火車站代碼
+  final _toController = TextEditingController(text: 'ST_E7G93QNJ'); // 福森火車站代碼
   final _dateController = TextEditingController();
-  final _timeController = TextEditingController(text: '12:00');
+  final _timeController = TextEditingController();
   final _adultController = TextEditingController(text: '1');
   final _childController = TextEditingController(text: '0');
   final _juniorController = TextEditingController(text: '0');
@@ -40,9 +53,41 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
     super.initState();
     _railService = RailBookingService.defaultInstance();
     
-    // 設定預設日期為 2025-09-18
-    final defaultDate = DateTime(2025, 9, 18);
-    _dateController.text = DateFormat('yyyy-MM-dd').format(defaultDate);
+    // 根據門票資訊預填表單
+    _initializeFormFromTicketInfo();
+  }
+
+  /// 根據門票資訊初始化表單
+  void _initializeFormFromTicketInfo() {
+    // 設定日期
+    if (widget.ticketDate != null) {
+      _dateController.text = widget.ticketDate!;
+    } else {
+      // 預設日期為明天
+      final defaultDate = DateTime.now().add(const Duration(days: 1));
+      _dateController.text = DateFormat('yyyy-MM-dd').format(defaultDate);
+    }
+
+    // 根據門票時段設定出發時間
+    // 無論是 Morning 還是 Afternoon，火車票時間都設定為 12:00
+    _timeController.text = '12:00';
+
+    // 根據門票資訊設定乘客數量
+    if (widget.ticketInfos != null && widget.ticketInfos!.isNotEmpty) {
+      int adultCount = 0;
+      int childCount = 0;
+      
+      for (var ticketInfo in widget.ticketInfos!) {
+        if (ticketInfo.isAdult) {
+          adultCount++;
+        } else {
+          childCount++;
+        }
+      }
+      
+      _adultController.text = adultCount.toString();
+      _childController.text = childCount.toString();
+    }
   }
 
   @override
@@ -192,6 +237,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
       MaterialPageRoute(
         builder: (context) => TrainSelectionPage(
           solutions: _trainSolutions,
+          originalTicketRequest: widget.originalTicketRequest,
         ),
       ),
     );
@@ -208,9 +254,33 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '🔍 火車班次搜尋',
+                '🚄 新天鵝堡火車票預訂',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.blue.shade200),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.info_outline, color: Colors.blue, size: 20),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        '路線：慕尼黑 (Munich) → 福森 (Füssen)',
+                        style: TextStyle(
+                          color: Colors.blue.shade700,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 16),
@@ -222,9 +292,10 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                     child: TextFormField(
                       controller: _fromController,
                       decoration: const InputDecoration(
-                        labelText: 'From Rome Termini Central Station',
-                        hintText: 'ST_LX225YVP',
+                        labelText: 'From Munich Central Station (ST_EMYR64OX)',
+                        hintText: 'ST_EMYR64OX',
                         border: OutlineInputBorder(),
+                        helperText: 'Munich to Füssen',
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
@@ -241,9 +312,10 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                     child: TextFormField(
                       controller: _toController,
                       decoration: const InputDecoration(
-                        labelText: 'To Catania Centrale Station',
-                        hintText: 'ST_E7GGGP8J',
+                        labelText: 'To Füssen Station (ST_E7G93QNJ)',
+                        hintText: 'ST_E7G93QNJ',
                         border: OutlineInputBorder(),
+                        helperText: 'Füssen',
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
@@ -335,7 +407,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                       },
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: TextFormField(
                       controller: _childController,
@@ -353,67 +425,76 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                       },
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _juniorController,
-                      decoration: const InputDecoration(
-                        labelText: '青少年',
-                        border: OutlineInputBorder(),
-                      ),
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        final count = int.tryParse(value ?? '');
-                        if (count == null || count < 0) {
-                          return '請輸入有效的青少年數量';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
                 ],
               ),
               const SizedBox(height: 8),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _seniorController,
-                      decoration: const InputDecoration(
-                        labelText: '長者',
-                        border: OutlineInputBorder(),
-                      ),
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        final count = int.tryParse(value ?? '');
-                        if (count == null || count < 0) {
-                          return '請輸入有效的長者數量';
-                        }
-                        return null;
-                      },
+              // 顯示預設的青少年、長者、嬰兒數量
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.blue.shade200),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Column(
+                      children: [
+                        Text(
+                          '青少年',
+                          style: TextStyle(
+                            color: Colors.grey.shade600,
+                            fontSize: 12,
+                          ),
+                        ),
+                        Text(
+                          '0',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _infantController,
-                      decoration: const InputDecoration(
-                        labelText: '嬰兒',
-                        border: OutlineInputBorder(),
-                      ),
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        final count = int.tryParse(value ?? '');
-                        if (count == null || count < 0) {
-                          return '請輸入有效的嬰兒數量';
-                        }
-                        return null;
-                      },
+                    Column(
+                      children: [
+                        Text(
+                          '長者',
+                          style: TextStyle(
+                            color: Colors.grey.shade600,
+                            fontSize: 12,
+                          ),
+                        ),
+                        Text(
+                          '0',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  const SizedBox(width: 8), // 佔位符保持對齊
-                ],
+                    Column(
+                      children: [
+                        Text(
+                          '嬰兒',
+                          style: TextStyle(
+                            color: Colors.grey.shade600,
+                            fontSize: 12,
+                          ),
+                        ),
+                        Text(
+                          '0',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 24),
 
