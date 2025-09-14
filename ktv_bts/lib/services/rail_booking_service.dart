@@ -6,6 +6,10 @@ import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 import '../models/rail_search_criteria.dart';
 import '../models/rail_api_response.dart';
+import '../models/online_order_request.dart';
+import '../models/online_order_response.dart';
+import '../models/online_confirmation_response.dart';
+import '../models/online_ticket_response.dart';
 
 /// 鐵路預訂服務
 /// 整合 G2Rail API 進行火車班次搜尋和預訂
@@ -303,6 +307,367 @@ class RailBookingService {
       retryDelay: resultRetryDelay,
       maxRetries: maxRetries,
     );
+  }
+
+  /// 創建線上訂單
+  /// 調用 G2Rail /api/v2/online_orders API
+  Future<RailApiResponse<OnlineOrderResponse>> createOnlineOrder({
+    required OnlineOrderRequest request,
+  }) async {
+    try {
+      print('🚀 [RAIL API] 開始創建線上訂單');
+      print('📍 請求參數: ${request.toJson()}');
+      
+      final orderUrl = '$baseUrl/api/v2/online_orders';
+      
+      print('🔗 API URL: $orderUrl');
+      
+      final requestBody = json.encode(request.toJson());
+      
+      final response = await httpClient.post(
+        Uri.parse(orderUrl),
+        headers: {
+          ..._getAuthorizationHeaders(request.toJson()),
+          'Content-Type': 'application/json',
+        },
+        body: requestBody,
+      );
+
+      print('📊 響應狀態碼: ${response.statusCode}');
+      print('📦 響應內容: ${response.body}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+        
+        // 檢查是否返回 async 鍵
+        if (jsonResponse.containsKey('async')) {
+          final asyncKey = jsonResponse['async'] as String;
+          print('⏳ 線上訂單創建中，獲取 async key: $asyncKey');
+          
+          // 等待並獲取異步結果
+          return await _getOnlineOrderAsyncResult(asyncKey);
+        } else {
+          // 直接返回訂單數據
+          final orderResponse = OnlineOrderResponse.fromJson(jsonResponse);
+          
+          print('✅ 線上訂單創建成功');
+          print('🆔 訂單ID: ${orderResponse.id}');
+          
+          return RailApiResponse.success(
+            data: orderResponse,
+            message: '線上訂單創建成功',
+          );
+        }
+      } else {
+        print('❌ API 錯誤: ${response.statusCode} - ${response.body}');
+        return RailApiResponse.failure(
+          errorMessage: 'API Error ${response.statusCode}: ${response.body}',
+          statusCode: response.statusCode,
+        );
+      }
+    } catch (e) {
+      print('❌ 創建線上訂單異常: $e');
+      return RailApiResponse.failure(
+        errorMessage: '創建線上訂單失敗: ${e.toString()}',
+      );
+    }
+  }
+
+  /// 獲取線上訂單的異步結果
+  Future<RailApiResponse<OnlineOrderResponse>> _getOnlineOrderAsyncResult(
+    String asyncKey, {
+    Duration retryDelay = const Duration(seconds: 2),
+    int maxRetries = 15,
+  }) async {
+    int attempts = 0;
+    
+    while (attempts < maxRetries) {
+      try {
+        attempts++;
+        print('🚀 [RAIL API] 獲取線上訂單結果 (嘗試 $attempts)');
+        print('📍 Async Key: $asyncKey');
+        
+        final resultUrl = '$baseUrl/api/v2/async_results/$asyncKey';
+        
+        print('🔗 API URL: $resultUrl');
+        
+        final response = await httpClient.get(
+          Uri.parse(resultUrl),
+          headers: _getAuthorizationHeaders({'async_key': asyncKey}),
+        );
+
+        print('📊 響應狀態碼: ${response.statusCode}');
+
+        if (response.statusCode == 202 || response.statusCode == 423) {
+          // 結果還在處理中 (202) 或非同步結果未準備好 (423)
+          print('⏳ 線上訂單仍在處理中 (${response.statusCode})，等待 ${retryDelay.inSeconds} 秒後重試...');
+          if (attempts < maxRetries) {
+            await Future.delayed(retryDelay);
+            continue;
+          } else {
+            return RailApiResponse.failure(
+              errorMessage: '線上訂單處理超時：超過最大重試次數 ($maxRetries)',
+            );
+          }
+        }
+
+        if (response.statusCode != 200) {
+          print('❌ API 錯誤: ${response.statusCode} - ${response.body}');
+          return RailApiResponse.failure(
+            errorMessage: 'API Error ${response.statusCode}: ${response.body}',
+            statusCode: response.statusCode,
+          );
+        }
+
+        final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+        
+        // 檢查是否仍在處理中
+        if (jsonResponse.containsKey('isLoading') && jsonResponse['isLoading'] == true) {
+          print('⏳ 線上訂單仍在處理中，等待 ${retryDelay.inSeconds} 秒後重試...');
+          await Future.delayed(retryDelay);
+          continue;
+        }
+        
+        // 處理完成，解析訂單數據
+        final orderResponse = OnlineOrderResponse.fromJson(jsonResponse);
+        
+        print('✅ 線上訂單創建成功');
+        print('🆔 訂單ID: ${orderResponse.id}');
+        print('🚄 路線: ${orderResponse.from.localName} → ${orderResponse.to.localName}');
+        
+        return RailApiResponse.success(
+          data: orderResponse,
+          message: '線上訂單創建成功',
+        );
+      } catch (e) {
+        print('❌ 獲取線上訂單結果異常: $e');
+        if (attempts >= maxRetries) {
+          return RailApiResponse.failure(
+            errorMessage: '獲取線上訂單結果失敗: ${e.toString()}',
+          );
+        }
+        print('⏳ 等待 ${retryDelay.inSeconds} 秒後重試...');
+        await Future.delayed(retryDelay);
+      }
+    }
+    
+    return RailApiResponse.failure(
+      errorMessage: '獲取線上訂單結果超時，已重試 $maxRetries 次',
+    );
+  }
+
+  /// 確認線上訂單
+  /// 調用 G2Rail /api/v2/online_orders/{online_order_id}/online_confirmations API
+  Future<RailApiResponse<OnlineConfirmationResponse>> confirmOnlineOrder({
+    required String onlineOrderId,
+  }) async {
+    try {
+      print('🚀 [RAIL API] 開始確認線上訂單');
+      print('📍 線上訂單ID: $onlineOrderId');
+      
+      final confirmationUrl = '$baseUrl/api/v2/online_orders/$onlineOrderId/online_confirmations';
+      
+      print('🔗 API URL: $confirmationUrl');
+      
+      final response = await httpClient.post(
+        Uri.parse(confirmationUrl),
+        headers: {
+          ..._getAuthorizationHeaders({'online_order_id': onlineOrderId}),
+          'Content-Type': 'application/json',
+        },
+      );
+
+      print('📊 響應狀態碼: ${response.statusCode}');
+      print('📦 響應內容: ${response.body}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+        
+        // 檢查是否返回 async 鍵
+        if (jsonResponse.containsKey('async')) {
+          final asyncKey = jsonResponse['async'] as String;
+          print('⏳ 線上訂單確認中，獲取 async key: $asyncKey');
+          
+          // 等待並獲取異步結果
+          return await _getOnlineConfirmationAsyncResult(asyncKey);
+        } else {
+          // 直接返回確認數據
+          final confirmationResponse = OnlineConfirmationResponse.fromJson(jsonResponse);
+          
+          print('✅ 線上訂單確認成功');
+          print('🆔 確認ID: ${confirmationResponse.id}');
+          print('🎫 PNR: ${confirmationResponse.order.pnr}');
+          print('🚄 路線: ${confirmationResponse.order.from.localName} → ${confirmationResponse.order.to.localName}');
+          print('⏰ 出發時間: ${confirmationResponse.order.departure}');
+          
+          // 顯示座位資訊
+          if (confirmationResponse.order.reservations.isNotEmpty) {
+            final reservation = confirmationResponse.order.reservations.first;
+            print('🚂 列車: ${reservation.trainName}, 車廂: ${reservation.car}, 座位: ${reservation.seat}');
+          }
+          
+          return RailApiResponse.success(
+            data: confirmationResponse,
+            message: '線上訂單確認成功',
+          );
+        }
+      } else {
+        print('❌ API 錯誤: ${response.statusCode} - ${response.body}');
+        return RailApiResponse.failure(
+          errorMessage: 'API Error ${response.statusCode}: ${response.body}',
+          statusCode: response.statusCode,
+        );
+      }
+    } catch (e) {
+      print('❌ 確認線上訂單異常: $e');
+      return RailApiResponse.failure(
+        errorMessage: '確認線上訂單失敗: ${e.toString()}',
+      );
+    }
+  }
+
+  /// 獲取線上訂單確認的異步結果
+  Future<RailApiResponse<OnlineConfirmationResponse>> _getOnlineConfirmationAsyncResult(
+    String asyncKey, {
+    Duration retryDelay = const Duration(seconds: 2),
+    int maxRetries = 15,
+  }) async {
+    int attempts = 0;
+    
+    while (attempts < maxRetries) {
+      try {
+        attempts++;
+        print('🚀 [RAIL API] 獲取線上訂單確認結果 (嘗試 $attempts)');
+        print('📍 Async Key: $asyncKey');
+        
+        final resultUrl = '$baseUrl/api/v2/async_results/$asyncKey';
+        
+        print('🔗 API URL: $resultUrl');
+        
+        final response = await httpClient.get(
+          Uri.parse(resultUrl),
+          headers: _getAuthorizationHeaders({'async_key': asyncKey}),
+        );
+
+        print('📊 響應狀態碼: ${response.statusCode}');
+
+        if (response.statusCode == 202 || response.statusCode == 423) {
+          // 結果還在處理中 (202) 或非同步結果未準備好 (423)
+          print('⏳ 線上訂單確認仍在處理中 (${response.statusCode})，等待 ${retryDelay.inSeconds} 秒後重試...');
+          if (attempts < maxRetries) {
+            await Future.delayed(retryDelay);
+            continue;
+          } else {
+            return RailApiResponse.failure(
+              errorMessage: '線上訂單確認處理超時：超過最大重試次數 ($maxRetries)',
+            );
+          }
+        }
+
+        if (response.statusCode != 200) {
+          print('❌ API 錯誤: ${response.statusCode} - ${response.body}');
+          return RailApiResponse.failure(
+            errorMessage: 'API Error ${response.statusCode}: ${response.body}',
+            statusCode: response.statusCode,
+          );
+        }
+
+        final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+        
+        // 檢查是否仍在處理中
+        if (jsonResponse.containsKey('isLoading') && jsonResponse['isLoading'] == true) {
+          print('⏳ 線上訂單確認仍在處理中，等待 ${retryDelay.inSeconds} 秒後重試...');
+          await Future.delayed(retryDelay);
+          continue;
+        }
+        
+        // 處理完成，解析確認數據
+        final confirmationResponse = OnlineConfirmationResponse.fromJson(jsonResponse);
+        
+        print('✅ 線上訂單確認成功');
+        print('🆔 確認ID: ${confirmationResponse.id}');
+        print('🎫 PNR: ${confirmationResponse.order.pnr}');
+        print('🚄 路線: ${confirmationResponse.order.from.localName} → ${confirmationResponse.order.to.localName}');
+        print('⏰ 出發時間: ${confirmationResponse.order.departure}');
+        
+        // 顯示座位資訊
+        if (confirmationResponse.order.reservations.isNotEmpty) {
+          final reservation = confirmationResponse.order.reservations.first;
+          print('🚂 列車: ${reservation.trainName}, 車廂: ${reservation.car}, 座位: ${reservation.seat}');
+        }
+        
+        return RailApiResponse.success(
+          data: confirmationResponse,
+          message: '線上訂單確認成功',
+        );
+      } catch (e) {
+        print('❌ 獲取線上訂單確認結果異常: $e');
+        if (attempts >= maxRetries) {
+          return RailApiResponse.failure(
+            errorMessage: '獲取線上訂單確認結果失敗: ${e.toString()}',
+          );
+        }
+        print('⏳ 等待 ${retryDelay.inSeconds} 秒後重試...');
+        await Future.delayed(retryDelay);
+      }
+    }
+    
+    return RailApiResponse.failure(
+      errorMessage: '獲取線上訂單確認結果超時，已重試 $maxRetries 次',
+    );
+  }
+
+  /// 下載線上票券
+  /// 調用 G2Rail /api/v2/online_orders/{online_order_id}/online_tickets API
+  Future<RailApiResponse<OnlineTicketResponse>> downloadOnlineTickets({
+    required String onlineOrderId,
+  }) async {
+    try {
+      print('🚀 [RAIL API] 開始下載線上票券');
+      print('📍 線上訂單ID: $onlineOrderId');
+      
+      final ticketUrl = '$baseUrl/api/v2/online_orders/$onlineOrderId/online_tickets';
+      
+      print('🔗 API URL: $ticketUrl');
+      
+      final response = await httpClient.get(
+        Uri.parse(ticketUrl),
+        headers: _getAuthorizationHeaders({'online_order_id': onlineOrderId}),
+      );
+
+      print('📊 響應狀態碼: ${response.statusCode}');
+      print('📦 響應內容: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes)) as List;
+        final ticketResponse = OnlineTicketResponse.fromJson(jsonResponse);
+        
+        print('✅ 線上票券下載成功');
+        print('🎫 票券數量: ${ticketResponse.tickets.length}');
+        
+        for (int i = 0; i < ticketResponse.tickets.length; i++) {
+          final ticket = ticketResponse.tickets[i];
+          print('🎫 票券 ${i + 1}: ${ticket.ticketTypeDisplayName}');
+          print('🔗 下載連結: ${ticket.file}');
+        }
+        
+        return RailApiResponse.success(
+          data: ticketResponse,
+          message: '線上票券下載成功',
+        );
+      } else {
+        print('❌ API 錯誤: ${response.statusCode} - ${response.body}');
+        return RailApiResponse.failure(
+          errorMessage: 'API Error ${response.statusCode}: ${response.body}',
+          statusCode: response.statusCode,
+        );
+      }
+    } catch (e) {
+      print('❌ 下載線上票券異常: $e');
+      return RailApiResponse.failure(
+        errorMessage: '下載線上票券失敗: ${e.toString()}',
+      );
+    }
   }
 
   /// 關閉 HTTP 客戶端

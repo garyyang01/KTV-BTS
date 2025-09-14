@@ -16,6 +16,15 @@ class PaymentRequest {
   final TrainOffer? trainOffer;
   final TrainService? trainService;
   final double? trainTicketAmount; // 火車票金額
+  
+  // 乘客詳細資訊（用於火車票）
+  final String? passengerFirstName;
+  final String? passengerLastName;
+  final String? passengerEmail;
+  final String? passengerPhone;
+  final String? passengerPassport;
+  final String? passengerBirthdate;
+  final String? passengerGender;
 
   const PaymentRequest({
     required this.customerName,
@@ -29,6 +38,13 @@ class PaymentRequest {
     this.trainOffer,
     this.trainService,
     this.trainTicketAmount,
+    this.passengerFirstName,
+    this.passengerLastName,
+    this.passengerEmail,
+    this.passengerPhone,
+    this.passengerPassport,
+    this.passengerBirthdate,
+    this.passengerGender,
   });
 
   /// Convert to JSON for API requests
@@ -65,6 +81,13 @@ class PaymentRequest {
     required TrainInfo train,
     required TrainOffer offer,
     required TrainService service,
+    String? passengerFirstName,
+    String? passengerLastName,
+    String? passengerEmail,
+    String? passengerPhone,
+    String? passengerPassport,
+    String? passengerBirthdate,
+    String? passengerGender,
   }) {
     final amount = service.price.cents / 100.0; // 將 cents 轉換為 EUR
     final description = '火車票 - ${train.number} (慕尼黑 → 福森)';
@@ -91,6 +114,13 @@ class PaymentRequest {
       trainOffer: offer,
       trainService: service,
       trainTicketAmount: amount,
+      passengerFirstName: passengerFirstName,
+      passengerLastName: passengerLastName,
+      passengerEmail: passengerEmail,
+      passengerPhone: passengerPhone,
+      passengerPassport: passengerPassport,
+      passengerBirthdate: passengerBirthdate,
+      passengerGender: passengerGender,
     );
   }
 
@@ -100,6 +130,14 @@ class PaymentRequest {
     required TrainInfo train,
     required TrainOffer offer,
     required TrainService service,
+    String? customerName,
+    String? passengerFirstName,
+    String? passengerLastName,
+    String? passengerEmail,
+    String? passengerPhone,
+    String? passengerPassport,
+    String? passengerBirthdate,
+    String? passengerGender,
   }) {
     final trainAmount = service.price.cents / 100.0;
     final totalAmount = originalTicketRequest.amount + trainAmount;
@@ -112,7 +150,7 @@ class PaymentRequest {
     print('  - Total amount: $totalAmount');
     
     return PaymentRequest(
-      customerName: originalTicketRequest.customerName,
+      customerName: customerName ?? originalTicketRequest.customerName,
       isAdult: originalTicketRequest.isAdult,
       time: originalTicketRequest.time,
       amount: totalAmount,
@@ -123,6 +161,13 @@ class PaymentRequest {
       trainOffer: offer,
       trainService: service,
       trainTicketAmount: trainAmount,
+      passengerFirstName: passengerFirstName,
+      passengerLastName: passengerLastName,
+      passengerEmail: passengerEmail,
+      passengerPhone: passengerPhone,
+      passengerPassport: passengerPassport,
+      passengerBirthdate: passengerBirthdate,
+      passengerGender: passengerGender,
     );
   }
 

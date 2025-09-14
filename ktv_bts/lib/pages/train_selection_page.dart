@@ -24,6 +24,18 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
   int? selectedOfferIndex;
   int? selectedServiceIndex;
   int? selectedTrainIndex;
+  
+  // 乘客資訊表單控制器
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _passportController = TextEditingController();
+  final _birthdateController = TextEditingController();
+  String _selectedGender = 'male';
+  
+  // 表單驗證鍵
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -32,21 +44,30 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
         title: const Text('🚄 選擇火車班次'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: widget.solutions.length,
-              itemBuilder: (context, index) {
-                final solution = widget.solutions[index];
-                return _buildSolutionCard(solution, index);
-              },
+      body: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  // 乘客資訊表單
+                  _buildPassengerInfoForm(),
+                  const SizedBox(height: 16),
+                  
+                  // 火車班次選擇
+                  ...widget.solutions.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final solution = entry.value;
+                    return _buildSolutionCard(solution, index);
+                  }).toList(),
+                ],
+              ),
             ),
-          ),
-          
-          // 確認按鈕
-          Container(
+            
+            // 確認按鈕
+            Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -120,7 +141,8 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
               ),
             ),
           ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -770,14 +792,197 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
     );
   }
 
+  @override
+  void dispose() {
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _passportController.dispose();
+    _birthdateController.dispose();
+    super.dispose();
+  }
+
+  /// 建立乘客資訊表單
+  Widget _buildPassengerInfoForm() {
+    return Card(
+      elevation: 2,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              '👤 乘客資訊',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            
+            // 姓名欄位
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: _firstNameController,
+                    decoration: const InputDecoration(
+                      labelText: '名字 *',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return '請輸入名字';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextFormField(
+                    controller: _lastNameController,
+                    decoration: const InputDecoration(
+                      labelText: '姓氏 *',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return '請輸入姓氏';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            
+            // 聯絡資訊
+            TextFormField(
+              controller: _emailController,
+              decoration: const InputDecoration(
+                labelText: '電子郵件 *',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.emailAddress,
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return '請輸入電子郵件';
+                }
+                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                  return '請輸入有效的電子郵件';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 12),
+            
+            TextFormField(
+              controller: _phoneController,
+              decoration: const InputDecoration(
+                labelText: '電話號碼 *',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.phone,
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return '請輸入電話號碼';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 12),
+            
+            // 護照和生日
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: _passportController,
+                    decoration: const InputDecoration(
+                      labelText: '護照號碼 *',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return '請輸入護照號碼';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextFormField(
+                    controller: _birthdateController,
+                    decoration: const InputDecoration(
+                      labelText: '生日 (YYYY-MM-DD) *',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return '請輸入生日';
+                      }
+                      if (!RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(value)) {
+                        return '請使用 YYYY-MM-DD 格式';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            
+            // 性別選擇
+            DropdownButtonFormField<String>(
+              value: _selectedGender,
+              decoration: const InputDecoration(
+                labelText: '性別 *',
+                border: OutlineInputBorder(),
+              ),
+              items: const [
+                DropdownMenuItem(value: 'male', child: Text('男性')),
+                DropdownMenuItem(value: 'female', child: Text('女性')),
+              ],
+              onChanged: (value) {
+                setState(() {
+                  _selectedGender = value!;
+                });
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   /// 導航到支付頁面
   void _proceedToPayment() {
     if (!_canProceed()) return;
+    
+    // 驗證表單
+    if (!_formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('請填寫完整的乘客資訊'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
     
     final solution = widget.solutions[selectedSolutionIndex!];
     final train = solution.trains[selectedTrainIndex!];
     final offer = solution.offers[selectedOfferIndex!];
     final service = offer.services[selectedServiceIndex!];
+    
+    // 獲取乘客資訊
+    final firstName = _firstNameController.text.trim();
+    final lastName = _lastNameController.text.trim();
+    final customerName = '$firstName $lastName';
     
     PaymentRequest paymentRequest;
     
@@ -788,14 +993,29 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
         train: train,
         offer: offer,
         service: service,
+        customerName: customerName,
+        passengerFirstName: firstName,
+        passengerLastName: lastName,
+        passengerEmail: _emailController.text.trim(),
+        passengerPhone: _phoneController.text.trim(),
+        passengerPassport: _passportController.text.trim(),
+        passengerBirthdate: _birthdateController.text.trim(),
+        passengerGender: _selectedGender,
       );
     } else {
       // 創建火車票專用的 PaymentRequest
       paymentRequest = PaymentRequest.forTrainTicket(
-        customerName: 'Train Passenger', // 這裡可以從用戶輸入獲取
+        customerName: customerName,
         train: train,
         offer: offer,
         service: service,
+        passengerFirstName: firstName,
+        passengerLastName: lastName,
+        passengerEmail: _emailController.text.trim(),
+        passengerPhone: _phoneController.text.trim(),
+        passengerPassport: _passportController.text.trim(),
+        passengerBirthdate: _birthdateController.text.trim(),
+        passengerGender: _selectedGender,
       );
     }
     
