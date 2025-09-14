@@ -272,7 +272,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
         ),
         constraints: BoxConstraints(
           maxHeight: 350,
-          maxWidth: MediaQuery.of(context).size.width - 16,
+          maxWidth: MediaQuery.of(context).size.width - 32,
         ),
         child: options.isEmpty
             ? _buildNoResultsView()

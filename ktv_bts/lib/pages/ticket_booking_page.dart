@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import '../widgets/booking_form.dart';
+import '../models/search_option.dart';
 import 'my_train_tickets_page.dart';
 
 /// Main ticket booking page
 /// Contains castle information display and ticket booking form
 class TicketBookingPage extends StatefulWidget {
-  const TicketBookingPage({super.key});
+  final SearchOption? selectedAttraction;
+  
+  const TicketBookingPage({
+    super.key,
+    this.selectedAttraction,
+  });
 
   @override
   State<TicketBookingPage> createState() => _TicketBookingPageState();
@@ -33,6 +39,7 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
           appBar: AppBar(
             title: Row(
               mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
                   padding: const EdgeInsets.all(8),
@@ -49,12 +56,15 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                const Text(
-                  'Neuschwanstein Castle',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: Colors.white,
+                Flexible(
+                  child: Text(
+                    widget.selectedAttraction?.name ?? 'Neuschwanstein Castle',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: Colors.white,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
@@ -179,7 +189,7 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      const BookingForm(),
+                      BookingForm(selectedAttraction: widget.selectedAttraction),
                     ],
                   ),
                 ),
@@ -266,7 +276,7 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'Neuschwanstein Castle',
+                            widget.selectedAttraction?.name ?? 'Neuschwanstein Castle',
                             style: TextStyle(
                               color: Colors.purple.shade700,
                               fontSize: 20,
@@ -312,26 +322,40 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
               ),
               child: Column(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  Column(
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Colors.purple.shade400, Colors.blue.shade400],
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [Colors.purple.shade400, Colors.blue.shade400],
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(
+                              Icons.star,
+                              color: Colors.white,
+                              size: 20,
+                            ),
                           ),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(
-                          Icons.star,
-                          color: Colors.white,
-                          size: 20,
-                        ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Attraction Ticket Booking',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.purple.shade700,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(height: 8),
                       Text(
-                        'Visit Neuschwanstein Castle',
+                        'Visit ${widget.selectedAttraction?.name ?? 'Neuschwanstein Castle'}',
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,

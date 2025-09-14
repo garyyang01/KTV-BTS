@@ -5,6 +5,7 @@ import '../widgets/price_display.dart';
 import '../models/ticket_request.dart';
 import '../models/ticket_info.dart';
 import '../models/payment_request.dart';
+import '../models/search_option.dart';
 import '../pages/payment_page.dart';
 import '../pages/rail_search_test_page.dart';
 import '../services/ip_verification_service.dart';
@@ -12,7 +13,12 @@ import '../services/ip_verification_service.dart';
 /// 預訂表單組件
 /// 包含所有票券預訂所需的輸入欄位
 class BookingForm extends StatefulWidget {
-  const BookingForm({super.key});
+  final SearchOption? selectedAttraction;
+  
+  const BookingForm({
+    super.key,
+    this.selectedAttraction,
+  });
 
   @override
   State<BookingForm> createState() => _BookingFormState();
@@ -49,15 +55,37 @@ class _BookingFormState extends State<BookingForm> {
     super.dispose();
   }
 
+  /// 獲取景點票價
+  Map<String, int> _getAttractionPrices() {
+    if (widget.selectedAttraction?.metadata != null) {
+      final ticketPrice = widget.selectedAttraction!.metadata!['ticketPrice'] as Map<String, dynamic>?;
+      if (ticketPrice != null) {
+        return {
+          'adult': ticketPrice['adult'] as int? ?? 19,
+          'child': ticketPrice['child'] as int? ?? 1,
+        };
+      }
+    }
+    // 預設為 Neuschwanstein Castle 的價格
+    return {'adult': 19, 'child': 1};
+  }
+
+  /// 獲取成人票價
+  int _getAdultPrice() => _getAttractionPrices()['adult']!;
+
+  /// 獲取兒童票價
+  int _getChildPrice() => _getAttractionPrices()['child']!;
+
   /// 添加新票券
   void _addNewTicket() {
     setState(() {
+      final isFirstTicket = _tickets.isEmpty;
       _tickets.add({
         'familyNameController': TextEditingController(),
         'givenNameController': TextEditingController(),
         'isAdult': true,
-        'selectedDate': null,
-        'selectedSession': 'Morning',
+        'selectedDate': isFirstTicket ? null : _tickets.first['selectedDate'],
+        'selectedSession': isFirstTicket ? 'Morning' : _tickets.first['selectedSession'],
       });
     });
   }
@@ -202,9 +230,9 @@ class _BookingFormState extends State<BookingForm> {
                 ),
               ),
               const SizedBox(height: 20),
-              const Text(
-                'Do you also need to book train tickets to Neuschwanstein Castle?',
-                style: TextStyle(
+              Text(
+                'Do you also need to book train tickets to ${widget.selectedAttraction?.name ?? 'Neuschwanstein Castle'}?',
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),
@@ -239,7 +267,7 @@ class _BookingFormState extends State<BookingForm> {
                       ],
                     ),
                     const SizedBox(height: 12),
-                    _buildInfoRow(Icons.location_on, 'Route', 'Munich → Füssen'),
+                    _buildInfoRow(Icons.location_on, 'Route', _getTrainRoute()),
                     const SizedBox(height: 8),
                     _buildInfoRow(Icons.calendar_today, 'Date', ticketDate),
                     const SizedBox(height: 8),
@@ -355,6 +383,19 @@ class _BookingFormState extends State<BookingForm> {
     return '12:00';
   }
 
+  /// 根據景點獲取火車路線
+  String _getTrainRoute() {
+    final attractionId = widget.selectedAttraction?.id;
+    switch (attractionId) {
+      case 'neuschwanstein':
+        return 'Munich → Füssen';
+      case 'uffizi':
+        return 'Munich → Florence';
+      default:
+        return 'Munich → Füssen'; // 預設為 Neuschwanstein Castle 的路線
+    }
+  }
+
   /// 導航到火車票預訂頁面
   void _navigateToTrainBooking(PaymentRequest paymentRequest) {
     // 獲取門票資訊
@@ -390,12 +431,15 @@ class _BookingFormState extends State<BookingForm> {
       initialDate: DateTime.now().add(const Duration(days: 1)),
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
-      helpText: 'Select Arrival Date for Ticket ${ticketIndex + 1}',
+      helpText: 'Select Arrival Date for All Tickets',
     );
     
     if (picked != null && picked != _tickets[ticketIndex]['selectedDate']) {
       setState(() {
-        _tickets[ticketIndex]['selectedDate'] = picked;
+        // 更新所有票券的日期
+        for (int i = 0; i < _tickets.length; i++) {
+          _tickets[i]['selectedDate'] = picked;
+        }
       });
     }
   }
@@ -411,7 +455,7 @@ class _BookingFormState extends State<BookingForm> {
       final session = ticket['selectedSession'] as String;
       final selectedDate = ticket['selectedDate'] as DateTime;
       final arrivalTime = DateFormat('yyyy-MM-dd').format(selectedDate);
-      final price = isAdult ? 19.0 : 1.0; // 成人19歐元，兒童1歐元
+      final price = isAdult ? _getAdultPrice().toDouble() : _getChildPrice().toDouble();
       
       ticketInfoList.add(TicketInfo(
         familyName: familyName,
@@ -442,7 +486,8 @@ class _BookingFormState extends State<BookingForm> {
     // 創建描述
     final adultCount = ticketRequest.adultTickets.length;
     final childCount = ticketRequest.childTickets.length;
-    String description = 'Neuschwanstein Castle Tickets - ';
+    final attractionName = widget.selectedAttraction?.name ?? 'Neuschwanstein Castle';
+    String description = '$attractionName Tickets - ';
     if (adultCount > 0) description += '$adultCount Adult';
     if (adultCount > 0 && childCount > 0) description += ', ';
     if (childCount > 0) description += '$childCount Child';
@@ -554,7 +599,7 @@ class _BookingFormState extends State<BookingForm> {
             child: Column(
               children: [
                 RadioListTile<bool>(
-                  title: const Text('Adult (19 EUR)'),
+                  title: Text('Adult (${_getAdultPrice()} EUR)'),
                   subtitle: const Text('18 years and above'),
                   value: true,
                   groupValue: ticket['isAdult'],
@@ -565,7 +610,7 @@ class _BookingFormState extends State<BookingForm> {
                   },
                 ),
                 RadioListTile<bool>(
-                  title: const Text('Under 18 (1 EUR)'),
+                  title: Text('Under 18 (${_getChildPrice() == 0 ? 'Free' : '${_getChildPrice()} EUR'})'),
                   subtitle: const Text('Under 18 years old'),
                   value: false,
                   groupValue: ticket['isAdult'],
@@ -580,76 +625,75 @@ class _BookingFormState extends State<BookingForm> {
           ),
           const SizedBox(height: 16),
 
-          // Date and Session Row
-          Row(
-            children: [
-              // Date Selection
-              Expanded(
-                flex: 3,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Arrival Date',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                    ),
-                    const SizedBox(height: 8),
-                    InkWell(
-                      onTap: () => _selectDate(index),
-                      child: Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey.shade300),
-                          borderRadius: BorderRadius.circular(8),
-                          color: Colors.white,
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.calendar_today, color: Colors.grey),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                ticket['selectedDate'] == null
-                                    ? 'Select date'
-                                    : DateFormat('yyyy-MM-dd').format(ticket['selectedDate']),
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: ticket['selectedDate'] == null ? Colors.grey : Colors.black,
+          // Date and Session Row (only show for first ticket)
+          if (index == 0) ...[
+            Row(
+              children: [
+                // Date Selection
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Arrival Date',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(height: 8),
+                      InkWell(
+                        onTap: () => _selectDate(index),
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey.shade300),
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.white,
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.calendar_today, color: Colors.grey),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  ticket['selectedDate'] == null
+                                      ? 'Select date'
+                                      : DateFormat('yyyy-MM-dd').format(ticket['selectedDate']),
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: ticket['selectedDate'] == null ? Colors.grey : Colors.black,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              
-              // Session Selection
-              Expanded(
-                flex: 2,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Session',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade300),
-                        borderRadius: BorderRadius.circular(8),
-                        color: Colors.white,
+                const SizedBox(width: 12),
+                
+                // Session Selection
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Session',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                       ),
-                      child: DropdownButtonFormField<String>(
+                      const SizedBox(height: 8),
+                      DropdownButtonFormField<String>(
                         value: ticket['selectedSession'],
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         ),
                         items: const [
                           DropdownMenuItem(value: 'Morning', child: Text('Morning')),
@@ -657,16 +701,45 @@ class _BookingFormState extends State<BookingForm> {
                         ],
                         onChanged: (value) {
                           setState(() {
-                            ticket['selectedSession'] = value!;
+                            ticket['selectedSession'] = value;
+                            // 更新所有其他票券的時段
+                            for (int i = 1; i < _tickets.length; i++) {
+                              _tickets[i]['selectedSession'] = value;
+                            }
                           });
                         },
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
+              ],
+            ),
+          ] else ...[
+            // Show date and session info for additional tickets
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.blue.shade200),
               ),
-            ],
-          ),
+              child: Row(
+                children: [
+                  Icon(Icons.info_outline, color: Colors.blue.shade600, size: 16),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Date: ${ticket['selectedDate'] != null ? DateFormat('yyyy-MM-dd').format(ticket['selectedDate']) : 'Not selected'}, Session: ${ticket['selectedSession']}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.blue.shade700,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -710,6 +783,8 @@ class _BookingFormState extends State<BookingForm> {
           // Price Display
           PriceDisplay(
             tickets: _tickets,
+            adultPrice: _getAdultPrice(),
+            childPrice: _getChildPrice(),
           ),
           const SizedBox(height: 24),
 

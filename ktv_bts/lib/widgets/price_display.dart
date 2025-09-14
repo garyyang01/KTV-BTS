@@ -4,14 +4,18 @@ import 'package:flutter/material.dart';
 /// 根據票券列表動態顯示總價
 class PriceDisplay extends StatelessWidget {
   final List<Map<String, dynamic>> tickets;
+  final int adultPrice;
+  final int childPrice;
 
   const PriceDisplay({
     super.key,
     required this.tickets,
+    this.adultPrice = 19,
+    this.childPrice = 1,
   });
 
   /// 計算單張票價
-  int getTicketPrice(bool isAdult) => isAdult ? 19 : 1;
+  int getTicketPrice(bool isAdult) => isAdult ? adultPrice : childPrice;
   
   /// 計算總價
   int get totalPrice {
@@ -61,7 +65,7 @@ class PriceDisplay extends StatelessWidget {
                   style: const TextStyle(fontSize: 16),
                 ),
                 Text(
-                  '€${adultCount * 19}',
+                  '€${adultCount * adultPrice}',
                   style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),
               ],
@@ -79,7 +83,7 @@ class PriceDisplay extends StatelessWidget {
                   style: const TextStyle(fontSize: 16),
                 ),
                 Text(
-                  '€${childCount * 1}',
+                  childPrice == 0 ? 'Free' : '€${childCount * childPrice}',
                   style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),
               ],
