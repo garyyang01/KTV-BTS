@@ -102,14 +102,41 @@ class _PaymentPageState extends State<PaymentPage> {
     print('✅ IP verification passed, proceeding with payment');
 
     if (_lastPaymentIntent == null || !_lastPaymentIntent!.success) {
-      print('💳 Payment intent not ready');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please create payment intent first'),
-          backgroundColor: Colors.orange,
-        ),
-      );
-      return;
+      print('💳 Payment intent not ready, attempting to create...');
+      setState(() {
+        _isLoading = true;
+      });
+      
+      try {
+        final response = await _stripeService.createPaymentIntent(widget.paymentRequest);
+        setState(() {
+          _lastPaymentIntent = response;
+        });
+        
+        if (!response.success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to create payment intent: ${response.errorMessage}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          setState(() {
+            _isLoading = false;
+          });
+          return;
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Payment initialization failed: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
     }
 
     print('💳 Payment intent ready, starting payment...');
