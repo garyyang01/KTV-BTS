@@ -9,13 +9,13 @@ import '../models/payment_request.dart';
 import '../widgets/rail_solution_card.dart';
 import 'train_selection_page.dart';
 
-/// 鐵路搜尋測試頁面
-/// 提供 UI 介面來測試 G2Rail API 搜尋功能
+/// Railway Search Test Page
+/// Provides UI interface to test G2Rail API search functionality
 class RailSearchTestPage extends StatefulWidget {
-  final List<TicketInfo>? ticketInfos; // 從門票資訊帶入的乘客資料
-  final String? ticketDate; // 從門票資訊帶入的日期
-  final String? ticketSession; // 從門票資訊帶入的時段
-  final PaymentRequest? originalTicketRequest; // 原始門票支付請求（用於組合支付）
+  final List<TicketInfo>? ticketInfos; // Passenger data from ticket information
+  final String? ticketDate; // Date from ticket information
+  final String? ticketSession; // Session from ticket information
+  final PaymentRequest? originalTicketRequest; // Original ticket payment request (for combined payment)
 
   const RailSearchTestPage({
     super.key,
@@ -31,8 +31,8 @@ class RailSearchTestPage extends StatefulWidget {
 
 class _RailSearchTestPageState extends State<RailSearchTestPage> {
   final _formKey = GlobalKey<FormState>();
-  final _fromController = TextEditingController(text: 'ST_EMYR64OX'); // 慕尼黑火車站代碼
-  final _toController = TextEditingController(text: 'ST_E7G93QNJ'); // 福森火車站代碼
+  final _fromController = TextEditingController(text: 'ST_EMYR64OX'); // Munich train station code
+  final _toController = TextEditingController(text: 'ST_E7G93QNJ'); // Füssen train station code
   final _dateController = TextEditingController();
   final _timeController = TextEditingController();
   final _adultController = TextEditingController(text: '1');
@@ -53,26 +53,26 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
     super.initState();
     _railService = RailBookingService.defaultInstance();
     
-    // 根據門票資訊預填表單
+    // Pre-fill form based on ticket information
     _initializeFormFromTicketInfo();
   }
 
-  /// 根據門票資訊初始化表單
+  /// Initialize form based on ticket information
   void _initializeFormFromTicketInfo() {
-    // 設定日期
+    // Set date
     if (widget.ticketDate != null) {
       _dateController.text = widget.ticketDate!;
     } else {
-      // 預設日期為明天
+      // Default date is tomorrow
       final defaultDate = DateTime.now().add(const Duration(days: 1));
       _dateController.text = DateFormat('yyyy-MM-dd').format(defaultDate);
     }
 
-    // 根據門票時段設定出發時間
-    // 無論是 Morning 還是 Afternoon，火車票時間都設定為 12:00
+    // Set departure time based on ticket session
+    // Whether Morning or Afternoon, train ticket time is set to 12:00
     _timeController.text = '12:00';
 
-    // 根據門票資訊設定乘客數量
+    // Set passenger count based on ticket information
     if (widget.ticketInfos != null && widget.ticketInfos!.isNotEmpty) {
       int adultCount = 0;
       int childCount = 0;
@@ -112,14 +112,14 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
 
     setState(() {
       _isLoading = true;
-      _statusMessage = '正在搜尋火車班次...';
+      _statusMessage = 'Searching for train schedules...';
       _searchResults = null;
       _trainSolutions = [];
       _errorMessage = '';
     });
 
     try {
-      // 創建搜尋條件
+      // Create search criteria
       final criteria = RailSearchCriteria(
         from: _fromController.text.trim(),
         to: _toController.text.trim(),
@@ -133,10 +133,10 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
       );
 
       setState(() {
-        _statusMessage = '搜尋條件: ${criteria.from} → ${criteria.to}';
+        _statusMessage = 'Search criteria: ${criteria.from} → ${criteria.to}';
       });
 
-      // 執行搜尋
+      // Execute search
       final result = await _railService.searchAndGetResults(criteria);
 
       setState(() {
@@ -145,11 +145,11 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
         if (result.success) {
           _searchResults = result.data;
           _trainSolutions = _parseTrainSolutions(result.data?.solutions ?? []);
-          _statusMessage = '搜尋完成！找到 ${_trainSolutions.length} 個班次選項';
+          _statusMessage = 'Search completed! Found ${_trainSolutions.length} schedule options';
           _errorMessage = '';
         } else {
-          _errorMessage = result.errorMessage ?? '搜尋失敗';
-          _statusMessage = '搜尋失敗';
+          _errorMessage = result.errorMessage ?? 'Search failed';
+          _statusMessage = 'Search failed';
           _searchResults = null;
           _trainSolutions = [];
         }
@@ -254,7 +254,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '🚄 新天鵝堡火車票預訂',
+                '🚄 Neuschwanstein Castle Train Ticket Booking',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -273,7 +273,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        '路線：慕尼黑 (Munich) → 福森 (Füssen)',
+                        'Route: Munich → Füssen',
                         style: TextStyle(
                           color: Colors.blue.shade700,
                           fontWeight: FontWeight.w500,
@@ -285,7 +285,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
               ),
               const SizedBox(height: 16),
               
-              // 出發地和目的地
+              // Departure and destination
               Row(
                 children: [
                   Expanded(
@@ -299,7 +299,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return '請輸入出發地';
+                          return 'Please enter departure location';
                         }
                         return null;
                       },
@@ -319,7 +319,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return '請輸入目的地';
+                          return 'Please enter destination';
                         }
                         return null;
                       },
@@ -329,14 +329,14 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
               ),
               const SizedBox(height: 16),
 
-              // 日期和時間
+              // Date and time
               Row(
                 children: [
                   Expanded(
                     child: TextFormField(
                       controller: _dateController,
                       decoration: const InputDecoration(
-                        labelText: '出發日期',
+                        labelText: 'Departure Date',
                         hintText: 'yyyy-MM-dd',
                         border: OutlineInputBorder(),
                         suffixIcon: Icon(Icons.calendar_today),
@@ -355,7 +355,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                       },
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return '請選擇出發日期';
+                          return 'Please select departure date';
                         }
                         return null;
                       },
@@ -366,13 +366,13 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                     child: TextFormField(
                       controller: _timeController,
                       decoration: const InputDecoration(
-                        labelText: '出發時間',
+                        labelText: 'Departure Time',
                         hintText: 'HH:mm',
                         border: OutlineInputBorder(),
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return '請輸入出發時間';
+                          return 'Please enter departure time';
                         }
                         return null;
                       },
@@ -382,9 +382,9 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
               ),
               const SizedBox(height: 16),
 
-              // 乘客數量
+              // Passenger count
               Text(
-                '👥 乘客數量',
+                '👥 Passenger Count',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 8),
@@ -394,14 +394,14 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                     child: TextFormField(
                       controller: _adultController,
                       decoration: const InputDecoration(
-                        labelText: '成人',
+                        labelText: 'Adults',
                         border: OutlineInputBorder(),
                       ),
                       keyboardType: TextInputType.number,
                       validator: (value) {
                         final count = int.tryParse(value ?? '');
                         if (count == null || count < 0) {
-                          return '請輸入有效的成人數量';
+                          return 'Please enter valid adult count';
                         }
                         return null;
                       },
@@ -412,14 +412,14 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                     child: TextFormField(
                       controller: _childController,
                       decoration: const InputDecoration(
-                        labelText: '兒童',
+                        labelText: 'Children',
                         border: OutlineInputBorder(),
                       ),
                       keyboardType: TextInputType.number,
                       validator: (value) {
                         final count = int.tryParse(value ?? '');
                         if (count == null || count < 0) {
-                          return '請輸入有效的兒童數量';
+                          return 'Please enter valid children count';
                         }
                         return null;
                       },
@@ -428,7 +428,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                 ],
               ),
               const SizedBox(height: 8),
-              // 顯示預設的青少年、長者、嬰兒數量
+              // Show default junior, senior, infant counts
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -442,7 +442,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                     Column(
                       children: [
                         Text(
-                          '青少年',
+                          'Junior',
                           style: TextStyle(
                             color: Colors.grey.shade600,
                             fontSize: 12,
@@ -460,7 +460,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                     Column(
                       children: [
                         Text(
-                          '長者',
+                          'Senior',
                           style: TextStyle(
                             color: Colors.grey.shade600,
                             fontSize: 12,
@@ -478,7 +478,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                     Column(
                       children: [
                         Text(
-                          '嬰兒',
+                          'Infant',
                           style: TextStyle(
                             color: Colors.grey.shade600,
                             fontSize: 12,
@@ -498,7 +498,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
               ),
               const SizedBox(height: 24),
 
-              // 搜尋按鈕
+              // Search button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
@@ -510,7 +510,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : const Icon(Icons.search),
-                  label: Text(_isLoading ? '搜尋中...' : '開始搜尋'),
+                  label: Text(_isLoading ? 'Searching...' : 'Start Search'),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     textStyle: const TextStyle(fontSize: 16),
@@ -537,7 +537,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '📊 搜尋狀態',
+              '📊 Search Status',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -595,7 +595,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
             Row(
               children: [
                 Text(
-                  '🚄 搜尋結果 (${_trainSolutions.length} 個班次選項)',
+                  '🚄 Search Results (${_trainSolutions.length} schedule options)',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -604,7 +604,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                 ElevatedButton.icon(
                   onPressed: _navigateToTrainSelection,
                   icon: const Icon(Icons.arrow_forward),
-                  label: const Text('選擇班次'),
+                  label: const Text('Select Schedule'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).primaryColor,
                     foregroundColor: Colors.white,
@@ -614,7 +614,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
             ),
             const SizedBox(height: 16),
             
-            // 顯示班次摘要
+            // Show schedule summary
             ..._trainSolutions.asMap().entries.map((entry) {
               final index = entry.key;
               final solution = entry.value;

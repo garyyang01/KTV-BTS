@@ -5,8 +5,8 @@ import '../services/ticket_storage_service.dart';
 import '../models/online_confirmation_response.dart';
 import '../models/online_ticket_response.dart';
 
-/// 我的火車票頁面
-/// 顯示用戶已購買的火車票
+/// My Train Tickets Page
+/// Displays user's purchased train tickets
 class MyTrainTicketsPage extends StatefulWidget {
   const MyTrainTicketsPage({super.key});
 
@@ -26,7 +26,7 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
     _loadTicketData();
   }
 
-  /// 載入火車票數據
+  /// Load train ticket data
   Future<void> _loadTicketData() async {
     setState(() {
       _isLoading = true;
@@ -56,7 +56,7 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
         _isLoading = false;
       });
     } catch (e) {
-      print('❌ 載入火車票數據失敗: $e');
+      print('❌ Failed to load train ticket data: $e');
       setState(() {
         _isLoading = false;
       });
@@ -67,13 +67,13 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('我的火車票'),
+        title: const Text('My Train Tickets'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         elevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            tooltip: '重新載入',
+            tooltip: 'Reload',
             onPressed: _loadTicketData,
           ),
         ],
@@ -86,7 +86,7 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
     );
   }
 
-  /// 建立空狀態
+  /// Build empty state
   Widget _buildEmptyState() {
     return Center(
       child: Column(
@@ -99,7 +99,7 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
           ),
           const SizedBox(height: 16),
           Text(
-            '還沒有火車票',
+            'No Train Tickets Yet',
             style: TextStyle(
               fontSize: 18,
               color: Colors.grey.shade600,
@@ -108,7 +108,7 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
           ),
           const SizedBox(height: 8),
           Text(
-            '購買火車票後，票券資訊會顯示在這裡',
+            'Train ticket information will be displayed here after purchase',
             style: TextStyle(
               fontSize: 14,
               color: Colors.grey.shade500,
@@ -118,7 +118,7 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
           ElevatedButton.icon(
             onPressed: () => Navigator.pop(context),
             icon: const Icon(Icons.search),
-            label: const Text('搜尋火車票'),
+            label: const Text('Search Train Tickets'),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.blue,
               foregroundColor: Colors.white,
@@ -129,7 +129,7 @@ class _MyTrainTicketsPageState extends State<MyTrainTicketsPage> {
     );
   }
 
-  /// 建立票券列表
+  /// Build ticket list
   Widget _buildTicketList() {
     return RefreshIndicator(
       onRefresh: _loadTicketData,

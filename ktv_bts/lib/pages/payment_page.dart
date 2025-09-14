@@ -35,7 +35,7 @@ class _PaymentPageState extends State<PaymentPage> {
   final _ticketApiService = TicketApiService();
   final _ipVerificationService = IpVerificationService();
   final _railBookingService = RailBookingService.defaultInstance();
-  // 表單控制器
+  // Form controllers
   final _cardNumberController = TextEditingController();
   final _expiryDateController = TextEditingController();
   final _cvcController = TextEditingController();
@@ -48,7 +48,7 @@ class _PaymentPageState extends State<PaymentPage> {
   void initState() {
     super.initState();
     _initializeService();
-    // 自動創建支付意圖
+    // Automatically create payment intent
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _createPaymentIntent();
     });
@@ -58,7 +58,7 @@ class _PaymentPageState extends State<PaymentPage> {
     try {
       await _stripeService.initialize();
     } catch (e) {
-      // 靜默處理初始化錯誤，在支付時會再次嘗試
+      // Silently handle initialization error, will retry during payment
     }
   }
 
@@ -80,7 +80,7 @@ class _PaymentPageState extends State<PaymentPage> {
         _lastPaymentIntent = response;
       });
     } catch (e) {
-      // 靜默處理錯誤，在支付時會再次嘗試
+      // Silently handle error, will retry during payment
     }
   }
 
@@ -92,7 +92,7 @@ class _PaymentPageState extends State<PaymentPage> {
       return;
     }
 
-    // 在進行刷卡前進行 IP 驗證
+    // Verify user IP before payment
     print('🔒 Verifying user IP before payment...');
     final isIpAuthorized = await _ipVerificationService.verifyUserIp();
     if (!isIpAuthorized) {
@@ -220,7 +220,7 @@ class _PaymentPageState extends State<PaymentPage> {
         print('🎫 Legacy API response - Success: ${apiResponse.success}, Error: ${apiResponse.errorMessage}');
         
         if (apiResponse.success) {
-          // 如果有火車票資訊，調用 G2Rail online_orders API
+          // If train ticket info exists, call G2Rail online_orders API
           if (widget.paymentRequest.trainInfo != null) {
             await _createOnlineOrderWithLoading(paymentIntentId);
           } else {
@@ -242,14 +242,14 @@ class _PaymentPageState extends State<PaymentPage> {
         print('🎫 New API response - Success: ${apiResponse.success}, Error: ${apiResponse.errorMessage}');
         
         if (apiResponse.success) {
-          // 如果有火車票資訊，調用 G2Rail online_orders API
+          // If train ticket info exists, call G2Rail online_orders API
           if (widget.paymentRequest.trainInfo != null) {
             await _createOnlineOrderWithLoading(paymentIntentId);
           } else {
             _showSuccessDialog();
           }
         } else {
-          // 臨時測試：即使 API 失敗也顯示成功對話框
+          // Temporary test: show success dialog even if API fails
           print('🎫 API failed but showing success dialog for testing');
           _showSuccessDialog();
           // _showApiErrorDialog(apiResponse.errorMessage ?? 'Unknown error');
@@ -286,9 +286,9 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 
-  /// 創建 G2Rail 線上訂單（帶 Loading 動畫）
+  /// Create G2Rail online order (with Loading animation)
   Future<void> _createOnlineOrderWithLoading(String paymentIntentId) async {
-    // 顯示 Loading 對話框
+    // Show Loading dialog
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -299,7 +299,7 @@ class _PaymentPageState extends State<PaymentPage> {
             const CircularProgressIndicator(),
             const SizedBox(height: 16),
             const Text(
-              '獲取火車票卷中...',
+              'Processing train tickets...',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
@@ -307,7 +307,7 @@ class _PaymentPageState extends State<PaymentPage> {
             ),
             const SizedBox(height: 8),
             Text(
-              '正在處理您的火車票訂單',
+              'Processing your train ticket order',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey.shade600,
@@ -319,40 +319,40 @@ class _PaymentPageState extends State<PaymentPage> {
     );
 
     try {
-      // 執行火車票處理流程
+      // Execute train ticket processing flow
       await _createOnlineOrder(paymentIntentId);
       
-      // 關閉 Loading 對話框
+      // Close Loading dialog
       if (mounted) {
         Navigator.of(context).pop();
-        // 顯示成功對話框，包含跳轉到票券頁面的選項
+        // Show success dialog with option to navigate to tickets page
         _showTrainTicketSuccessDialog();
       }
     } catch (e) {
-      // 關閉 Loading 對話框
+      // Close Loading dialog
       if (mounted) {
         Navigator.of(context).pop();
-        // 顯示錯誤對話框
+        // Show error dialog
         _showTrainTicketErrorDialog(e.toString());
       }
     }
   }
 
-  /// 創建 G2Rail 線上訂單
+  /// Create G2Rail online order
   Future<void> _createOnlineOrder(String paymentIntentId) async {
     try {
-      print('🚄 開始創建 G2Rail 線上訂單');
+      print('🚄 Starting G2Rail online order creation');
       
-      // 檢查是否有火車票資訊
+      // Check if train ticket info exists
       if (widget.paymentRequest.trainInfo == null) {
-        print('🚄 沒有火車票資訊，跳過線上訂單創建');
+        print('🚄 No train ticket info, skipping online order creation');
         return;
       }
 
-      // 從火車票資訊中獲取必要數據
+      // Get necessary data from train ticket info
       final trainInfo = widget.paymentRequest.trainInfo!;
       
-      // 使用真實的乘客資訊，如果沒有則使用預設值
+      // Use real passenger info, or default values if not available
       final firstName = widget.paymentRequest.passengerFirstName ?? 'Train';
       final lastName = widget.paymentRequest.passengerLastName ?? 'Passenger';
       final email = widget.paymentRequest.passengerEmail ?? 'customer@example.com';
@@ -361,7 +361,7 @@ class _PaymentPageState extends State<PaymentPage> {
       final birthdate = widget.paymentRequest.passengerBirthdate ?? '1986-09-01';
       final gender = widget.paymentRequest.passengerGender ?? 'male';
       
-      // 創建乘客資訊
+      // Create passenger information
       final passengers = [
         Passenger(
           lastName: lastName,
@@ -526,7 +526,7 @@ class _PaymentPageState extends State<PaymentPage> {
     }
   }
 
-  /// 顯示火車票成功對話框
+  /// Show train ticket success dialog
   void _showTrainTicketSuccessDialog() {
     showDialog(
       context: context,
@@ -535,7 +535,7 @@ class _PaymentPageState extends State<PaymentPage> {
           children: [
             Icon(Icons.check_circle, color: Colors.green),
             SizedBox(width: 8),
-            Text('火車票購買成功！'),
+            Text('Train Ticket Purchase Successful!'),
           ],
         ),
         content: Column(
@@ -543,7 +543,7 @@ class _PaymentPageState extends State<PaymentPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '您的火車票已成功購買並確認！',
+              'Your train ticket has been successfully purchased and confirmed!',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
@@ -561,7 +561,7 @@ class _PaymentPageState extends State<PaymentPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    '🎫 票券資訊：',
+                    '🎫 Ticket Information:',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
@@ -569,17 +569,17 @@ class _PaymentPageState extends State<PaymentPage> {
                   ),
                   const SizedBox(height: 4),
                   if (widget.paymentRequest.trainInfo != null) ...[
-                    Text('路線: ${widget.paymentRequest.trainInfo!.from.localName} → ${widget.paymentRequest.trainInfo!.to.localName}'),
-                    Text('車次: ${widget.paymentRequest.trainInfo!.number}'),
-                    Text('出發: ${DateFormat('HH:mm').format(widget.paymentRequest.trainInfo!.departure)}'),
-                    Text('到達: ${DateFormat('HH:mm').format(widget.paymentRequest.trainInfo!.arrival)}'),
+                    Text('Route: ${widget.paymentRequest.trainInfo!.from.localName} → ${widget.paymentRequest.trainInfo!.to.localName}'),
+                    Text('Train: ${widget.paymentRequest.trainInfo!.number}'),
+                    Text('Departure: ${DateFormat('HH:mm').format(widget.paymentRequest.trainInfo!.departure)}'),
+                    Text('Arrival: ${DateFormat('HH:mm').format(widget.paymentRequest.trainInfo!.arrival)}'),
                   ],
                 ],
               ),
             ),
             const SizedBox(height: 12),
             const Text(
-              '您現在可以查看您的火車票券，或返回首頁繼續瀏覽。',
+              'You can now view your train tickets or return to the homepage to continue browsing.',
               style: TextStyle(fontSize: 14),
             ),
           ],
@@ -588,18 +588,18 @@ class _PaymentPageState extends State<PaymentPage> {
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
-              // 跳轉到首頁
+              // Navigate to homepage
               Navigator.of(context).pushNamedAndRemoveUntil(
                 '/',
                 (route) => false,
               );
             },
-            child: const Text('返回首頁'),
+            child: const Text('Return to Homepage'),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop();
-              // 跳轉到我的火車票頁面
+              // Navigate to my train tickets page
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => const MyTrainTicketsPage(),
@@ -610,14 +610,14 @@ class _PaymentPageState extends State<PaymentPage> {
               backgroundColor: Colors.blue,
               foregroundColor: Colors.white,
             ),
-            child: const Text('查看我的票券'),
+            child: const Text('View My Tickets'),
           ),
         ],
       ),
     );
   }
 
-  /// 顯示火車票錯誤對話框
+  /// Show train ticket error dialog
   void _showTrainTicketErrorDialog(String errorMessage) {
     showDialog(
       context: context,
@@ -626,7 +626,7 @@ class _PaymentPageState extends State<PaymentPage> {
           children: [
             Icon(Icons.warning, color: Colors.orange),
             SizedBox(width: 8),
-            Text('火車票處理失敗'),
+            Text('Train Ticket Processing Failed'),
           ],
         ),
         content: Column(
@@ -634,7 +634,7 @@ class _PaymentPageState extends State<PaymentPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '支付已成功，但火車票處理過程中出現問題：',
+              'Payment was successful, but there was an issue processing your train ticket:',
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 8),
@@ -652,7 +652,7 @@ class _PaymentPageState extends State<PaymentPage> {
             ),
             const SizedBox(height: 16),
             const Text(
-              '請聯繫客服並提供您的支付參考號：',
+              'Please contact customer service and provide your payment reference number:',
               style: TextStyle(fontWeight: FontWeight.w500),
             ),
             Text(
@@ -665,13 +665,13 @@ class _PaymentPageState extends State<PaymentPage> {
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
-              // 跳轉到首頁
+              // Navigate to homepage
               Navigator.of(context).pushNamedAndRemoveUntil(
                 '/',
                 (route) => false,
               );
             },
-            child: const Text('返回首頁'),
+            child: const Text('Return to Homepage'),
           ),
         ],
       ),
@@ -856,7 +856,7 @@ class _PaymentPageState extends State<PaymentPage> {
           children: [
             Icon(Icons.train, color: Colors.blue),
             SizedBox(width: 8),
-            Text('🚄 火車票預訂'),
+            Text('🚄 Booking Train Ticket'),
           ],
         ),
         content: Column(
@@ -864,7 +864,7 @@ class _PaymentPageState extends State<PaymentPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '門票購買成功！',
+              'Ticket buying successful！',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
@@ -887,17 +887,17 @@ class _PaymentPageState extends State<PaymentPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    '預設火車票資訊：',
+                    'Default Train Ticket Information：',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text('出發：慕尼黑 → 福森', style: const TextStyle(fontSize: 12)),
-                  Text('日期：$ticketDate', style: const TextStyle(fontSize: 12)),
-                  Text('時間：$departureTime', style: const TextStyle(fontSize: 12)),
-                  Text('時段：${ticketSession == "Morning" ? "上午" : "下午"}', style: const TextStyle(fontSize: 12)),
+                  Text('Start：Munich Central → Füssen', style: const TextStyle(fontSize: 12)),
+                  Text('Date：$ticketDate', style: const TextStyle(fontSize: 12)),
+                  Text('Time：$departureTime', style: const TextStyle(fontSize: 12)),
+                  Text('Session：${ticketSession == "Morning" ? "Morning" : "Afternoon"}', style: const TextStyle(fontSize: 12)),
                 ],
               ),
             ),
@@ -913,7 +913,7 @@ class _PaymentPageState extends State<PaymentPage> {
                 (route) => false,
               );
             },
-            child: const Text('不需要'),
+            child: const Text('No need'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -924,7 +924,7 @@ class _PaymentPageState extends State<PaymentPage> {
               backgroundColor: Colors.blue,
               foregroundColor: Colors.white,
             ),
-            child: const Text('🚄 預訂火車票'),
+            child: const Text('🚄 Booking Train Ticket'),
           ),
         ],
       ),
@@ -957,7 +957,7 @@ class _PaymentPageState extends State<PaymentPage> {
           children: [
             Icon(Icons.security, color: Colors.orange),
             SizedBox(width: 8),
-            Text('3DS 身份驗證'),
+            Text('3DS Authentication'),
           ],
         ),
         content: Column(
@@ -965,7 +965,7 @@ class _PaymentPageState extends State<PaymentPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '您的銀行要求進行額外的身份驗證。',
+              'Your bank requires additional authentication。',
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 16),

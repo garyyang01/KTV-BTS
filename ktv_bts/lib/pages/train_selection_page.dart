@@ -41,7 +41,7 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('🚄 選擇火車班次'),
+        title: const Text('🚄 Select Train Schedule'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Form(
@@ -52,11 +52,11 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-                  // 乘客資訊表單
+                  // Passenger Information Form
                   _buildPassengerInfoForm(),
                   const SizedBox(height: 16),
                   
-                  // 火車班次選擇
+                  // Train Schedule Selection
                   ...widget.solutions.asMap().entries.map((entry) {
                     final index = entry.key;
                     final solution = entry.value;
@@ -66,7 +66,7 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
               ),
             ),
             
-            // 確認按鈕
+            // Confirm Button
             Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -129,7 +129,7 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
                         ),
                       ),
                       child: Text(
-                        _canProceed() ? '確認選擇' : '請選擇車次和票價',
+                        _canProceed() ? 'Confirm Selection' : 'Please select train and fare',
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -232,10 +232,10 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
                 
                 const SizedBox(height: 16),
                 
-                // 火車班次信息
+                // Train Schedule Information
                 if (solution.trains.isNotEmpty) ...[
                   Text(
-                    '🚂 火車班次 (請選擇一個班次)',
+                    '🚂 Train Schedule (Please select a train)',
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -250,10 +250,10 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
                 
                 const SizedBox(height: 16),
                 
-                // 票價選項
+                // Fare Options
                 if (solution.offers.isNotEmpty) ...[
                   Text(
-                    '💰 票價選項',
+                    '💰 Fare Options',
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -757,35 +757,35 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('確認選擇'),
+        title: const Text('Confirm Selection'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('車次: ${train.number}'),
-            Text('類型: ${train.typeName}'),
-            Text('出發: ${DateFormat('HH:mm').format(train.departure)} - ${train.from.localName}'),
-            Text('到達: ${DateFormat('HH:mm').format(train.arrival)} - ${train.to.localName}'),
-            Text('行程時間: ${train.formattedDuration}'),
+            Text('Train: ${train.number}'),
+            Text('Type: ${train.typeName}'),
+            Text('Departure: ${DateFormat('HH:mm').format(train.departure)} - ${train.from.localName}'),
+            Text('Arrival: ${DateFormat('HH:mm').format(train.arrival)} - ${train.to.localName}'),
+            Text('Duration: ${train.formattedDuration}'),
             const SizedBox(height: 8),
-            Text('票價類型: ${offer.description}'),
-            Text('座位類型: ${service.description}'),
-            Text('價格: ${service.price.formattedPrice}'),
+            Text('Fare Type: ${offer.description}'),
+            Text('Seat Type: ${service.description}'),
+            Text('Price: ${service.price.formattedPrice}'),
             if (service.available.seats > 0)
-              Text('剩餘座位: ${service.available.seats}'),
+              Text('Available Seats: ${service.available.seats}'),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('取消'),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop();
               _proceedToPayment();
             },
-            child: const Text('確認預訂'),
+            child: const Text('Confirm Booking'),
           ),
         ],
       ),
@@ -803,7 +803,7 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
     super.dispose();
   }
 
-  /// 建立乘客資訊表單
+  /// Build Passenger Information Form
   Widget _buildPassengerInfoForm() {
     return Card(
       elevation: 2,
@@ -813,7 +813,7 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '👤 乘客資訊',
+              '👤 Passenger Information',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -821,19 +821,19 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
             ),
             const SizedBox(height: 16),
             
-            // 姓名欄位
+            // Name Fields
             Row(
               children: [
                 Expanded(
                   child: TextFormField(
                     controller: _firstNameController,
                     decoration: const InputDecoration(
-                      labelText: '名字 *',
+                      labelText: 'First Name *',
                       border: OutlineInputBorder(),
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return '請輸入名字';
+                        return 'Please enter first name';
                       }
                       return null;
                     },
@@ -844,12 +844,12 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
                   child: TextFormField(
                     controller: _lastNameController,
                     decoration: const InputDecoration(
-                      labelText: '姓氏 *',
+                      labelText: 'Last Name *',
                       border: OutlineInputBorder(),
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return '請輸入姓氏';
+                        return 'Please enter last name';
                       }
                       return null;
                     },
@@ -859,20 +859,20 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
             ),
             const SizedBox(height: 12),
             
-            // 聯絡資訊
+            // Contact Information
             TextFormField(
               controller: _emailController,
               decoration: const InputDecoration(
-                labelText: '電子郵件 *',
+                labelText: 'Email *',
                 border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.emailAddress,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return '請輸入電子郵件';
+                  return 'Please enter email';
                 }
                 if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                  return '請輸入有效的電子郵件';
+                  return 'Please enter a valid email';
                 }
                 return null;
               },
@@ -882,32 +882,32 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
             TextFormField(
               controller: _phoneController,
               decoration: const InputDecoration(
-                labelText: '電話號碼 *',
+                labelText: 'Phone Number *',
                 border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.phone,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return '請輸入電話號碼';
+                  return 'Please enter phone number';
                 }
                 return null;
               },
             ),
             const SizedBox(height: 12),
             
-            // 護照和生日
+            // Passport and Birthdate
             Row(
               children: [
                 Expanded(
                   child: TextFormField(
                     controller: _passportController,
                     decoration: const InputDecoration(
-                      labelText: '護照號碼 *',
+                      labelText: 'Passport Number *',
                       border: OutlineInputBorder(),
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return '請輸入護照號碼';
+                        return 'Please enter passport number';
                       }
                       return null;
                     },
@@ -918,15 +918,15 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
                   child: TextFormField(
                     controller: _birthdateController,
                     decoration: const InputDecoration(
-                      labelText: '生日 (YYYY-MM-DD) *',
+                      labelText: 'Birthdate (YYYY-MM-DD) *',
                       border: OutlineInputBorder(),
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return '請輸入生日';
+                        return 'Please enter birthdate';
                       }
                       if (!RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(value)) {
-                        return '請使用 YYYY-MM-DD 格式';
+                        return 'Please use YYYY-MM-DD format';
                       }
                       return null;
                     },
@@ -936,16 +936,16 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
             ),
             const SizedBox(height: 12),
             
-            // 性別選擇
+            // Gender Selection
             DropdownButtonFormField<String>(
               value: _selectedGender,
               decoration: const InputDecoration(
-                labelText: '性別 *',
+                labelText: 'Gender *',
                 border: OutlineInputBorder(),
               ),
               items: const [
-                DropdownMenuItem(value: 'male', child: Text('男性')),
-                DropdownMenuItem(value: 'female', child: Text('女性')),
+                DropdownMenuItem(value: 'male', child: Text('Male')),
+                DropdownMenuItem(value: 'female', child: Text('Female')),
               ],
               onChanged: (value) {
                 setState(() {
@@ -959,15 +959,15 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
     );
   }
 
-  /// 導航到支付頁面
+  /// Navigate to Payment Page
   void _proceedToPayment() {
     if (!_canProceed()) return;
     
-    // 驗證表單
+    // Validate form
     if (!_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('請填寫完整的乘客資訊'),
+          content: Text('Please fill in complete passenger information'),
           backgroundColor: Colors.red,
         ),
       );
@@ -979,7 +979,7 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
     final offer = solution.offers[selectedOfferIndex!];
     final service = offer.services[selectedServiceIndex!];
     
-    // 獲取乘客資訊
+    // Get passenger information
     final firstName = _firstNameController.text.trim();
     final lastName = _lastNameController.text.trim();
     final customerName = '$firstName $lastName';
@@ -987,7 +987,7 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
     PaymentRequest paymentRequest;
     
     if (widget.originalTicketRequest != null) {
-      // 創建組合支付（門票+火車票）的 PaymentRequest
+      // Create combined payment (ticket + train ticket) PaymentRequest
       paymentRequest = PaymentRequest.forCombinedPayment(
         originalTicketRequest: widget.originalTicketRequest!,
         train: train,
@@ -1003,7 +1003,7 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
         passengerGender: _selectedGender,
       );
     } else {
-      // 創建火車票專用的 PaymentRequest
+      // Create train ticket only PaymentRequest
       paymentRequest = PaymentRequest.forTrainTicket(
         customerName: customerName,
         train: train,
@@ -1019,7 +1019,7 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
       );
     }
     
-    // 導航到支付頁面
+    // Navigate to payment page
     Navigator.push(
       context,
       MaterialPageRoute(

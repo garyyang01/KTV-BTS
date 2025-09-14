@@ -68,7 +68,7 @@ class _AttractionTicketWidgetState extends State<AttractionTicketWidget>
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
+                color: Colors.black.withOpacity(0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -149,7 +149,7 @@ class _AttractionTicketWidgetState extends State<AttractionTicketWidget>
           end: Alignment.bottomRight,
           colors: [
             Colors.orange.shade50,
-            Colors.orange.shade100.withValues(alpha: 0.3),
+            Colors.orange.shade100.withOpacity(0.3),
           ],
         ),
         borderRadius: BorderRadius.circular(12),
@@ -252,7 +252,7 @@ class _AttractionTicketWidgetState extends State<AttractionTicketWidget>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.8),
+        color: Colors.white.withOpacity(0.8),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.orange.shade200),
       ),
@@ -288,7 +288,7 @@ class _AttractionTicketWidgetState extends State<AttractionTicketWidget>
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.9),
+        color: Colors.white.withOpacity(0.9),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.orange.shade300),
       ),
@@ -345,9 +345,9 @@ class _AttractionTicketWidgetState extends State<AttractionTicketWidget>
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Column(
         children: [
