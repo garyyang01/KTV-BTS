@@ -37,7 +37,7 @@ class _MainPageState extends State<MainPage> {
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
         title: const Text(
-          '🎫 Ticket Booking System',
+          '🎫 Ticketrip',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 20,
