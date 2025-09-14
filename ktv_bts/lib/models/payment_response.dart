@@ -7,6 +7,7 @@ class PaymentResponse {
   final String? status;
   final double? amount;
   final String? currency;
+  final bool requiresAction; // For 3DS authentication
 
   const PaymentResponse({
     required this.success,
@@ -16,6 +17,7 @@ class PaymentResponse {
     this.status,
     this.amount,
     this.currency,
+    this.requiresAction = false,
   });
 
   /// Create successful payment response
@@ -39,10 +41,16 @@ class PaymentResponse {
   /// Create failed payment response
   factory PaymentResponse.failure({
     required String errorMessage,
+    String? paymentIntentId,
+    String? clientSecret,
+    bool requiresAction = false,
   }) {
     return PaymentResponse(
       success: false,
       errorMessage: errorMessage,
+      paymentIntentId: paymentIntentId,
+      clientSecret: clientSecret,
+      requiresAction: requiresAction,
     );
   }
 
@@ -56,6 +64,7 @@ class PaymentResponse {
       status: json['status'] as String?,
       amount: json['amount'] != null ? (json['amount'] as num).toDouble() : null,
       currency: json['currency'] as String?,
+      requiresAction: json['requires_action'] as bool? ?? false,
     );
   }
 
@@ -69,6 +78,7 @@ class PaymentResponse {
       'status': status,
       'amount': amount,
       'currency': currency,
+      'requires_action': requiresAction,
     };
   }
 
