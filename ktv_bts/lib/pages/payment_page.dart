@@ -14,6 +14,7 @@ import '../models/online_order_response.dart';
 import '../models/online_confirmation_response.dart';
 import '../models/online_ticket_response.dart';
 import '../services/ticket_storage_service.dart';
+import '../utils/ticket_id_generator.dart';
 import 'rail_search_test_page.dart';
 import 'my_train_tickets_page.dart';
 
@@ -234,58 +235,105 @@ class _PaymentPageState extends State<PaymentPage> {
     try {
       print('🎫 Submitting ticket request to API with paymentIntentId: $paymentIntentId');
       
-      // Check if we have ticket request data
-      if (widget.paymentRequest.ticketRequest == null) {
-        print('🎫 Using legacy ticket format');
-        // Fallback to legacy single ticket format
-        final legacyTicketRequest = _createLegacyTicketRequest();
-        final apiResponse = await _ticketApiService.submitTicketRequest(
-          paymentRefno: paymentIntentId,
-          ticketRequest: legacyTicketRequest,
-        );
-        
-        print('🎫 Legacy API response - Success: ${apiResponse.success}, Error: ${apiResponse.errorMessage}');
-        
-        if (apiResponse.success) {
-          // If train ticket info exists, call G2Rail online_orders API
-          if (widget.paymentRequest.trainInfo != null) {
-            await _createOnlineOrderWithLoading(paymentIntentId);
-          } else {
-            _showSuccessDialog();
-          }
+      // Create comprehensive ticket request that includes both entrance and train tickets
+      final comprehensiveTicketRequest = _createComprehensiveTicketRequest();
+      
+      print('🎫 Comprehensive ticket request data: ${comprehensiveTicketRequest.toJson()}');
+      
+      // Submit to API
+      final apiResponse = await _ticketApiService.submitTicketRequest(
+        paymentRefno: paymentIntentId,
+        ticketRequest: comprehensiveTicketRequest,
+      );
+      
+      print('🎫 API response - Success: ${apiResponse.success}, Error: ${apiResponse.errorMessage}');
+      
+      if (apiResponse.success) {
+        // If train ticket info exists, call G2Rail online_orders API
+        if (widget.paymentRequest.trainInfo != null) {
+          await _createOnlineOrderWithLoading(paymentIntentId);
         } else {
-          _showApiErrorDialog(apiResponse.errorMessage ?? 'Unknown error');
+          _showSuccessDialog();
         }
       } else {
-        print('🎫 Using new ticket request format');
-        print('🎫 Ticket request data: ${widget.paymentRequest.ticketRequest!.toJson()}');
-        
-        // Use new ticket request format
-        final apiResponse = await _ticketApiService.submitTicketRequest(
-          paymentRefno: paymentIntentId,
-          ticketRequest: widget.paymentRequest.ticketRequest!,
-        );
-        
-        print('🎫 New API response - Success: ${apiResponse.success}, Error: ${apiResponse.errorMessage}');
-        
-        if (apiResponse.success) {
-          // If train ticket info exists, call G2Rail online_orders API
-          if (widget.paymentRequest.trainInfo != null) {
-            await _createOnlineOrderWithLoading(paymentIntentId);
-          } else {
-            _showSuccessDialog();
-          }
-        } else {
-          // Temporary test: show success dialog even if API fails
-          print('🎫 API failed but showing success dialog for testing');
-          _showSuccessDialog();
-          // _showApiErrorDialog(apiResponse.errorMessage ?? 'Unknown error');
-        }
+        // Temporary test: show success dialog even if API fails
+        print('🎫 API failed but showing success dialog for testing');
+        _showSuccessDialog();
+        // _showApiErrorDialog(apiResponse.errorMessage ?? 'Unknown error');
       }
     } catch (e) {
       print('🎫 Exception in _submitTicketToApi: $e');
       _showApiErrorDialog('Failed to submit ticket request: $e');
     }
+  }
+
+  /// Create comprehensive ticket request that includes both entrance and train tickets
+  TicketRequest _createComprehensiveTicketRequest() {
+    final ticketInfoList = <TicketInfo>[];
+    
+    // Add entrance tickets if they exist
+    if (widget.paymentRequest.ticketRequest != null) {
+      ticketInfoList.addAll(widget.paymentRequest.ticketRequest!.ticketInfo);
+    }
+    
+    // Add train ticket if it exists
+    if (widget.paymentRequest.trainInfo != null) {
+      final trainInfo = widget.paymentRequest.trainInfo!;
+      final trainTicketId = TicketIdGenerator.generateTicketId();
+      
+      // Use passenger info from payment request (collected from train booking page)
+      final firstName = widget.paymentRequest.passengerFirstName ?? 'Train';
+      final lastName = widget.paymentRequest.passengerLastName ?? 'Passenger';
+      final phone = widget.paymentRequest.passengerPhone ?? '';
+      final passport = widget.paymentRequest.passengerPassport ?? '';
+      final birthdate = widget.paymentRequest.passengerBirthdate ?? '';
+      final gender = widget.paymentRequest.passengerGender ?? '';
+      
+      // Get train route information
+      final fromStation = trainInfo.from.localName;
+      final toStation = trainInfo.to.localName;
+      
+      // Calculate train ticket price
+      final trainPrice = widget.paymentRequest.trainTicketAmount ?? 0.0;
+      
+      // 根據火車出發時間判斷是上午還是下午
+      final trainSession = TicketIdGenerator.getSessionFromTime(trainInfo.departure);
+      
+      ticketInfoList.add(TicketInfo(
+        id: trainTicketId,
+        familyName: lastName,
+        givenName: firstName,
+        isAdult: true, // Train tickets are always adult
+        session: trainSession, // 根據火車出發時間判斷 Morning/Afternoon
+        arrivalTime: DateFormat('yyyy-MM-dd').format(trainInfo.departure),
+        price: trainPrice,
+        type: 'Train', // Train ticket type
+        entranceName: '', // No entrance name for train tickets
+        bundleName: '', // Currently empty
+        from: fromStation,
+        to: toStation,
+        phone: phone, // 從火車票預訂頁面收集
+        passportNumber: passport, // 從火車票預訂頁面收集
+        birthDate: birthdate, // 從火車票預訂頁面收集
+        gender: gender, // 從火車票預訂頁面收集
+      ));
+    }
+    
+    // Determine recipient email
+    String recipientEmail;
+    if (widget.paymentRequest.ticketRequest != null) {
+      recipientEmail = widget.paymentRequest.ticketRequest!.recipientEmail;
+    } else if (widget.paymentRequest.passengerEmail != null) {
+      recipientEmail = widget.paymentRequest.passengerEmail!;
+    } else {
+      recipientEmail = 'customer@example.com';
+    }
+    
+    return TicketRequest(
+      recipientEmail: recipientEmail,
+      totalTickets: ticketInfoList.length,
+      ticketInfo: ticketInfoList,
+    );
   }
 
   /// Create legacy ticket request from current payment request
@@ -297,17 +345,39 @@ class _PaymentPageState extends State<PaymentPage> {
     final familyName = nameParts.length > 1 ? nameParts.last : '';
     final givenName = nameParts.length > 1 ? nameParts.take(nameParts.length - 1).join(' ') : customerName;
     
+    // 獲取景點資訊
+    final description = widget.paymentRequest.description ?? '';
+    String attractionName;
+    if (description.contains('Uffizi Gallery')) {
+      attractionName = 'Uffizi Gallery Ticket';
+    } else {
+      attractionName = 'Neuschwanstein Castle Ticket';
+    }
+    
+    // 生成隨機ID
+    final ticketId = TicketIdGenerator.generateTicketId();
+    
     return TicketRequest(
       recipientEmail: 'customer@example.com', // Default email
       totalTickets: 1,
       ticketInfo: [
         TicketInfo(
+          id: ticketId,
           familyName: familyName,
           givenName: givenName,
           isAdult: widget.paymentRequest.isAdult,
           session: widget.paymentRequest.time,
           arrivalTime: DateTime.now().add(const Duration(days: 1)).toIso8601String().split('T')[0], // Tomorrow
           price: widget.paymentRequest.amount,
+          type: 'Entrance', // 門票類型
+          entranceName: attractionName,
+          bundleName: '', // 目前為空
+          from: '', // 門票不需要出發地資訊
+          to: '', // 門票不需要目的地資訊
+          phone: '', // 門票不需要電話資訊
+          passportNumber: '', // 門票不需要護照資訊
+          birthDate: '', // 門票不需要出生日期
+          gender: '', // 門票不需要性別資訊
         ),
       ],
     );

@@ -12,12 +12,13 @@ class TicketApiService {
   Future<TicketApiResponse> submitTicketRequest({
     required String paymentRefno,
     required TicketRequest ticketRequest,
+    String? ipAddress,
   }) async {
     try {
       final requestBody = {
         'PaymentRefno': paymentRefno,
         'RecipientEmail': ticketRequest.recipientEmail,
-        'TotalTickets': ticketRequest.totalTickets,
+        'Ip': ipAddress ?? '127.0.0.1', // Default IP if not provided
         'TicketInfo': ticketRequest.ticketInfo.map((ticket) => ticket.toJson()).toList(),
       };
 
