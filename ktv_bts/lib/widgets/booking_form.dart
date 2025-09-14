@@ -362,6 +362,11 @@ class _BookingFormState extends State<BookingForm> {
     final ticketDate = _getTicketDate(paymentRequest);
     final ticketSession = paymentRequest.time;
     
+    // 獲取用戶信息
+    final email = _emailController.text.trim();
+    final firstName = ticketInfos.isNotEmpty ? ticketInfos.first.givenName : '';
+    final lastName = ticketInfos.isNotEmpty ? ticketInfos.first.familyName : '';
+    
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => RailSearchTestPage(
@@ -369,6 +374,9 @@ class _BookingFormState extends State<BookingForm> {
           ticketDate: ticketDate,
           ticketSession: ticketSession,
           originalTicketRequest: paymentRequest,
+          passengerEmail: email,
+          passengerFirstName: firstName,
+          passengerLastName: lastName,
         ),
       ),
     );

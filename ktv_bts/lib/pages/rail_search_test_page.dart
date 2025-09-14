@@ -16,6 +16,9 @@ class RailSearchTestPage extends StatefulWidget {
   final String? ticketDate; // Date from ticket information
   final String? ticketSession; // Session from ticket information
   final PaymentRequest? originalTicketRequest; // Original ticket payment request (for combined payment)
+  final String? passengerEmail; // Email from homepage
+  final String? passengerFirstName; // First name from homepage
+  final String? passengerLastName; // Last name from homepage
 
   const RailSearchTestPage({
     super.key,
@@ -23,6 +26,9 @@ class RailSearchTestPage extends StatefulWidget {
     this.ticketDate,
     this.ticketSession,
     this.originalTicketRequest,
+    this.passengerEmail,
+    this.passengerFirstName,
+    this.passengerLastName,
   });
 
   @override
@@ -255,6 +261,9 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
         builder: (context) => TrainSelectionPage(
           solutions: _trainSolutions,
           originalTicketRequest: widget.originalTicketRequest,
+          passengerEmail: widget.passengerEmail,
+          passengerFirstName: widget.passengerFirstName,
+          passengerLastName: widget.passengerLastName,
         ),
       ),
     );

@@ -8,11 +8,17 @@ import 'payment_page.dart';
 class TrainSelectionPage extends StatefulWidget {
   final List<TrainSolution> solutions;
   final PaymentRequest? originalTicketRequest; // Original ticket payment request (for combined payment)
+  final String? passengerEmail; // Email from homepage
+  final String? passengerFirstName; // First name from homepage
+  final String? passengerLastName; // Last name from homepage
 
   const TrainSelectionPage({
     super.key,
     required this.solutions,
     this.originalTicketRequest,
+    this.passengerEmail,
+    this.passengerFirstName,
+    this.passengerLastName,
   });
 
   @override
@@ -36,6 +42,21 @@ class _TrainSelectionPageState extends State<TrainSelectionPage> {
   
   // Form validation key
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    // Auto-fill form with data from homepage
+    if (widget.passengerEmail != null) {
+      _emailController.text = widget.passengerEmail!;
+    }
+    if (widget.passengerFirstName != null) {
+      _firstNameController.text = widget.passengerFirstName!;
+    }
+    if (widget.passengerLastName != null) {
+      _lastNameController.text = widget.passengerLastName!;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
