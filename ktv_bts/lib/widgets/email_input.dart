@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 /// 電子郵件輸入組件
 /// 包含 Email 格式驗證功能
@@ -23,25 +24,27 @@ class EmailInput extends StatelessWidget {
       controller: controller,
       enabled: enabled,
       keyboardType: TextInputType.emailAddress,
-      decoration: const InputDecoration(
-        labelText: 'Email Address',
-        hintText: 'Enter your email address',
-        prefixIcon: Icon(Icons.email),
-        border: OutlineInputBorder(),
+      decoration: InputDecoration(
+        labelText: AppLocalizations.of(context)!.emailAddress,
+        hintText: AppLocalizations.of(context)!.emailAddressHint,
+        prefixIcon: const Icon(Icons.email),
+        border: const OutlineInputBorder(),
+        filled: true,
+        fillColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF2A2A2A) : Colors.white,
       ),
-      validator: validator ?? _defaultValidator,
+      validator: validator ?? (value) => _defaultValidator(context, value),
       onChanged: onChanged,
     );
   }
 
   /// 預設的 Email 驗證器
-  String? _defaultValidator(String? value) {
+  String? _defaultValidator(BuildContext context, String? value) {
     if (value == null || value.isEmpty) {
-      return 'Email address is required';
+      return AppLocalizations.of(context)!.emailAddressRequired;
     }
     
     if (!EmailValidator.validate(value)) {
-      return 'Please enter a valid email address';
+      return AppLocalizations.of(context)!.emailAddressInvalid;
     }
     
     return null;

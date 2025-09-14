@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../widgets/search_bar_widget.dart';
 import '../widgets/content_display_widget.dart';
 import '../models/search_option.dart';
@@ -15,6 +17,38 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   SearchOption? _selectedOption;
   int _currentIndex = 0; // Current bottom navigation index
+  
+  // Banner carousel state
+  late PageController _bannerController;
+  int _currentBannerIndex = 0;
+  Timer? _bannerTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _bannerController = PageController();
+    _startBannerTimer();
+  }
+
+  @override
+  void dispose() {
+    _bannerController.dispose();
+    _bannerTimer?.cancel();
+    super.dispose();
+  }
+
+  void _startBannerTimer() {
+    _bannerTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      if (_bannerController.hasClients) {
+        final nextIndex = (_currentBannerIndex + 1) % 2; // 只有2張圖片
+        _bannerController.animateToPage(
+          nextIndex,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
 
   void _clearSelection() {
     setState(() {
@@ -50,8 +84,16 @@ class _MainPageState extends State<MainPage> {
           }
         });
         break;
-      case 3: // Settings - placeholder for future settings functionality
-        _showComingSoonDialog('Settings');
+      case 3: // Settings
+        Navigator.pushNamed(context, '/settings');
+        // Reset to home after navigation
+        Future.delayed(const Duration(milliseconds: 100), () {
+          if (mounted) {
+            setState(() {
+              _currentIndex = 0;
+            });
+          }
+        });
         break;
     }
   }
@@ -65,14 +107,14 @@ class _MainPageState extends State<MainPage> {
           children: [
             Icon(Icons.info_outline, color: Colors.blue.shade600),
             const SizedBox(width: 8),
-            Text('$feature Coming Soon'),
+            Text('${AppLocalizations.of(context)!.comingSoon} $feature'),
           ],
         ),
-        content: Text('$feature feature is under development and will be available soon!'),
+        content: Text('$feature ${AppLocalizations.of(context)!.featureUnderDevelopment}'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
+            child: Text(AppLocalizations.of(context)!.ok),
           ),
         ],
       ),
@@ -81,13 +123,19 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
+            colors: isDark ? [
+              const Color(0xFF1A1A2E),
+              const Color(0xFF16213E),
+              const Color(0xFF0F3460),
+            ] : [
               Colors.blue.shade50,
               Colors.purple.shade50,
               Colors.orange.shade50,
@@ -116,9 +164,9 @@ class _MainPageState extends State<MainPage> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                const Text(
-                  'Ticket Trip Booking',
-                  style: TextStyle(
+                Text(
+                  AppLocalizations.of(context)!.appTitle,
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
                     color: Colors.white,
@@ -154,6 +202,11 @@ class _MainPageState extends State<MainPage> {
                   
                   const SizedBox(height: 24),
                   
+                  // Promotional Banner Carousel - Independent section
+                  _buildPromotionalBanner(),
+                  
+                  const SizedBox(height: 24),
+                  
                   // Search section
                   _buildSearchSection(),
                   
@@ -179,26 +232,31 @@ class _MainPageState extends State<MainPage> {
 
   /// Build bottom navigation bar
   Widget _buildBottomNavigationBar() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
+          colors: isDark ? [
+            const Color(0xFF1A1A1A),
+            const Color(0xFF0F0F0F),
+          ] : [
             Colors.white,
             Colors.blue.shade50,
           ],
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.blue.withOpacity(0.1),
+            color: isDark ? Colors.black.withOpacity(0.3) : Colors.blue.withOpacity(0.1),
             blurRadius: 20,
             offset: const Offset(0, -5),
           ),
         ],
         border: Border(
           top: BorderSide(
-            color: Colors.blue.withOpacity(0.1),
+            color: isDark ? Colors.blue.withOpacity(0.3) : Colors.blue.withOpacity(0.1),
             width: 1,
           ),
         ),
@@ -210,10 +268,10 @@ class _MainPageState extends State<MainPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildNavItem(0, Icons.home, 'Home'),
-              _buildNavItem(1, Icons.card_giftcard, 'Bundle'),
-              _buildNavItem(2, Icons.confirmation_number, 'My Tickets'),
-              _buildNavItem(3, Icons.settings, 'Settings'),
+              _buildNavItem(0, Icons.home, AppLocalizations.of(context)!.home),
+              _buildNavItem(1, Icons.card_giftcard, AppLocalizations.of(context)!.bundle),
+              _buildNavItem(2, Icons.confirmation_number, AppLocalizations.of(context)!.myTickets),
+              _buildNavItem(3, Icons.settings, AppLocalizations.of(context)!.settings),
             ],
           ),
         ),
@@ -280,13 +338,18 @@ class _MainPageState extends State<MainPage> {
 
   /// Build welcome section
   Widget _buildWelcomeSection() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
+          colors: isDark ? [
+            const Color(0xFF2A2A3E).withOpacity(0.9),
+            const Color(0xFF1E1E2E).withOpacity(0.8),
+          ] : [
             Colors.white.withOpacity(0.9),
             Colors.blue.shade50.withOpacity(0.8),
           ],
@@ -294,7 +357,7 @@ class _MainPageState extends State<MainPage> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.blue.withOpacity(0.1),
+            color: isDark ? Colors.black.withOpacity(0.3) : Colors.blue.withOpacity(0.1),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -324,20 +387,20 @@ class _MainPageState extends State<MainPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Welcome to Ticket Trip Travel!',
+                    Text(
+                      AppLocalizations.of(context)!.welcomeMessage,
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                        color: isDark ? Colors.white : Colors.black87,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Discover amazing destinations and book your perfect journey',
+                      AppLocalizations.of(context)!.welcomeSubtitle,
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.grey.shade600,
+                        color: isDark ? Colors.white70 : Colors.grey.shade600,
                         height: 1.3,
                       ),
                     ),
@@ -349,11 +412,11 @@ class _MainPageState extends State<MainPage> {
           const SizedBox(height: 20),
           Row(
             children: [
-              _buildFeatureChip(Icons.train, 'Train Tickets', Colors.blue),
+              _buildFeatureChip(Icons.train, AppLocalizations.of(context)!.trainTickets, Colors.blue),
               const SizedBox(width: 12),
-              _buildFeatureChip(Icons.castle, 'Castle Tours', Colors.purple),
+              _buildFeatureChip(Icons.castle, AppLocalizations.of(context)!.castleTours, Colors.purple),
               const SizedBox(width: 12),
-              _buildFeatureChip(Icons.explore, 'Attractions', Colors.orange),
+              _buildFeatureChip(Icons.explore, AppLocalizations.of(context)!.attractions, Colors.orange),
             ],
           ),
         ],
@@ -390,20 +453,22 @@ class _MainPageState extends State<MainPage> {
 
   /// Build search section
   Widget _buildSearchSection() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: isDark ? Colors.black.withOpacity(0.3) : Colors.black.withOpacity(0.08),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
         ],
         border: Border.all(
-          color: Colors.blue.withOpacity(0.1),
+          color: isDark ? Colors.blue.withOpacity(0.3) : Colors.blue.withOpacity(0.1),
           width: 1,
         ),
       ),
@@ -436,13 +501,13 @@ class _MainPageState extends State<MainPage> {
                   ),
                 ),
                 const SizedBox(width: 12),
-                const Expanded(
-                  child: Text(
-                    'Search for Destinations',
+                Expanded(
+                  child:                   Text(
+                    AppLocalizations.of(context)!.searchDestinations,
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: isDark ? Colors.white : Colors.black87,
                     ),
                   ),
                 ),
@@ -453,7 +518,7 @@ class _MainPageState extends State<MainPage> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    'NEW',
+                    AppLocalizations.of(context)!.newLabel,
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
@@ -469,7 +534,7 @@ class _MainPageState extends State<MainPage> {
           
           // Search component
           SearchBarWidget(
-            hintText: 'Type destination...',
+            hintText: AppLocalizations.of(context)!.typeDestination,
             onSelectionChanged: (option) {
               setState(() {
                 _selectedOption = option;
@@ -489,21 +554,21 @@ class _MainPageState extends State<MainPage> {
   /// Build quick suggestions
   Widget _buildQuickSuggestions() {
     final suggestions = [
-      {'icon': Icons.train, 'text': 'Munich Central', 'color': Colors.blue},
-      {'icon': Icons.castle, 'text': 'Neuschwanstein', 'color': Colors.purple},
-      {'icon': Icons.location_city, 'text': 'Florence', 'color': Colors.orange},
-      {'icon': Icons.museum, 'text': 'Uffizi Gallery', 'color': Colors.green},
+      {'icon': Icons.train, 'text': AppLocalizations.of(context)!.munichCentral, 'color': Colors.blue},
+      {'icon': Icons.castle, 'text': AppLocalizations.of(context)!.neuschwanstein, 'color': Colors.purple},
+      {'icon': Icons.location_city, 'text': AppLocalizations.of(context)!.florence, 'color': Colors.orange},
+      {'icon': Icons.museum, 'text': AppLocalizations.of(context)!.uffiziGallery, 'color': Colors.green},
     ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Popular Destinations',
+          AppLocalizations.of(context)!.popularDestinations,
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: Colors.grey.shade700,
+            color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.grey.shade700,
           ),
         ),
         const SizedBox(height: 12),
@@ -549,6 +614,196 @@ class _MainPageState extends State<MainPage> {
           }).toList(),
         ),
       ],
+    );
+  }
+
+  /// Build promotional banner carousel
+  Widget _buildPromotionalBanner() {
+    // 推廣圖片列表 - 只有2張圖片
+    final promotionalImages = [
+      {
+        'image': 'assets/images/neuschwanstein_castle.png', // 新天鵝堡圖片
+        'title': AppLocalizations.of(context)!.neuschwanstein,
+        'subtitle': AppLocalizations.of(context)!.visitMagicalCastle,
+      },
+      {
+        'image': 'assets/images/uffizi_gallery.png', // 烏菲茲美術館圖片
+        'title': AppLocalizations.of(context)!.uffiziGallery,
+        'subtitle': AppLocalizations.of(context)!.exploreRenaissance,
+      },
+    ];
+
+    return Container(
+      height: 200,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          // PageView for banner images
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: PageView.builder(
+              controller: _bannerController,
+              onPageChanged: (index) {
+                setState(() {
+                  _currentBannerIndex = index;
+                });
+              },
+              itemCount: promotionalImages.length,
+              itemBuilder: (context, index) {
+                final promo = promotionalImages[index];
+                return Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(promo['image'] as String),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withOpacity(0.7),
+                        ],
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            promo['title'] as String,
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            promo['subtitle'] as String,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white.withOpacity(0.9),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          
+          // Left arrow button
+          Positioned(
+            left: 10,
+            top: 0,
+            bottom: 0,
+            child: Center(
+              child: GestureDetector(
+                onTap: () {
+                  _bannerTimer?.cancel();
+                  final prevIndex = _currentBannerIndex > 0 
+                      ? _currentBannerIndex - 1 
+                      : promotionalImages.length - 1;
+                  _bannerController.animateToPage(
+                    prevIndex,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                  _startBannerTimer();
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Icon(
+                    Icons.chevron_left,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          
+          // Right arrow button
+          Positioned(
+            right: 10,
+            top: 0,
+            bottom: 0,
+            child: Center(
+              child: GestureDetector(
+                onTap: () {
+                  _bannerTimer?.cancel();
+                  final nextIndex = (_currentBannerIndex + 1) % promotionalImages.length;
+                  _bannerController.animateToPage(
+                    nextIndex,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                  _startBannerTimer();
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Icon(
+                    Icons.chevron_right,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          
+          // Page indicators
+          Positioned(
+            bottom: 10,
+            left: 0,
+            right: 0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                promotionalImages.length,
+                (index) => Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _currentBannerIndex == index 
+                        ? Colors.white 
+                        : Colors.white.withOpacity(0.5),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

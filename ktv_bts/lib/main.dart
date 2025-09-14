@@ -1,5 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'services/email_service.dart';
 import 'pages/payment_test_page.dart';
 import 'pages/payment_page.dart';
@@ -7,7 +10,10 @@ import 'pages/ticket_booking_page.dart';
 import 'pages/main_page.dart';
 import 'pages/payment_confirmation_page.dart';
 import 'pages/rail_search_test_page.dart';
+import 'pages/settings_page.dart';
 import 'models/payment_request.dart';
+import 'providers/theme_provider.dart';
+import 'providers/locale_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,25 +50,41 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Ticket Trip Booking',
-      debugShowCheckedModeBanner: false, // 關閉調試模式的紅色錯誤條
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MainPage(),
-      routes: {
-        '/payment-test': (context) => const PaymentTestPage(),
-        '/payment': (context) {
-          final args = ModalRoute.of(context)!.settings.arguments as PaymentRequest;
-          return PaymentPage(paymentRequest: args);
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => LocaleProvider()),
+      ],
+      child: Consumer2<ThemeProvider, LocaleProvider>(
+        builder: (context, themeProvider, localeProvider, child) {
+          return MaterialApp(
+            title: 'Ticket Trip Booking',
+            debugShowCheckedModeBanner: false,
+            theme: themeProvider.getThemeData(context),
+            locale: localeProvider.locale,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: LocaleProvider.supportedLocales,
+            home: const MainPage(),
+            routes: {
+              '/payment-test': (context) => const PaymentTestPage(),
+              '/payment': (context) {
+                final args = ModalRoute.of(context)!.settings.arguments as PaymentRequest;
+                return PaymentPage(paymentRequest: args);
+              },
+              '/payment-confirmation': (context) => const PaymentConfirmationPage(),
+              '/rail-search-test': (context) => const RailSearchTestPage(),
+              '/legacy-ticket-booking': (context) => const TicketBookingPage(),
+              '/legacy-landing': (context) => const LandingPage(),
+              '/settings': (context) => const SettingsPage(),
+            },
+          );
         },
-        '/payment-confirmation': (context) => const PaymentConfirmationPage(),
-        '/rail-search-test': (context) => const RailSearchTestPage(),
-        '/legacy-ticket-booking': (context) => const TicketBookingPage(),
-        '/legacy-landing': (context) => const LandingPage(),
-      },
+      ),
     );
   }
 }

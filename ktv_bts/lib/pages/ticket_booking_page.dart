@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../widgets/booking_form.dart';
 import '../models/search_option.dart';
 import 'my_train_tickets_page.dart';
@@ -20,13 +21,19 @@ class TicketBookingPage extends StatefulWidget {
 class _TicketBookingPageState extends State<TicketBookingPage> {
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
+            colors: isDark ? [
+              const Color(0xFF1A1A2E),
+              const Color(0xFF16213E),
+              const Color(0xFF0F3460),
+            ] : [
               Colors.purple.shade50,
               Colors.blue.shade50,
               Colors.orange.shade50,
@@ -95,7 +102,7 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
                 ),
                 child: IconButton(
                   icon: const Icon(Icons.confirmation_number, color: Colors.white),
-                  tooltip: 'My Train Tickets',
+                  tooltip: AppLocalizations.of(context)!.myTrainTicketsTooltip,
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -115,7 +122,7 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
                 ),
                 child: IconButton(
                   icon: const Icon(Icons.train, color: Colors.white),
-                  tooltip: 'Railway Search Test',
+                  tooltip: AppLocalizations.of(context)!.railwaySearchTestTooltip,
                   onPressed: () {
                     Navigator.pushNamed(context, '/rail-search-test');
                   },
@@ -135,17 +142,17 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
                   margin: const EdgeInsets.all(16.0),
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.purple.withOpacity(0.1),
+                        color: isDark ? Colors.black.withOpacity(0.3) : Colors.purple.withOpacity(0.1),
                         blurRadius: 20,
                         offset: const Offset(0, 8),
                       ),
                     ],
                     border: Border.all(
-                      color: Colors.purple.withOpacity(0.1),
+                      color: isDark ? Colors.blue.withOpacity(0.3) : Colors.purple.withOpacity(0.1),
                       width: 1,
                     ),
                   ),
@@ -156,7 +163,9 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [Colors.purple.shade50, Colors.blue.shade50],
+                            colors: isDark 
+                                ? [const Color(0xFF2A2A3E), const Color(0xFF1E1E2E)]
+                                : [Colors.purple.shade50, Colors.blue.shade50],
                           ),
                           borderRadius: BorderRadius.circular(16),
                         ),
@@ -177,12 +186,12 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
                               ),
                             ),
                             const SizedBox(width: 12),
-                            const Text(
-                              'Book Your Tickets',
+                            Text(
+                              AppLocalizations.of(context)!.bookYourTickets,
                               style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.black87,
+                                color: isDark ? Colors.white : Colors.black87,
                               ),
                             ),
                           ],
@@ -285,7 +294,7 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Image not found',
+                            AppLocalizations.of(context)!.imageNotFound,
                             style: TextStyle(
                               color: Colors.purple.shade600,
                               fontSize: 14,
@@ -343,11 +352,11 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'Attraction Ticket Booking',
+                            AppLocalizations.of(context)!.attractionTicketBooking,
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
-                              color: Colors.purple.shade700,
+                              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.purple.shade700,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -355,11 +364,11 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Visit ${widget.selectedAttraction?.name ?? 'Neuschwanstein Castle'}',
+                        AppLocalizations.of(context)!.visitAttraction(widget.selectedAttraction?.name ?? 'Neuschwanstein Castle'),
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.purple.shade700,
+                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.purple.shade700,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -367,11 +376,11 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Your Fairytale Awaits',
+                    AppLocalizations.of(context)!.yourFairytaleAwaits,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: Colors.blue.shade600,
+                      color: Theme.of(context).brightness == Brightness.dark ? Colors.blue.shade400 : Colors.blue.shade600,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -379,10 +388,10 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
                   
                   // Subtitle
                   Text(
-                    'Skip the lines and secure your spot at Germany\'s most magical castle.',
+                    AppLocalizations.of(context)!.skipLinesDescription,
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.grey.shade700,
+                      color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.grey.shade700,
                       height: 1.4,
                     ),
                     textAlign: TextAlign.center,
@@ -394,9 +403,9 @@ class _TicketBookingPageState extends State<TicketBookingPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _buildFeatureHighlight(Icons.access_time, 'Skip Lines'),
-                      _buildFeatureHighlight(Icons.verified, 'Instant Confirmation'),
-                      _buildFeatureHighlight(Icons.mobile_friendly, 'Mobile Ticket'),
+                      _buildFeatureHighlight(Icons.access_time, AppLocalizations.of(context)!.skipLines),
+                      _buildFeatureHighlight(Icons.verified, AppLocalizations.of(context)!.instantConfirmation),
+                      _buildFeatureHighlight(Icons.mobile_friendly, AppLocalizations.of(context)!.mobileTicket),
                     ],
                   ),
                 ],
