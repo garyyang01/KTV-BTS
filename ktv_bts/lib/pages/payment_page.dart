@@ -523,14 +523,8 @@ class _PaymentPageState extends State<PaymentPage> {
 
   /// 根據門票時段獲取出發時間
   String _getDepartureTime(String session) {
-    switch (session) {
-      case 'Morning':
-        return '00:00';
-      case 'Afternoon':
-        return '12:00';
-      default:
-        return '00:00';
-    }
+    // 無論是 Morning 還是 Afternoon，火車票時間都設定為 12:00
+    return '12:00';
   }
 
   /// 顯示 3DS 驗證對話框

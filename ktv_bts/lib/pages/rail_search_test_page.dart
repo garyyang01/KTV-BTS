@@ -69,20 +69,8 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
     }
 
     // 根據門票時段設定出發時間
-    if (widget.ticketSession != null) {
-      switch (widget.ticketSession!) {
-        case 'Morning':
-          _timeController.text = '00:00';
-          break;
-        case 'Afternoon':
-          _timeController.text = '12:00';
-          break;
-        default:
-          _timeController.text = '00:00';
-      }
-    } else {
-      _timeController.text = '00:00';
-    }
+    // 無論是 Morning 還是 Afternoon，火車票時間都設定為 12:00
+    _timeController.text = '12:00';
 
     // 根據門票資訊設定乘客數量
     if (widget.ticketInfos != null && widget.ticketInfos!.isNotEmpty) {
