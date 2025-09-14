@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/search_bar_widget.dart';
 import '../widgets/content_display_widget.dart';
+import '../models/search_option.dart';
 
 /// 主頁面 - 統一的票券搜索和申請頁面
 class MainPage extends StatefulWidget {

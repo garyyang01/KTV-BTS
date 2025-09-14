@@ -1,38 +1,17 @@
 import 'package:flutter/material.dart';
+import '../models/search_option.dart';
 
-/// 搜索選項類型
-enum SearchOptionType { station, attraction }
-
-/// 搜索選項模型（臨時版本）
-class SearchOption {
-  final String id;
-  final String name;
-  final SearchOptionType type;
-  final String description;
-  final String icon;
-  final List<String> keywords;
-  final String? stationCode;
-
-  const SearchOption({
-    required this.id,
-    required this.name,
-    required this.type,
-    required this.description,
-    required this.icon,
-    required this.keywords,
-    this.stationCode,
-  });
-}
-
-/// 搜索組件 - 可輸入的下拉選單，支援多語言關鍵字搜索
+/// 搜索欄組件 - 支援多語言關鍵字搜索的下拉選單
 class SearchBarWidget extends StatefulWidget {
-  final Function(SearchOption?)? onSelectionChanged;
-  final String? hintText;
+  final String hintText;
+  final ValueChanged<SearchOption?> onSelectionChanged;
+  final SearchOptionType? filterType;
 
   const SearchBarWidget({
     super.key,
-    this.onSelectionChanged,
-    this.hintText,
+    this.hintText = 'Search destinations...',
+    required this.onSelectionChanged,
+    this.filterType,
   });
 
   @override
@@ -40,148 +19,62 @@ class SearchBarWidget extends StatefulWidget {
 }
 
 class _SearchBarWidgetState extends State<SearchBarWidget> {
-  final TextEditingController _controller = TextEditingController();
-  final FocusNode _focusNode = FocusNode();
-  
+  final TextEditingController _textEditingController = TextEditingController();
   SearchOption? _selectedOption;
-  List<SearchOption> _filteredOptions = [];
-  bool _isDropdownVisible = false;
-
-  // 硬編碼的搜索選項（包含多語言關鍵字）
-  static const List<SearchOption> _searchOptions = [
-    SearchOption(
-      id: 'munich_central',
-      name: 'Munich Central',
-      type: SearchOptionType.station,
-      description: 'Munich Central Railway Station',
-      icon: '🚉',
-      stationCode: 'ST_L6NN3P6K',
-      keywords: [
-        'Munich', 'München', 'Munich Hbf', 'München Hauptbahnhof',
-        'Munich Central', 'Munich Main Station', '慕尼黑', '慕尼黑中央車站'
-      ],
-    ),
-    SearchOption(
-      id: 'neuschwanstein_castle',
-      name: 'Neuschwanstein Castle',
-      type: SearchOptionType.attraction,
-      description: 'Fairy-tale Castle in Bavaria',
-      icon: '🏰',
-      keywords: [
-        '新天鵝堡', '新天鹅堡', 'Neuschwanstein', 'Neuschwanstein Castle',
-        'Schloss Neuschwanstein', '노이슈반슈타인성', 'Château de Neuschwanstein'
-      ],
-    ),
-    SearchOption(
-      id: 'fuessen_station',
-      name: 'Füssen Station',
-      type: SearchOptionType.station,
-      description: 'Füssen Railway Station',
-      icon: '🚉',
-      stationCode: 'ST_FUESSEN',
-      keywords: ['Füssen', 'Fussen', '福森', 'Bahnhof Füssen'],
-    ),
-    SearchOption(
-      id: 'uffizi_gallery',
-      name: 'Uffizi Gallery',
-      type: SearchOptionType.attraction,
-      description: 'World-famous Renaissance art museum in Florence',
-      icon: '🎨',
-      keywords: [
-        '烏菲齊美術館', '烏菲茲美術館', 'Uffizi', 'Uffizi Gallery',
-        'Galleria degli Uffizi', 'Galerie des Offices', 'Галерея Уффици'
-      ],
-    ),
-    SearchOption(
-      id: 'florence_station',
-      name: 'Florence SMN',
-      type: SearchOptionType.station,
-      description: 'Firenze Santa Maria Novella Railway Station',
-      icon: '🚉',
-      stationCode: 'ST_DKRRM9Q4',
-      keywords: [
-        'Florence', 'Firenze', 'Florenz', '佛羅倫斯',
-        'Firenze S. M. Novella', 'Firenze SMN', 'Florence SMN',
-        'Firenze Centrale', '佛羅倫斯中央車站'
-      ],
-    ),
-    SearchOption(
-      id: 'milan_station',
-      name: 'Milano Centrale',
-      type: SearchOptionType.station,
-      description: 'Milan Central Railway Station',
-      icon: '🚉',
-      stationCode: 'ST_L6NN3P6K',
-      keywords: ['Milan', 'Milano', 'Milano Centrale', '米蘭', '米蘭中央車站'],
-    ),
-  ];
+  late FocusNode _focusNode;
+  List<SearchResult> _searchResults = [];
 
   @override
   void initState() {
     super.initState();
-    _filteredOptions = _searchOptions;
+    _focusNode = FocusNode();
+    _focusNode.addListener(_onFocusChanged);
     
-    _focusNode.addListener(() {
-      if (_focusNode.hasFocus) {
-        setState(() {
-          _isDropdownVisible = true;
-        });
-      }
-    });
+    // 初始化搜索結果
+    _updateSearchResults('');
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _textEditingController.dispose();
+    _focusNode.removeListener(_onFocusChanged);
     _focusNode.dispose();
     super.dispose();
   }
 
-  /// 多語言關鍵字搜索
-  void _filterOptions(String query) {
+  void _onFocusChanged() {
+    if (!_focusNode.hasFocus && _selectedOption == null && _textEditingController.text.isNotEmpty) {
+      _textEditingController.clear();
+      _updateSearchResults('');
+    }
+  }
+
+  void _updateSearchResults(String query) {
     setState(() {
-      if (query.isEmpty) {
-        _filteredOptions = _searchOptions;
-      } else {
-        _filteredOptions = _searchOptions.where((option) {
-          // 搜索名稱
-          if (option.name.toLowerCase().contains(query.toLowerCase())) {
-            return true;
-          }
-          // 搜索描述
-          if (option.description.toLowerCase().contains(query.toLowerCase())) {
-            return true;
-          }
-          // 搜索關鍵字
-          return option.keywords.any((keyword) =>
-              keyword.toLowerCase().contains(query.toLowerCase()));
-        }).toList();
-      }
+      _searchResults = SearchService.performSearch(
+        query,
+        filterType: widget.filterType,
+        limit: 10,
+      );
     });
   }
 
-  /// 選擇選項
   void _selectOption(SearchOption option) {
     setState(() {
       _selectedOption = option;
-      _controller.text = option.name;
-      _isDropdownVisible = false;
+      _textEditingController.text = option.name;
     });
-    
+    widget.onSelectionChanged(option);
     _focusNode.unfocus();
-    widget.onSelectionChanged?.call(option);
   }
 
-  /// 清除選擇
   void _clearSelection() {
     setState(() {
       _selectedOption = null;
-      _controller.clear();
-      _filteredOptions = _searchOptions;
-      _isDropdownVisible = false;
+      _textEditingController.clear();
+      _updateSearchResults('');
     });
-    
-    widget.onSelectionChanged?.call(null);
+    widget.onSelectionChanged(null);
   }
 
   @override
@@ -189,180 +82,364 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 搜索輸入框
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: _focusNode.hasFocus ? Colors.blue.shade600 : Colors.grey.shade300,
-              width: _focusNode.hasFocus ? 2 : 1,
-            ),
-          ),
-          child: TextFormField(
-            controller: _controller,
-            focusNode: _focusNode,
-            decoration: InputDecoration(
-              hintText: widget.hintText ?? 'Type destination...',
-              hintStyle: TextStyle(color: Colors.grey.shade500),
-              prefixIcon: Icon(
-                Icons.search,
-                color: Colors.grey.shade500,
-              ),
-              suffixIcon: _selectedOption != null
-                  ? IconButton(
-                      onPressed: _clearSelection,
-                      icon: Icon(
-                        Icons.clear,
-                        color: Colors.grey.shade500,
-                      ),
-                    )
-                  : Icon(
-                      Icons.arrow_drop_down,
-                      color: Colors.grey.shade500,
-                    ),
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
-            ),
-            onChanged: (value) {
-              _filterOptions(value);
-              if (!_isDropdownVisible) {
-                setState(() {
-                  _isDropdownVisible = true;
-                });
-              }
-            },
-            onTap: () {
-              setState(() {
-                _isDropdownVisible = true;
-              });
-            },
+        // 標題
+        Text(
+          'Where would you like to go?',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey.shade800,
           ),
         ),
-
-        // 下拉選項列表
-        if (_isDropdownVisible && _filteredOptions.isNotEmpty)
-          Container(
-            margin: const EdgeInsets.only(top: 4),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey.shade300),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            constraints: const BoxConstraints(maxHeight: 200),
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: _filteredOptions.length,
-              itemBuilder: (context, index) {
-                final option = _filteredOptions[index];
-                return _buildOptionItem(option);
+        
+        const SizedBox(height: 12),
+        
+        // 搜索輸入框
+        Autocomplete<SearchOption>(
+          optionsBuilder: (TextEditingValue textEditingValue) {
+            _updateSearchResults(textEditingValue.text);
+            return _searchResults.map((result) => result.option);
+          },
+          
+          displayStringForOption: (SearchOption option) => option.name,
+          
+          fieldViewBuilder: (
+            BuildContext context,
+            TextEditingController fieldTextEditingController,
+            FocusNode fieldFocusNode,
+            VoidCallback onFieldSubmitted,
+          ) {
+            // 同步控制器
+            if (_textEditingController.text != fieldTextEditingController.text) {
+              _textEditingController.text = fieldTextEditingController.text;
+            }
+            
+            return TextFormField(
+              controller: fieldTextEditingController,
+              focusNode: fieldFocusNode,
+              onChanged: (value) {
+                _textEditingController.text = value;
+                _updateSearchResults(value);
               },
-            ),
-          ),
-
-        // 搜索建議提示
-        if (_controller.text.isEmpty && !_focusNode.hasFocus)
+              decoration: InputDecoration(
+                hintText: widget.hintText,
+                hintStyle: TextStyle(color: Colors.grey.shade500),
+                
+                // 前綴圖標
+                prefixIcon: Icon(
+                  Icons.search,
+                  color: _selectedOption != null ? Colors.green.shade600 : Colors.blue.shade600,
+                ),
+                
+                // 後綴圖標
+                suffixIcon: _selectedOption != null
+                    ? Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // 選中狀態指示器
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            margin: const EdgeInsets.only(right: 8),
+                            decoration: BoxDecoration(
+                              color: _selectedOption!.type == SearchOptionType.station
+                                  ? Colors.blue.shade100
+                                  : Colors.orange.shade100,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              _selectedOption!.type == SearchOptionType.station ? 'Station' : 'Attraction',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500,
+                                color: _selectedOption!.type == SearchOptionType.station
+                                    ? Colors.blue.shade700
+                                    : Colors.orange.shade700,
+                              ),
+                            ),
+                          ),
+                          // 清除按鈕
+                          IconButton(
+                            icon: const Icon(Icons.clear, color: Colors.grey),
+                            onPressed: _clearSelection,
+                            tooltip: 'Clear selection',
+                          ),
+                        ],
+                      )
+                    : null,
+                
+                // 邊框樣式
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                
+                // 填充樣式
+                filled: true,
+                fillColor: _selectedOption != null 
+                    ? Colors.green.shade50 
+                    : Colors.grey.shade100,
+                
+                // 內邊距
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 16,
+                  horizontal: 16,
+                ),
+                
+                // 焦點邊框
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: _selectedOption != null 
+                        ? Colors.green.shade400 
+                        : Colors.blue.shade400,
+                    width: 2,
+                  ),
+                ),
+              ),
+              
+              onTap: () {
+                // 點擊時如果已選中，則清除選擇以允許新搜索
+                if (_selectedOption != null) {
+                  _clearSelection();
+                }
+              },
+            );
+          },
+          
+          optionsViewBuilder: (
+            BuildContext context,
+            AutocompleteOnSelected<SearchOption> onSelected,
+            Iterable<SearchOption> options,
+          ) {
+            return _buildOptionsView(context, onSelected, options.toList());
+          },
+          
+          onSelected: _selectOption,
+        ),
+        
+        // 搜索統計信息
+        if (_textEditingController.text.isNotEmpty && _selectedOption == null)
           Padding(
             padding: const EdgeInsets.only(top: 8),
-            child: Wrap(
-              spacing: 8,
-              runSpacing: 4,
-              children: [
-                _buildSuggestionChip('🚉 Munich Central'),
-                _buildSuggestionChip('🏰 Neuschwanstein Castle'),
-                _buildSuggestionChip('🎨 Uffizi Gallery'),
-              ],
+            child: Text(
+              '${_searchResults.length} results found',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey.shade600,
+              ),
             ),
           ),
       ],
     );
   }
 
-  /// 建立選項項目
-  Widget _buildOptionItem(SearchOption option) {
+  /// 建立選項視圖
+  Widget _buildOptionsView(
+    BuildContext context,
+    AutocompleteOnSelected<SearchOption> onSelected,
+    List<SearchOption> options,
+  ) {
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Material(
+        elevation: 8.0,
+        borderRadius: BorderRadius.circular(12),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: 300,
+            maxWidth: MediaQuery.of(context).size.width - 32,
+          ),
+          child: options.isEmpty
+              ? _buildNoResultsView()
+              : ListView.separated(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  shrinkWrap: true,
+                  itemCount: options.length,
+                  separatorBuilder: (context, index) => Divider(
+                    height: 1,
+                    color: Colors.grey.shade200,
+                  ),
+                  itemBuilder: (context, index) {
+                    final option = options[index];
+                    final searchResult = _searchResults.firstWhere(
+                      (result) => result.option.id == option.id,
+                      orElse: () => SearchResult(
+                        option: option,
+                        matchingKeywords: [],
+                        relevanceScore: 0.0,
+                      ),
+                    );
+                    
+                    return _buildOptionTile(option, searchResult, onSelected);
+                  },
+                ),
+        ),
+      ),
+    );
+  }
+
+  /// 建立選項磁貼
+  Widget _buildOptionTile(
+    SearchOption option,
+    SearchResult searchResult,
+    AutocompleteOnSelected<SearchOption> onSelected,
+  ) {
     return InkWell(
-      onTap: () => _selectOption(option),
-      child: Container(
+      onTap: () => onSelected(option),
+      child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              option.icon,
-              style: const TextStyle(fontSize: 20),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    option.name,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                    ),
+            // 主要信息行
+            Row(
+              children: [
+                // 圖標
+                Text(
+                  option.icon,
+                  style: const TextStyle(fontSize: 20),
+                ),
+                
+                const SizedBox(width: 12),
+                
+                // 名稱和描述
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        option.name,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      
+                      const SizedBox(height: 2),
+                      
+                      Text(
+                        option.description,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    option.description,
+                ),
+                
+                // 類型標籤
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: option.type == SearchOptionType.station
+                        ? Colors.blue.shade100
+                        : Colors.orange.shade100,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    option.type == SearchOptionType.station ? 'Station' : 'Attraction',
                     style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey.shade600,
+                      fontSize: 11,
+                      color: option.type == SearchOptionType.station
+                          ? Colors.blue.shade800
+                          : Colors.orange.shade800,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: option.type == SearchOptionType.station
-                    ? Colors.blue.shade100
-                    : Colors.orange.shade100,
-                borderRadius: BorderRadius.circular(12),
+            
+            // 匹配的關鍵字
+            if (searchResult.matchingKeywords.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 4,
+                runSpacing: 4,
+                children: searchResult.matchingKeywords.take(3).map((keyword) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      keyword,
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: Colors.grey.shade700,
+                      ),
+                    ),
+                  );
+                }).toList(),
               ),
-              child: Text(
-                option.type == SearchOptionType.station ? 'Station' : 'Attraction',
+            ],
+            
+            // 相關性分數（開發模式顯示）
+            if (searchResult.relevanceScore > 0) ...[
+              const SizedBox(height: 4),
+              Text(
+                'Relevance: ${searchResult.relevanceScore.toStringAsFixed(1)}',
                 style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: option.type == SearchOptionType.station
-                      ? Colors.blue.shade700
-                      : Colors.orange.shade700,
+                  fontSize: 9,
+                  color: Colors.grey.shade500,
                 ),
               ),
-            ),
+            ],
           ],
         ),
       ),
     );
   }
 
-  /// 建立搜索建議標籤
-  Widget _buildSuggestionChip(String text) {
+  /// 建立無結果視圖
+  Widget _buildNoResultsView() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 12,
-          color: Colors.grey.shade600,
-        ),
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.search_off,
+            size: 48,
+            color: Colors.grey.shade400,
+          ),
+          
+          const SizedBox(height: 12),
+          
+          Text(
+            'No destinations found',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey.shade600,
+            ),
+          ),
+          
+          const SizedBox(height: 8),
+          
+          Text(
+            'Try searching with different keywords',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey.shade500,
+            ),
+          ),
+          
+          const SizedBox(height: 16),
+          
+          // 建議關鍵字
+          Text(
+            'Try: Munich, Florence, Castle, Gallery',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.blue.shade600,
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+        ],
       ),
     );
   }

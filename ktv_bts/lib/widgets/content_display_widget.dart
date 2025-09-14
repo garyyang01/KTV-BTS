@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'search_bar_widget.dart';
+import '../models/search_option.dart';
 
 /// 內容顯示組件 - 根據搜索選擇動態顯示不同的票券申請區塊
 class ContentDisplayWidget extends StatefulWidget {
