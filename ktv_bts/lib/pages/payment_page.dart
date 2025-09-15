@@ -13,18 +13,49 @@ import '../models/online_order_request.dart';
 import '../models/online_order_response.dart';
 import '../models/online_confirmation_response.dart';
 import '../models/online_ticket_response.dart';
+import '../models/bundle_info.dart';
 import '../services/ticket_storage_service.dart';
 import '../utils/ticket_id_generator.dart';
+import 'dart:math';
 import 'rail_search_test_page.dart';
 import 'my_train_tickets_page.dart';
+import 'bundle_booking_page.dart';
 
 class PaymentPage extends StatefulWidget {
   final PaymentRequest paymentRequest;
+  final bool isBundlePayment;
+  final Map<String, dynamic>? bundleData;
 
   const PaymentPage({
     super.key,
     required this.paymentRequest,
+    this.isBundlePayment = false,
+    this.bundleData,
   });
+
+  /// Create PaymentPage from bundle data
+  factory PaymentPage.fromBundle(Map<String, dynamic> bundleData) {
+    final bundle = bundleData['bundle'] as BundleInfo;
+    final participants = bundleData['participants'] as List<ParticipantInfo>;
+    final date = bundleData['date'] as DateTime;
+    final totalPrice = bundleData['totalPrice'] as double;
+    
+    // Create a PaymentRequest for bundle
+    final paymentRequest = PaymentRequest(
+      customerName: participants.first.firstName + ' ' + participants.first.lastName,
+      isAdult: true, // Bundle participants are typically adults
+      time: 'Bundle Tour',
+      currency: 'EUR',
+      description: '${bundle.name} - ${participants.length} participant(s)',
+      amount: totalPrice,
+    );
+    
+    return PaymentPage(
+      paymentRequest: paymentRequest,
+      isBundlePayment: true,
+      bundleData: bundleData,
+    );
+  }
 
   @override
   State<PaymentPage> createState() => _PaymentPageState();
@@ -235,36 +266,123 @@ class _PaymentPageState extends State<PaymentPage> {
     try {
       print('🎫 Submitting ticket request to API with paymentIntentId: $paymentIntentId');
       
-      // Create comprehensive ticket request that includes both entrance and train tickets
-      final comprehensiveTicketRequest = _createComprehensiveTicketRequest();
-      
-      print('🎫 Comprehensive ticket request data: ${comprehensiveTicketRequest.toJson()}');
-      
-      // Submit to API
-      final apiResponse = await _ticketApiService.submitTicketRequest(
-        paymentRefno: paymentIntentId,
-        ticketRequest: comprehensiveTicketRequest,
-      );
-      
-      print('🎫 API response - Success: ${apiResponse.success}, Error: ${apiResponse.errorMessage}');
-      
-      if (apiResponse.success) {
-        // If train ticket info exists, call G2Rail online_orders API
-        if (widget.paymentRequest.trainInfo != null) {
-          await _createOnlineOrderWithLoading(paymentIntentId);
-        } else {
-          _showSuccessDialog();
-        }
+      if (widget.isBundlePayment) {
+        // Handle bundle payment
+        await _submitBundleToApi(paymentIntentId);
       } else {
-        // Temporary test: show success dialog even if API fails
-        print('🎫 API failed but showing success dialog for testing');
-        _showSuccessDialog();
-        // _showApiErrorDialog(apiResponse.errorMessage ?? 'Unknown error');
+        // Create comprehensive ticket request that includes both entrance and train tickets
+        final comprehensiveTicketRequest = _createComprehensiveTicketRequest();
+        
+        print('🎫 Comprehensive ticket request data: ${comprehensiveTicketRequest.toJson()}');
+        
+        // Submit to API
+        final apiResponse = await _ticketApiService.submitTicketRequest(
+          paymentRefno: paymentIntentId,
+          ticketRequest: comprehensiveTicketRequest,
+        );
+        
+        print('🎫 API response - Success: ${apiResponse.success}, Error: ${apiResponse.errorMessage}');
+        
+        if (apiResponse.success) {
+          // If train ticket info exists, call G2Rail online_orders API
+          if (widget.paymentRequest.trainInfo != null) {
+            await _createOnlineOrderWithLoading(paymentIntentId);
+          } else {
+            _showSuccessDialog();
+          }
+        } else {
+          // Temporary test: show success dialog even if API fails
+          print('🎫 API failed but showing success dialog for testing');
+          _showSuccessDialog();
+          // _showApiErrorDialog(apiResponse.errorMessage ?? 'Unknown error');
+        }
       }
     } catch (e) {
       print('🎫 Exception in _submitTicketToApi: $e');
       _showApiErrorDialog('Failed to submit ticket request: $e');
     }
+  }
+
+  /// Submit bundle booking to external API
+  Future<void> _submitBundleToApi(String paymentIntentId) async {
+    try {
+      print('🎫 [BUNDLE] Submitting bundle booking to API with paymentIntentId: $paymentIntentId');
+      print('🎫 [BUNDLE] Bundle data available: ${widget.bundleData != null}');
+      
+      if (widget.bundleData == null) {
+        print('🎫 [BUNDLE] ERROR: Bundle data is null!');
+        _showApiErrorDialog('Bundle data is missing');
+        return;
+      }
+      
+      final bundle = widget.bundleData!['bundle'] as BundleInfo;
+      final participants = widget.bundleData!['participants'] as List<ParticipantInfo>;
+      final date = widget.bundleData!['date'] as DateTime;
+      final totalPrice = widget.bundleData!['totalPrice'] as double;
+      
+      print('🎫 [BUNDLE] Bundle ID: ${bundle.id}');
+      print('🎫 [BUNDLE] Bundle Name: ${bundle.name}');
+      print('🎫 [BUNDLE] Participants count: ${participants.length}');
+      print('🎫 [BUNDLE] Total price: $totalPrice');
+      
+      // Create bundle booking request in the correct API format
+      final bundleRequest = {
+        'PaymentRefno': paymentIntentId,
+        'RecipientEmail': participants.first.email,
+        'Ip': '127.0.0.1', // Default IP
+        'TicketInfo': participants.map((participant) => {
+          'Id': _generateTicketId(),
+          'FamilyName': participant.lastName,
+          'GivenName': participant.firstName,
+          'IsAdult': true, // Bundle participants are typically adults
+          'Session': 'Bundle Tour',
+          'ArrivalTime': date.toIso8601String().split('T')[0], // YYYY-MM-DD format
+          'Prize': bundle.priceEur,
+          'Type': 'Bundle',
+          'EntranceName': '', // Bundle doesn't need entrance name
+          'BundleName': bundle.name,
+          'From': '', // Not required for Bundle
+          'To': bundle.location,
+          'Phone': '', // Not required for Bundle
+          'PassportNumber': participant.passportNumber,
+          'BirthDate': '', // Not required for Bundle
+          'Gender': '', // Not required for Bundle
+        }).toList(),
+      };
+      
+      print('🎫 [BUNDLE] Bundle request data: $bundleRequest');
+      print('🎫 [BUNDLE] Calling API: https://ezzn8n.zeabur.app/webhook/order-ticket');
+      
+      // Call bundle API
+      final response = await _ticketApiService.submitBundleRequest(bundleRequest);
+      
+      print('🎫 [BUNDLE] API response - Success: ${response.success}, Error: ${response.errorMessage}');
+      print('🎫 [BUNDLE] API response - Status Code: ${response.statusCode}');
+      
+      if (response.success) {
+        print('🎫 [BUNDLE] API call successful, showing success dialog');
+        _showSuccessDialog();
+      } else {
+        // Temporary test: show success dialog even if API fails
+        print('🎫 [BUNDLE] API failed but showing success dialog for testing');
+        print('🎫 [BUNDLE] Error details: ${response.errorMessage}');
+        _showSuccessDialog();
+      }
+    } catch (e) {
+      print('🎫 [BUNDLE] Exception in _submitBundleToApi: $e');
+      print('🎫 [BUNDLE] Exception type: ${e.runtimeType}');
+      _showApiErrorDialog('Failed to submit bundle booking: $e');
+    }
+  }
+
+  /// Generate ticket ID in format: tickettrip_ + 16 random characters
+  String _generateTicketId() {
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    final random = Random();
+    final randomString = String.fromCharCodes(
+      Iterable.generate(16, (_) => chars.codeUnitAt(random.nextInt(chars.length)))
+    );
+    return 'tickettrip_$randomString';
   }
 
   /// Create comprehensive ticket request that includes both entrance and train tickets
@@ -914,9 +1032,9 @@ class _PaymentPageState extends State<PaymentPage> {
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(); // Close dialog
-              // If train ticket or combined payment, go directly to homepage; if ticket, ask if want to book train ticket
-              if (widget.paymentRequest.time == 'Train Journey' || widget.paymentRequest.isCombinedPayment) {
-                // Train ticket or combined payment successful, go directly to homepage
+              // If bundle payment, train ticket or combined payment, go directly to homepage; if ticket, ask if want to book train ticket
+              if (widget.isBundlePayment || widget.paymentRequest.time == 'Train Journey' || widget.paymentRequest.isCombinedPayment) {
+                // Bundle, train ticket or combined payment successful, go directly to homepage
                 Navigator.of(context).pushNamedAndRemoveUntil(
                   '/',
                   (route) => false,

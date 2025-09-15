@@ -5,6 +5,7 @@ import '../widgets/search_bar_widget.dart';
 import '../widgets/content_display_widget.dart';
 import '../models/search_option.dart';
 import 'my_train_tickets_page.dart';
+import 'bundle_page.dart';
 
 /// Main Page - Unified ticket search and booking page
 class MainPage extends StatefulWidget {
@@ -65,8 +66,21 @@ class _MainPageState extends State<MainPage> {
     switch (index) {
       case 0: // Home - already on home page
         break;
-      case 1: // Bundle - placeholder for future bundle functionality
-        _showComingSoonDialog('Bundle');
+      case 1: // Bundle
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const BundlePage(),
+          ),
+        );
+        // Reset to home after navigation
+        Future.delayed(const Duration(milliseconds: 100), () {
+          if (mounted) {
+            setState(() {
+              _currentIndex = 0;
+            });
+          }
+        });
         break;
       case 2: // My Tickets
         Navigator.push(
