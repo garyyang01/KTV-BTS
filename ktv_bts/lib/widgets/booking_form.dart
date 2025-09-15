@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../widgets/email_input.dart';
 import '../widgets/price_display.dart';
 import '../models/ticket_request.dart';
@@ -9,6 +10,7 @@ import '../models/search_option.dart';
 import '../pages/payment_page.dart';
 import '../pages/rail_search_test_page.dart';
 import '../services/ip_verification_service.dart';
+import '../utils/ticket_id_generator.dart';
 
 /// 預訂表單組件
 /// 包含所有票券預訂所需的輸入欄位
@@ -126,7 +128,7 @@ class _BookingFormState extends State<BookingForm> {
       print('檢查票券 ${i + 1} 的日期: ${_tickets[i]['selectedDate']}');
       if (_tickets[i]['selectedDate'] == null) {
         print('票券 ${i + 1} 沒有選擇日期');
-        _showErrorSnackBar('Please select an arrival date for ticket ${i + 1}');
+        _showErrorSnackBar(AppLocalizations.of(context)!.pleaseSelectArrivalDate('${i + 1}'));
         return;
       }
     }
@@ -160,7 +162,7 @@ class _BookingFormState extends State<BookingForm> {
       print('=== 表單提交處理完成 ===');
     } catch (e) {
       print('創建請求時發生錯誤: $e');
-      _showErrorSnackBar('Error creating booking request: $e');
+      _showErrorSnackBar(AppLocalizations.of(context)!.errorCreatingBookingRequest(e.toString()));
     }
   }
 
@@ -180,11 +182,11 @@ class _BookingFormState extends State<BookingForm> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.block, color: Colors.red),
-            SizedBox(width: 8),
-            Text('Access Denied'),
+            const Icon(Icons.block, color: Colors.red),
+            const SizedBox(width: 8),
+            Text(AppLocalizations.of(context)!.accessDenied),
           ],
         ),
         content: Text(_ipVerificationService.getBlockedUserMessage()),
@@ -193,7 +195,7 @@ class _BookingFormState extends State<BookingForm> {
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child: const Text('OK'),
+            child: Text(AppLocalizations.of(context)!.ok),
           ),
         ],
       ),
@@ -221,10 +223,10 @@ class _BookingFormState extends State<BookingForm> {
               child: Icon(Icons.train, color: Colors.blue.shade600, size: 24),
             ),
             const SizedBox(width: 12),
-            const Expanded(
+            Expanded(
               child: Text(
-                'Train Ticket Booking',
-                style: TextStyle(
+                AppLocalizations.of(context)!.trainTicketBooking,
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -249,9 +251,9 @@ class _BookingFormState extends State<BookingForm> {
                   children: [
                     Icon(Icons.check_circle, color: Colors.green.shade600, size: 20),
                     const SizedBox(width: 8),
-                    const Text(
-                      'Ticket information confirmed!',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)!.ticketInformationConfirmed,
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                         color: Colors.green,
@@ -262,7 +264,7 @@ class _BookingFormState extends State<BookingForm> {
               ),
               const SizedBox(height: 20),
               Text(
-                'Do you also need to book train tickets to ${widget.selectedAttraction?.name ?? 'Neuschwanstein Castle'}?',
+                AppLocalizations.of(context)!.doYouNeedTrainTickets(widget.selectedAttraction?.name ?? 'Neuschwanstein Castle'),
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
@@ -287,9 +289,9 @@ class _BookingFormState extends State<BookingForm> {
                       children: [
                         Icon(Icons.info_outline, color: Colors.blue.shade600, size: 18),
                         const SizedBox(width: 8),
-                        const Text(
-                          'Default Train Ticket Information',
-                          style: TextStyle(
+                        Text(
+                          AppLocalizations.of(context)!.defaultTrainTicketInformation,
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
                             color: Colors.blue,
@@ -298,13 +300,13 @@ class _BookingFormState extends State<BookingForm> {
                       ],
                     ),
                     const SizedBox(height: 12),
-                    _buildInfoRow(Icons.location_on, 'Route', _getTrainRoute()),
+                    _buildInfoRow(Icons.location_on, AppLocalizations.of(context)!.route, _getTrainRoute()),
                     const SizedBox(height: 8),
-                    _buildInfoRow(Icons.calendar_today, 'Date', ticketDate),
+                    _buildInfoRow(Icons.calendar_today, AppLocalizations.of(context)!.date, ticketDate),
                     const SizedBox(height: 8),
-                    _buildInfoRow(Icons.access_time, 'Time', departureTime),
+                    _buildInfoRow(Icons.access_time, AppLocalizations.of(context)!.time, departureTime),
                     const SizedBox(height: 8),
-                    _buildInfoRow(Icons.schedule, 'Session', ticketSession == "Morning" ? "Morning" : "Afternoon"),
+                    _buildInfoRow(Icons.schedule, AppLocalizations.of(context)!.session, ticketSession == 'Morning' ? AppLocalizations.of(context)!.morning : AppLocalizations.of(context)!.afternoon),
                   ],
                 ),
               ),
@@ -332,9 +334,9 @@ class _BookingFormState extends State<BookingForm> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text(
-                    'Tickets Only',
-                    style: TextStyle(fontWeight: FontWeight.w500),
+                  child: Text(
+                    AppLocalizations.of(context)!.ticketOnly,
+                    style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
                 ),
               ),
@@ -346,7 +348,7 @@ class _BookingFormState extends State<BookingForm> {
                     _navigateToTrainBooking(paymentRequest);
                   },
                   icon: const Icon(Icons.train, size: 18),
-                  label: const Text('Book Train Tickets'),
+                  label: Text(AppLocalizations.of(context)!.bookTrainTickets),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue.shade600,
                     foregroundColor: Colors.white,
@@ -483,7 +485,7 @@ class _BookingFormState extends State<BookingForm> {
       initialDate: DateTime.now().add(const Duration(days: 1)),
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
-      helpText: 'Select Arrival Date for All Tickets',
+      helpText: AppLocalizations.of(context)!.selectArrivalDateForAllTickets,
     );
     
     if (picked != null && picked != _tickets[ticketIndex]['selectedDate']) {
@@ -499,6 +501,26 @@ class _BookingFormState extends State<BookingForm> {
   /// 創建 TicketRequest 物件
   TicketRequest _createTicketRequest() {
     final ticketInfoList = <TicketInfo>[];
+    
+    // 獲取景點資訊
+    final attractionId = widget.selectedAttraction?.id;
+    final attractionName = widget.selectedAttraction?.name ?? 'Neuschwanstein Castle';
+    
+    // 根據景點設定出發地和目的地
+    String fromLocation, toLocation;
+    switch (attractionId) {
+      case 'neuschwanstein':
+        fromLocation = 'Munich Central';
+        toLocation = 'Füssen';
+        break;
+      case 'uffizi':
+        fromLocation = 'Milano Centrale';
+        toLocation = 'Florence SMN';
+        break;
+      default:
+        fromLocation = 'Munich Central';
+        toLocation = 'Füssen';
+    }
     
     for (var ticket in _tickets) {
       final familyName = ticket['familyNameController'].text.trim();
@@ -516,13 +538,26 @@ class _BookingFormState extends State<BookingForm> {
       final arrivalTime = DateFormat('yyyy-MM-dd').format(selectedDate);
       final price = isAdult ? _getAdultPrice().toDouble() : _getChildPrice().toDouble();
       
+      // 生成隨機ID
+      final ticketId = TicketIdGenerator.generateTicketId();
+      
       ticketInfoList.add(TicketInfo(
+        id: ticketId,
         familyName: familyName,
         givenName: givenName,
         isAdult: isAdult,
         session: session,
         arrivalTime: arrivalTime,
         price: price,
+        type: 'Entrance', // 門票類型
+        entranceName: attractionName,
+        bundleName: '', // 目前為空
+        from: fromLocation,
+        to: toLocation,
+        phone: '', // 門票不需要電話資訊
+        passportNumber: '', // 門票不需要護照資訊
+        birthDate: '', // 門票不需要出生日期
+        gender: '', // 門票不需要性別資訊
       ));
     }
     
@@ -569,9 +604,11 @@ class _BookingFormState extends State<BookingForm> {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(
+          color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade600 : Colors.grey.shade300,
+        ),
         borderRadius: BorderRadius.circular(12),
-        color: Colors.grey.shade50,
+        color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E2E) : Colors.grey.shade50,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -581,14 +618,18 @@ class _BookingFormState extends State<BookingForm> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Ticket ${index + 1}',
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                AppLocalizations.of(context)!.ticketNumber('${index + 1}'),
+                style: TextStyle(
+                  fontSize: 18, 
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
+                ),
               ),
               if (_tickets.length > 1)
                 IconButton(
                   onPressed: () => _removeTicket(index),
                   icon: const Icon(Icons.delete_outline, color: Colors.red),
-                  tooltip: 'Remove ticket',
+                  tooltip: AppLocalizations.of(context)!.removeTicket,
                 ),
             ],
           ),
@@ -601,17 +642,17 @@ class _BookingFormState extends State<BookingForm> {
               Expanded(
                 child: TextFormField(
                   controller: ticket['familyNameController'],
-                  decoration: const InputDecoration(
-                    labelText: 'Family Name',
-                    hintText: 'Enter family name',
-                    prefixIcon: Icon(Icons.person),
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.familyName,
+                    hintText: AppLocalizations.of(context)!.familyNameHint,
+                    prefixIcon: const Icon(Icons.person),
+                    border: const OutlineInputBorder(),
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF2A2A2A) : Colors.white,
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Family name is required';
+                      return AppLocalizations.of(context)!.familyNameRequired;
                     }
                     return null;
                   },
@@ -623,17 +664,17 @@ class _BookingFormState extends State<BookingForm> {
               Expanded(
                 child: TextFormField(
                   controller: ticket['givenNameController'],
-                  decoration: const InputDecoration(
-                    labelText: 'Given Name',
-                    hintText: 'Enter given name',
-                    prefixIcon: Icon(Icons.person_outline),
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.givenName,
+                    hintText: AppLocalizations.of(context)!.givenNameHint,
+                    prefixIcon: const Icon(Icons.person_outline),
+                    border: const OutlineInputBorder(),
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF2A2A2A) : Colors.white,
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Given name is required';
+                      return AppLocalizations.of(context)!.givenNameRequired;
                     }
                     return null;
                   },
@@ -644,22 +685,38 @@ class _BookingFormState extends State<BookingForm> {
           const SizedBox(height: 16),
 
           // Age Group Selection
-          const Text(
-            'Age Group',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          Text(
+            AppLocalizations.of(context)!.ageGroup,
+            style: TextStyle(
+              fontSize: 16, 
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
+            ),
           ),
           const SizedBox(height: 8),
           Container(
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade300),
+              border: Border.all(
+                color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade600 : Colors.grey.shade300,
+              ),
               borderRadius: BorderRadius.circular(8),
-              color: Colors.white,
+              color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF2A2A2A) : Colors.white,
             ),
             child: Column(
               children: [
                 RadioListTile<bool>(
-                  title: Text('Adult (${_getAdultPrice()} EUR)'),
-                  subtitle: const Text('18 years and above'),
+                  title: Text(
+                    '${AppLocalizations.of(context)!.adult} (${_getAdultPrice()} EUR)',
+                    style: TextStyle(
+                      color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
+                    ),
+                  ),
+                  subtitle: Text(
+                    AppLocalizations.of(context)!.adultDescription,
+                    style: TextStyle(
+                      color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.grey.shade600,
+                    ),
+                  ),
                   value: true,
                   groupValue: ticket['isAdult'],
                   onChanged: (value) {
@@ -669,8 +726,18 @@ class _BookingFormState extends State<BookingForm> {
                   },
                 ),
                 RadioListTile<bool>(
-                  title: Text('Under 18 (${_getChildPrice() == 0 ? 'Free' : '${_getChildPrice()} EUR'})'),
-                  subtitle: const Text('Under 18 years old'),
+                  title: Text(
+                    '${AppLocalizations.of(context)!.under18} (${_getChildPrice() == 0 ? AppLocalizations.of(context)!.free : '${_getChildPrice()} EUR'})',
+                    style: TextStyle(
+                      color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
+                    ),
+                  ),
+                  subtitle: Text(
+                    AppLocalizations.of(context)!.under18Description,
+                    style: TextStyle(
+                      color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.grey.shade600,
+                    ),
+                  ),
                   value: false,
                   groupValue: ticket['isAdult'],
                   onChanged: (value) {
@@ -694,9 +761,13 @@ class _BookingFormState extends State<BookingForm> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Arrival Date',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      Text(
+                        AppLocalizations.of(context)!.arrivalDate,
+                        style: TextStyle(
+                          fontSize: 16, 
+                          fontWeight: FontWeight.w500,
+                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       InkWell(
@@ -705,22 +776,29 @@ class _BookingFormState extends State<BookingForm> {
                           width: double.infinity,
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey.shade300),
+                            border: Border.all(
+                              color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade600 : Colors.grey.shade300,
+                            ),
                             borderRadius: BorderRadius.circular(8),
-                            color: Colors.white,
+                            color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF2A2A2A) : Colors.white,
                           ),
                           child: Row(
                             children: [
-                              const Icon(Icons.calendar_today, color: Colors.grey),
+                              Icon(
+                                Icons.calendar_today, 
+                                color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.grey,
+                              ),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Text(
                                   ticket['selectedDate'] == null
-                                      ? 'Select date'
+                                      ? AppLocalizations.of(context)!.selectDate
                                       : DateFormat('yyyy-MM-dd').format(ticket['selectedDate']),
                                   style: TextStyle(
                                     fontSize: 16,
-                                    color: ticket['selectedDate'] == null ? Colors.grey : Colors.black,
+                                    color: ticket['selectedDate'] == null 
+                                        ? (Theme.of(context).brightness == Brightness.dark ? Colors.white60 : Colors.grey)
+                                        : (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black),
                                   ),
                                 ),
                               ),
@@ -739,9 +817,13 @@ class _BookingFormState extends State<BookingForm> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Session',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      Text(
+                        AppLocalizations.of(context)!.session,
+                        style: TextStyle(
+                          fontSize: 16, 
+                          fontWeight: FontWeight.w500,
+                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       DropdownButtonFormField<String>(
@@ -751,12 +833,28 @@ class _BookingFormState extends State<BookingForm> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           filled: true,
-                          fillColor: Colors.white,
+                          fillColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF2A2A2A) : Colors.white,
                           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         ),
-                        items: const [
-                          DropdownMenuItem(value: 'Morning', child: Text('Morning')),
-                          DropdownMenuItem(value: 'Afternoon', child: Text('Afternoon')),
+                        items: [
+                          DropdownMenuItem(
+                            value: 'Morning', 
+                            child: Text(
+                              AppLocalizations.of(context)!.morning,
+                              style: TextStyle(
+                                color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
+                              ),
+                            ),
+                          ),
+                          DropdownMenuItem(
+                            value: 'Afternoon', 
+                            child: Text(
+                              AppLocalizations.of(context)!.afternoon,
+                              style: TextStyle(
+                                color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
+                              ),
+                            ),
+                          ),
                         ],
                         onChanged: (value) {
                           setState(() {
@@ -778,9 +876,15 @@ class _BookingFormState extends State<BookingForm> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.blue.shade50,
+                color: Theme.of(context).brightness == Brightness.dark 
+                    ? Colors.blue.shade900.withOpacity(0.3) 
+                    : Colors.blue.shade50,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.blue.shade200),
+                border: Border.all(
+                  color: Theme.of(context).brightness == Brightness.dark 
+                      ? Colors.blue.shade600 
+                      : Colors.blue.shade200,
+                ),
               ),
               child: Row(
                 children: [
@@ -788,10 +892,15 @@ class _BookingFormState extends State<BookingForm> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Date: ${ticket['selectedDate'] != null ? DateFormat('yyyy-MM-dd').format(ticket['selectedDate']) : 'Not selected'}, Session: ${ticket['selectedSession']}',
+                      AppLocalizations.of(context)!.dateSessionInfo(
+                        ticket['selectedDate'] != null ? DateFormat('yyyy-MM-dd').format(ticket['selectedDate']) : AppLocalizations.of(context)!.notSelected,
+                        ticket['selectedSession']
+                      ),
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.blue.shade700,
+                        color: Theme.of(context).brightness == Brightness.dark 
+                            ? Colors.blue.shade400 
+                            : Colors.blue.shade700,
                       ),
                     ),
                   ),
@@ -818,9 +927,13 @@ class _BookingFormState extends State<BookingForm> {
           const SizedBox(height: 24),
 
           // Tickets Section
-          const Text(
-            'Ticket Information',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          Text(
+            AppLocalizations.of(context)!.ticketInformation,
+            style: TextStyle(
+              fontSize: 20, 
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
+            ),
           ),
           const SizedBox(height: 16),
 
@@ -832,7 +945,7 @@ class _BookingFormState extends State<BookingForm> {
           OutlinedButton.icon(
             onPressed: _addNewTicket,
             icon: const Icon(Icons.add),
-            label: const Text('Add Another Ticket'),
+            label: Text(AppLocalizations.of(context)!.addAnotherTicket),
             style: OutlinedButton.styleFrom(
               minimumSize: const Size(double.infinity, 48),
             ),
@@ -861,7 +974,7 @@ class _BookingFormState extends State<BookingForm> {
                 ),
               ),
               child: Text(
-                'Book ${_tickets.length} Ticket${_tickets.length > 1 ? 's' : ''} Now',
+                AppLocalizations.of(context)!.bookTicketsNow('${_tickets.length}', _tickets.length > 1 ? 's' : ''),
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),

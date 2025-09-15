@@ -1,5 +1,6 @@
 import 'ticket_request.dart';
 import 'train_solution.dart';
+import '../utils/ticket_id_generator.dart';
 
 /// Payment request model for KTV booking
 class PaymentRequest {
@@ -107,10 +108,13 @@ class PaymentRequest {
     print('  - offer.description: ${offer.description}');
     print('  - service.description: ${service.description}');
     
+    // 根據火車出發時間判斷是上午還是下午
+    final session = TicketIdGenerator.getSessionFromTime(train.departure);
+    
     return PaymentRequest(
       customerName: customerName,
       isAdult: true, // 火車票預設為成人票
-      time: 'Train Journey', // 火車行程時間
+      time: session, // 根據出發時間判斷 Morning/Afternoon
       amount: amount,
       currency: service.price.currency,
       description: description,

@@ -1,0 +1,223 @@
+{
+  "appTitle": "Ticket Trip Booking",
+  "settings": "Settings",
+  "language": "Language",
+  "theme": "Theme",
+  "lightTheme": "Light",
+  "darkTheme": "Dark",
+  "systemTheme": "System",
+  "english": "English",
+  "traditionalChinese": "繁體中文",
+  "simplifiedChinese": "简体中文",
+  "home": "Home",
+  "bundle": "Bundle",
+  "myTickets": "My Tickets",
+  "settings": "Settings",
+  "welcomeMessage": "Welcome to Ticket Trip Travel!",
+  "welcomeSubtitle": "Discover amazing destinations and book your perfect journey",
+  "searchDestinations": "Search for Destinations",
+  "popularDestinations": "Popular Destinations",
+  "trainTickets": "Train Tickets",
+  "castleTours": "Castle Tours",
+  "attractions": "Attractions",
+  "newLabel": "NEW",
+  "typeDestination": "Type destination...",
+  "munichCentral": "Munich Central",
+  "neuschwanstein": "Neuschwanstein",
+  "florence": "Florence",
+  "uffiziGallery": "Uffizi Gallery",
+  "visitMagicalCastle": "Visit the magical fairytale castle",
+  "exploreRenaissance": "Explore Renaissance masterpieces",
+  "comingSoon": "Coming Soon",
+  "featureUnderDevelopment": "feature is under development and will be available soon!",
+  "ok": "OK",
+  "myTrainTickets": "My Train Tickets",
+  "noTicketsFound": "No tickets found",
+  "loadingTickets": "Loading tickets...",
+  "details": "Details",
+  "share": "Share",
+  "ticketDetails": "Ticket Details",
+  "orderId": "Order ID",
+  "pnr": "PNR",
+  "route": "Route",
+  "departureTime": "Departure Time",
+  "paymentPrice": "Payment Price",
+  "chargingPrice": "Charging Price",
+  "ticketFiles": "Ticket Files",
+  "close": "Close",
+  "ticketInfoCopied": "Ticket information copied to clipboard",
+  "fileType": "File Type",
+  "downloadLink": "Download Link",
+  "downloadLinkCopied": "Download link copied to clipboard",
+  "copyLink": "Copy Link",
+  "customizeAppExperience": "Customize your app experience",
+  "appInformation": "App Information",
+  "version": "Version",
+  "build": "Build",
+  "developer": "Developer",
+  "bookYourTickets": "Book Your Tickets",
+  "attractionTicketBooking": "Attraction Ticket Booking",
+  "visitAttraction": "Visit {attractionName}",
+  "@visitAttraction": {
+    "placeholders": {
+      "attractionName": {
+        "type": "String"
+      }
+    }
+  },
+  "yourFairytaleAwaits": "Your Fairytale Awaits",
+  "skipLinesDescription": "Skip the lines and secure your spot at Germany's most magical castle.",
+  "skipLines": "Skip Lines",
+  "instantConfirmation": "Instant Confirmation",
+  "mobileTicket": "Mobile Ticket",
+  "ticketInformation": "Ticket Information",
+  "ticket": "Ticket",
+  "familyName": "Family Name",
+  "familyNameHint": "Enter family name",
+  "familyNameRequired": "Family name is required",
+  "givenName": "Given Name",
+  "givenNameHint": "Enter given name",
+  "givenNameRequired": "Given name is required",
+  "ageGroup": "Age Group",
+  "adult": "Adult",
+  "adultDescription": "18 years and above",
+  "under18": "Under 18",
+  "under18Description": "Under 18 years old",
+  "free": "Free",
+  "arrivalDate": "Arrival Date",
+  "selectDate": "Select date",
+  "selectArrivalDateForAllTickets": "Select Arrival Date for All Tickets",
+  "session": "Session",
+  "morning": "Morning",
+  "afternoon": "Afternoon",
+  "dateSessionInfo": "Date: {date}, Session: {session}",
+  "@dateSessionInfo": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "session": {
+        "type": "String"
+      }
+    }
+  },
+  "notSelected": "Not selected",
+  "addAnotherTicket": "Add Another Ticket",
+  "bookTicketsNow": "Book {count} Ticket{plural} Now",
+  "@bookTicketsNow": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "plural": {
+        "type": "String"
+      }
+    }
+  },
+  "ticketOnly": "Tickets Only",
+  "bookTrainTickets": "Book Train Tickets",
+  "trainTicketBooking": "Train Ticket Booking",
+  "ticketInformationConfirmed": "Ticket information confirmed!",
+  "doYouNeedTrainTickets": "Do you also need to book train tickets to {attractionName}?",
+  "@doYouNeedTrainTickets": {
+    "placeholders": {
+      "attractionName": {
+        "type": "String"
+      }
+    }
+  },
+  "defaultTrainTicketInformation": "Default Train Ticket Information",
+  "route": "Route",
+  "date": "Date",
+  "time": "Time",
+  "accessDenied": "Access Denied",
+  "pleaseSelectArrivalDate": "Please select an arrival date for ticket {ticketNumber}",
+  "@pleaseSelectArrivalDate": {
+    "placeholders": {
+      "ticketNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "errorCreatingBookingRequest": "Error creating booking request: {error}",
+  "@errorCreatingBookingRequest": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "removeTicket": "Remove ticket",
+  "imageNotFound": "Image not found",
+  "myTrainTicketsTooltip": "My Train Tickets",
+  "railwaySearchTestTooltip": "Railway Search Test",
+  "reload": "Reload",
+  "loadingYourTickets": "Loading your tickets...",
+  "noTrainTicketsYet": "No Train Tickets Yet",
+  "trainTicketInfoWillBeDisplayed": "Train ticket information will be displayed here after purchase",
+  "searchTrainTickets": "Search Train Tickets",
+  "tripInformation": "Trip Information",
+  "seatInformation": "Seat Information",
+  "passengerInformation": "Passenger Information",
+  "passenger": "Passenger",
+  "checkInInformation": "Check-in Information",
+  "checkInLink": "Check-in Link",
+  "clickToView": "Click to view",
+  "confirmed": "Confirmed",
+  "car": "Car",
+  "seat": "Seat",
+  "departureDate": "Departure Date",
+  "departureTime": "Departure Time",
+  "ticketApplication": "Ticket Application",
+  "selectDestinationToStartBooking": "Select a destination to start booking",
+  "useSearchBoxAbove": "Use the search box above to find trains or attractions",
+  "clearSelection": "Clear selection",
+  "munichCentral": "Munich Central",
+  "neuschwansteinCastle": "Neuschwanstein Castle",
+  "uffiziGallery": "Uffizi Gallery",
+  "pnrLabel": "PNR",
+  "pdfTicket": "PDF Ticket",
+  "mobileTicket": "Mobile Ticket",
+  "ticketBookingForm": "Ticket Booking Form",
+  "fillBookingDetailsBelow": "Please fill in the booking details below. You can add multiple tickets for your group.",
+  "emailAddress": "Email Address",
+  "emailAddressHint": "Enter your email address",
+  "ticketNumber": "Ticket {number}",
+  "@ticketNumber": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "emailAddressRequired": "Email address is required",
+  "emailAddressInvalid": "Please enter a valid email address",
+  "priceSummary": "Price Summary",
+  "total": "Total",
+  "tourPackages": "Tour Packages",
+  "discoverAmazingBundledExperiences": "Discover amazing bundled experiences",
+  "trainIncluded": "Train Included",
+  "guidedTours": "Guided Tours",
+  "mealsIncluded": "Meals Included",
+  "noBundlesAvailable": "No Bundles Available",
+  "checkBackLaterForExcitingTourPackages": "Check back later for exciting tour packages!",
+  "loadingBundles": "Loading bundles...",
+  "highlights": "Highlights",
+  "description": "Description",
+  "bookThisBundle": "Book This Bundle",
+  "bookNow": "Book Now",
+  "bookingBundle": "Booking {bundleName}...",
+  "@bookingBundle": {
+    "placeholders": {
+      "bundleName": {
+        "type": "String"
+      }
+    }
+  },
+  "whereWouldYouLikeToGo": "Where would you like to go?",
+  "trainTickets": "Train Tickets",
+  "bundleTickets": "Bundle Tickets",
+  "noBundleTicketsYet": "No Bundle Tickets Yet",
+  "bundleTicketInfoWillBeDisplayed": "Your bundle ticket information will be displayed here after purchase.",
+  "searchBundles": "Search Bundles"
+}

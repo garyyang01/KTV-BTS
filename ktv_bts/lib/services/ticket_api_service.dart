@@ -12,12 +12,13 @@ class TicketApiService {
   Future<TicketApiResponse> submitTicketRequest({
     required String paymentRefno,
     required TicketRequest ticketRequest,
+    String? ipAddress,
   }) async {
     try {
       final requestBody = {
         'PaymentRefno': paymentRefno,
         'RecipientEmail': ticketRequest.recipientEmail,
-        'TotalTickets': ticketRequest.totalTickets,
+        'Ip': ipAddress ?? '127.0.0.1', // Default IP if not provided
         'TicketInfo': ticketRequest.ticketInfo.map((ticket) => ticket.toJson()).toList(),
       };
 
@@ -99,6 +100,75 @@ class TicketApiService {
     } catch (e) {
       // Log error details
       print('❌ [API ERROR]');
+      print('🔥 Error Type: ${e.runtimeType}');
+      print('📝 Error Message: ${e.toString()}');
+      print('📍 URL: $_apiBaseUrl$_ticketEndpoint');
+      print('');
+      
+      return TicketApiResponse.failure(
+        errorMessage: 'Network error: ${e.toString()}',
+        statusCode: 0,
+      );
+    }
+  }
+
+  /// Submit bundle booking request to external API
+  Future<TicketApiResponse> submitBundleRequest(Map<String, dynamic> bundleRequest) async {
+    try {
+      final requestUrl = '$_apiBaseUrl$_ticketEndpoint';
+      final requestJson = json.encode(bundleRequest);
+      
+      // Log request details
+      print('🚀 [BUNDLE API REQUEST]');
+      print('📍 URL: $requestUrl');
+      print('📤 Method: POST');
+      print('📋 Headers: {"Content-Type": "application/json", "Accept": "application/json"}');
+      print('📦 Request Body:');
+      print('   ${requestJson.replaceAll(',', ',\n   ')}');
+      print('');
+
+      final response = await http.post(
+        Uri.parse(requestUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: requestJson,
+      );
+
+      // Log response details
+      print('📥 [BUNDLE API RESPONSE]');
+      print('📊 Status Code: ${response.statusCode}');
+      print('📋 Headers: ${response.headers}');
+      print('📦 Response Body:');
+      print('   ${response.body.replaceAll(',', ',\n   ')}');
+      print('');
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        
+        // Check if the response indicates success
+        if (responseData['success'] == true || responseData['Success'] == true) {
+          return TicketApiResponse.success(
+            message: responseData['message'] ?? responseData['Message'] ?? 'Bundle booking successful',
+            data: responseData,
+          );
+        } else {
+          return TicketApiResponse.failure(
+            errorMessage: responseData['errorMessage'] ?? responseData['ErrorMessage'] ?? 'Bundle booking failed',
+            statusCode: response.statusCode,
+            errorCode: responseData['errorCode'] ?? responseData['ErrorCode'],
+          );
+        }
+      } else {
+        return TicketApiResponse.failure(
+          errorMessage: 'HTTP ${response.statusCode}: ${response.reasonPhrase}',
+          statusCode: response.statusCode,
+        );
+      }
+    } catch (e) {
+      // Log error details
+      print('❌ [BUNDLE API ERROR]');
       print('🔥 Error Type: ${e.runtimeType}');
       print('📝 Error Message: ${e.toString()}');
       print('📍 URL: $_apiBaseUrl$_ticketEndpoint');

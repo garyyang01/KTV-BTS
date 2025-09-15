@@ -1,0 +1,223 @@
+{
+  "appTitle": "車票旅行預訂",
+  "settings": "設定",
+  "language": "語言",
+  "theme": "主題",
+  "lightTheme": "淺色",
+  "darkTheme": "深色",
+  "systemTheme": "系統",
+  "english": "English",
+  "traditionalChinese": "繁體中文",
+  "simplifiedChinese": "簡體中文",
+  "home": "首頁",
+  "bundle": "套裝",
+  "myTickets": "我的車票",
+  "settings": "設定",
+  "welcomeMessage": "歡迎來到車票旅行！",
+  "welcomeSubtitle": "探索精彩目的地，預訂您的完美旅程",
+  "searchDestinations": "搜尋目的地",
+  "popularDestinations": "熱門目的地",
+  "trainTickets": "火車票",
+  "castleTours": "城堡之旅",
+  "attractions": "景點",
+  "newLabel": "新",
+  "typeDestination": "輸入目的地...",
+  "munichCentral": "慕尼黑中央車站",
+  "neuschwanstein": "新天鵝堡",
+  "florence": "佛羅倫斯",
+  "uffiziGallery": "烏菲茲美術館",
+  "visitMagicalCastle": "參觀神奇的童話城堡",
+  "exploreRenaissance": "探索文藝復興傑作",
+  "comingSoon": "即將推出",
+  "featureUnderDevelopment": "功能正在開發中，即將推出！",
+  "ok": "確定",
+  "myTrainTickets": "我的火車票",
+  "noTicketsFound": "找不到車票",
+  "loadingTickets": "載入車票中...",
+  "details": "詳情",
+  "share": "分享",
+  "ticketDetails": "車票詳情",
+  "orderId": "訂單編號",
+  "pnr": "PNR",
+  "route": "路線",
+  "departureTime": "出發時間",
+  "paymentPrice": "付款金額",
+  "chargingPrice": "收費金額",
+  "ticketFiles": "車票檔案",
+  "close": "關閉",
+  "ticketInfoCopied": "車票資訊已複製到剪貼簿",
+  "fileType": "檔案類型",
+  "downloadLink": "下載連結",
+  "downloadLinkCopied": "下載連結已複製到剪貼簿",
+  "copyLink": "複製連結",
+  "customizeAppExperience": "自訂您的應用程式體驗",
+  "appInformation": "應用程式資訊",
+  "version": "版本",
+  "build": "建置",
+  "developer": "開發者",
+  "bookYourTickets": "預訂您的門票",
+  "attractionTicketBooking": "景點門票預訂",
+  "visitAttraction": "參觀{attractionName}",
+  "@visitAttraction": {
+    "placeholders": {
+      "attractionName": {
+        "type": "String"
+      }
+    }
+  },
+  "yourFairytaleAwaits": "您的童話等待",
+  "skipLinesDescription": "跳過排隊，確保您在德國最神奇的城堡中的位置。",
+  "skipLines": "跳過排隊",
+  "instantConfirmation": "即時確認",
+  "mobileTicket": "手機門票",
+  "ticketInformation": "門票資訊",
+  "ticket": "門票",
+  "familyName": "姓氏",
+  "familyNameHint": "輸入姓氏",
+  "familyNameRequired": "姓氏是必填項",
+  "givenName": "名字",
+  "givenNameHint": "輸入名字",
+  "givenNameRequired": "名字是必填項",
+  "ageGroup": "年齡組",
+  "adult": "成人",
+  "adultDescription": "18歲及以上",
+  "under18": "18歲以下",
+  "under18Description": "18歲以下",
+  "free": "免費",
+  "arrivalDate": "到達日期",
+  "selectDate": "選擇日期",
+  "selectArrivalDateForAllTickets": "為所有門票選擇到達日期",
+  "session": "時段",
+  "morning": "上午",
+  "afternoon": "下午",
+  "dateSessionInfo": "日期：{date}，時段：{session}",
+  "@dateSessionInfo": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "session": {
+        "type": "String"
+      }
+    }
+  },
+  "notSelected": "未選擇",
+  "addAnotherTicket": "新增另一張門票",
+  "bookTicketsNow": "立即預訂{count}張門票",
+  "@bookTicketsNow": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "plural": {
+        "type": "String"
+      }
+    }
+  },
+  "ticketOnly": "僅門票",
+  "bookTrainTickets": "預訂火車票",
+  "trainTicketBooking": "火車票預訂",
+  "ticketInformationConfirmed": "門票資訊已確認！",
+  "doYouNeedTrainTickets": "您是否還需要預訂到{attractionName}的火車票？",
+  "@doYouNeedTrainTickets": {
+    "placeholders": {
+      "attractionName": {
+        "type": "String"
+      }
+    }
+  },
+  "defaultTrainTicketInformation": "預設火車票資訊",
+  "route": "路線",
+  "date": "日期",
+  "time": "時間",
+  "accessDenied": "存取被拒絕",
+  "pleaseSelectArrivalDate": "請為第{ticketNumber}張門票選擇到達日期",
+  "@pleaseSelectArrivalDate": {
+    "placeholders": {
+      "ticketNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "errorCreatingBookingRequest": "建立預訂請求時發生錯誤：{error}",
+  "@errorCreatingBookingRequest": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "removeTicket": "刪除門票",
+  "imageNotFound": "圖片未找到",
+  "myTrainTicketsTooltip": "我的火車票",
+  "railwaySearchTestTooltip": "鐵路搜尋測試",
+  "reload": "重新載入",
+  "loadingYourTickets": "正在載入您的門票...",
+  "noTrainTicketsYet": "還沒有火車票",
+  "trainTicketInfoWillBeDisplayed": "購買後，火車票資訊將在此處顯示",
+  "searchTrainTickets": "搜尋火車票",
+  "tripInformation": "行程資訊",
+  "seatInformation": "座位資訊",
+  "passengerInformation": "乘客資訊",
+  "passenger": "乘客",
+  "checkInInformation": "登機資訊",
+  "checkInLink": "登機連結",
+  "clickToView": "點擊查看",
+  "confirmed": "已確認",
+  "car": "車廂",
+  "seat": "座位",
+  "departureDate": "出發日期",
+  "departureTime": "出發時間",
+  "ticketApplication": "門票申請",
+  "selectDestinationToStartBooking": "選擇目的地開始預訂",
+  "useSearchBoxAbove": "使用上方搜尋框查找火車或景點",
+  "clearSelection": "清除選擇",
+  "munichCentral": "慕尼黑中央車站",
+  "neuschwansteinCastle": "新天鵝堡",
+  "uffiziGallery": "烏菲茲美術館",
+  "pnrLabel": "PNR",
+  "pdfTicket": "PDF門票",
+  "mobileTicket": "手機門票",
+  "ticketBookingForm": "門票預訂表單",
+  "fillBookingDetailsBelow": "請在下方填寫預訂詳情。您可以為您的團隊新增多張門票。",
+  "emailAddress": "電子郵件地址",
+  "emailAddressHint": "輸入您的電子郵件地址",
+  "ticketNumber": "門票{number}",
+  "@ticketNumber": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "emailAddressRequired": "電子郵件地址是必填項",
+  "emailAddressInvalid": "請輸入有效的電子郵件地址",
+  "priceSummary": "價格摘要",
+  "total": "總計",
+  "tourPackages": "旅遊套餐",
+  "discoverAmazingBundledExperiences": "發現精彩的套裝體驗",
+  "trainIncluded": "包含火車",
+  "guidedTours": "導遊服務",
+  "mealsIncluded": "包含餐食",
+  "noBundlesAvailable": "暫無套裝",
+  "checkBackLaterForExcitingTourPackages": "請稍後再查看精彩的旅遊套餐！",
+  "loadingBundles": "載入套裝中...",
+  "highlights": "亮點",
+  "description": "描述",
+  "bookThisBundle": "預訂此套裝",
+  "bookNow": "立即預訂",
+  "bookingBundle": "正在預訂 {bundleName}...",
+  "@bookingBundle": {
+    "placeholders": {
+      "bundleName": {
+        "type": "String"
+      }
+    }
+  },
+  "whereWouldYouLikeToGo": "您想去哪裡？",
+  "trainTickets": "火車票",
+  "bundleTickets": "套裝行程",
+  "noBundleTicketsYet": "還沒有套裝行程",
+  "bundleTicketInfoWillBeDisplayed": "購買套裝行程後，您的票據資訊將在此顯示。",
+  "searchBundles": "搜尋套裝行程"
+}
