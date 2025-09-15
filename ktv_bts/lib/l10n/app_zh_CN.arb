@@ -193,5 +193,26 @@
   "emailAddressRequired": "邮箱地址是必填项",
   "emailAddressInvalid": "请输入有效的邮箱地址",
   "priceSummary": "价格摘要",
-  "total": "总计"
+  "total": "总计",
+  "tourPackages": "旅游套餐",
+  "discoverAmazingBundledExperiences": "发现精彩的套装体验",
+  "trainIncluded": "包含火车",
+  "guidedTours": "导游服务",
+  "mealsIncluded": "包含餐食",
+  "noBundlesAvailable": "暂无套装",
+  "checkBackLaterForExcitingTourPackages": "请稍后再查看精彩的旅游套餐！",
+  "loadingBundles": "加载套装中...",
+  "highlights": "亮点",
+  "description": "描述",
+  "bookThisBundle": "预订此套装",
+  "bookNow": "立即预订",
+  "bookingBundle": "正在预订 {bundleName}...",
+  "@bookingBundle": {
+    "placeholders": {
+      "bundleName": {
+        "type": "String"
+      }
+    }
+  },
+  "whereWouldYouLikeToGo": "您想去哪里？"
 }

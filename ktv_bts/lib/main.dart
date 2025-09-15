@@ -73,8 +73,14 @@ class MyApp extends StatelessWidget {
             routes: {
               '/payment-test': (context) => const PaymentTestPage(),
               '/payment': (context) {
-                final args = ModalRoute.of(context)!.settings.arguments as PaymentRequest;
-                return PaymentPage(paymentRequest: args);
+                final args = ModalRoute.of(context)!.settings.arguments;
+                if (args is PaymentRequest) {
+                  return PaymentPage(paymentRequest: args);
+                } else if (args is Map<String, dynamic>) {
+                  // Bundle payment
+                  return PaymentPage.fromBundle(args);
+                }
+                throw Exception('Invalid payment arguments');
               },
               '/payment-confirmation': (context) => const PaymentConfirmationPage(),
               '/rail-search-test': (context) => const RailSearchTestPage(),

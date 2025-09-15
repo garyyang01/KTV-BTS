@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../models/search_option.dart';
 
 /// 搜索欄組件 - 支援多語言關鍵字搜索的下拉選單
@@ -86,11 +87,13 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
       children: [
         // 標題
         Text(
-          'Where would you like to go?',
+          AppLocalizations.of(context)!.whereWouldYouLikeToGo,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: Colors.grey.shade800,
+            color: Theme.of(context).brightness == Brightness.dark 
+                ? Colors.white70 
+                : Colors.grey.shade800,
           ),
         ),
         

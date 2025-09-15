@@ -193,5 +193,26 @@
   "emailAddressRequired": "Email address is required",
   "emailAddressInvalid": "Please enter a valid email address",
   "priceSummary": "Price Summary",
-  "total": "Total"
+  "total": "Total",
+  "tourPackages": "Tour Packages",
+  "discoverAmazingBundledExperiences": "Discover amazing bundled experiences",
+  "trainIncluded": "Train Included",
+  "guidedTours": "Guided Tours",
+  "mealsIncluded": "Meals Included",
+  "noBundlesAvailable": "No Bundles Available",
+  "checkBackLaterForExcitingTourPackages": "Check back later for exciting tour packages!",
+  "loadingBundles": "Loading bundles...",
+  "highlights": "Highlights",
+  "description": "Description",
+  "bookThisBundle": "Book This Bundle",
+  "bookNow": "Book Now",
+  "bookingBundle": "Booking {bundleName}...",
+  "@bookingBundle": {
+    "placeholders": {
+      "bundleName": {
+        "type": "String"
+      }
+    }
+  },
+  "whereWouldYouLikeToGo": "Where would you like to go?"
 }
