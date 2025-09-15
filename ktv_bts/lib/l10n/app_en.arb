@@ -1,5 +1,5 @@
 {
-  "appTitle": "Ticket Trip Booking",
+  "appTitle": "Ticketrip Booking",
   "settings": "Settings",
   "language": "Language",
   "theme": "Theme",
@@ -13,7 +13,7 @@
   "bundle": "Bundle",
   "myTickets": "My Tickets",
   "settings": "Settings",
-  "welcomeMessage": "Welcome to Ticket Trip!",
+  "welcomeMessage": "Welcome to Ticketrip!",
   "welcomeSubtitle": "Discover amazing destinations and book your perfect journey",
   "searchDestinations": "Search for Destinations",
   "popularDestinations": "Popular Destinations",

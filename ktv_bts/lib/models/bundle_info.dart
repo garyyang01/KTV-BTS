@@ -44,6 +44,19 @@ class BundleInfo {
     );
   }
 
+  /// Create from API JSON response
+  factory BundleInfo.fromApiJson(Map<String, dynamic> json) {
+    return BundleInfo(
+      id: json['Id'] as String,
+      name: json['Name'] as String,
+      intro: json['Summary'] as String? ?? '',
+      highlights: '', // API doesn't provide highlights, using empty string
+      priceEur: (json['Price'] as num).toDouble(),
+      images: [json['ImageUrl'] as String], // API provides single image URL
+      location: json['Location'] as String,
+    );
+  }
+
   /// Get formatted price string
   String get formattedPrice => '€${priceEur.toStringAsFixed(2)}';
 
