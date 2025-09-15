@@ -23,6 +23,9 @@ class _MainPageState extends State<MainPage> {
   late PageController _bannerController;
   int _currentBannerIndex = 0;
   Timer? _bannerTimer;
+  
+  // Search bar key for controlling search text
+  final GlobalKey<SearchBarWidgetState> _searchBarKey = GlobalKey<SearchBarWidgetState>();
 
   @override
   void initState() {
@@ -548,6 +551,7 @@ class _MainPageState extends State<MainPage> {
           
           // Search component
           SearchBarWidget(
+            key: _searchBarKey,
             hintText: AppLocalizations.of(context)!.typeDestination,
             onSelectionChanged: (option) {
               setState(() {
@@ -592,7 +596,13 @@ class _MainPageState extends State<MainPage> {
           children: suggestions.map((suggestion) {
             return InkWell(
               onTap: () {
-                // Handle suggestion tap
+                // 先設置文字到搜尋框
+                _searchBarKey.currentState?.setSearchText(suggestion['text'] as String);
+                
+                // 延遲一點時間後觸發輸入框點擊來顯示下拉選單
+                Future.delayed(const Duration(milliseconds: 100), () {
+                  _searchBarKey.currentState?.triggerInputFieldTap();
+                });
               },
               borderRadius: BorderRadius.circular(20),
               child: Container(
