@@ -7,6 +7,19 @@ import '../models/search_option.dart';
 import 'my_train_tickets_page.dart';
 import 'bundle_page.dart';
 
+/// Chat message model
+class ChatMessage {
+  final String text;
+  final bool isUser;
+  final DateTime timestamp;
+
+  ChatMessage({
+    required this.text,
+    required this.isUser,
+    required this.timestamp,
+  });
+}
+
 /// Main Page - Unified ticket search and booking page
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -26,18 +39,26 @@ class _MainPageState extends State<MainPage> {
   
   // Search bar key for controlling search text
   final GlobalKey<SearchBarWidgetState> _searchBarKey = GlobalKey<SearchBarWidgetState>();
+  
+  // AI Chat state
+  final TextEditingController _chatController = TextEditingController();
+  final ScrollController _chatScrollController = ScrollController();
+  List<ChatMessage> _chatMessages = [];
 
   @override
   void initState() {
     super.initState();
     _bannerController = PageController();
     _startBannerTimer();
+    _initializeChat();
   }
 
   @override
   void dispose() {
     _bannerController.dispose();
     _bannerTimer?.cancel();
+    _chatController.dispose();
+    _chatScrollController.dispose();
     super.dispose();
   }
 
@@ -57,6 +78,87 @@ class _MainPageState extends State<MainPage> {
   void _clearSelection() {
     setState(() {
       _selectedOption = null;
+    });
+  }
+
+  /// Initialize chat with welcome message
+  void _initializeChat() {
+    _chatMessages.add(ChatMessage(
+      text: 'Hello! How can I help you with your train booking today?',
+      isUser: false,
+      timestamp: DateTime.now(),
+    ));
+  }
+
+  /// Send message to AI chat
+  void _sendMessage() {
+    final text = _chatController.text.trim();
+    if (text.isEmpty) return;
+
+    // Add user message
+    setState(() {
+      _chatMessages.add(ChatMessage(
+        text: text,
+        isUser: true,
+        timestamp: DateTime.now(),
+      ));
+    });
+
+    // Clear input
+    _chatController.clear();
+
+    // Scroll to bottom
+    _scrollToBottom();
+
+    // Simulate AI response (in real app, this would call AI service)
+    _simulateAIResponse(text);
+  }
+
+  /// Simulate AI response
+  void _simulateAIResponse(String userMessage) {
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      if (!mounted) return;
+
+      String aiResponse = _getAIResponse(userMessage);
+      setState(() {
+        _chatMessages.add(ChatMessage(
+          text: aiResponse,
+          isUser: false,
+          timestamp: DateTime.now(),
+        ));
+      });
+
+      _scrollToBottom();
+    });
+  }
+
+  /// Get AI response based on user message
+  String _getAIResponse(String message) {
+    final lowerMessage = message.toLowerCase();
+    
+    if (lowerMessage.contains('train') || lowerMessage.contains('火車')) {
+      return 'I can help you find train tickets! You can search for destinations in the search box below, or tell me where you want to go and I\'ll help you plan your journey.';
+    } else if (lowerMessage.contains('price') || lowerMessage.contains('價格') || lowerMessage.contains('多少錢')) {
+      return 'Train ticket prices vary depending on the route and travel class. You can search for your destination below to see current prices and availability.';
+    } else if (lowerMessage.contains('time') || lowerMessage.contains('時間') || lowerMessage.contains('什麼時候')) {
+      return 'Train schedules are available in real-time. Once you search for your destination, you\'ll see all available departure times and journey durations.';
+    } else if (lowerMessage.contains('booking') || lowerMessage.contains('預訂') || lowerMessage.contains('訂票')) {
+      return 'To book tickets, simply search for your destination using the search box below. I can guide you through the booking process step by step!';
+    } else {
+      return 'I\'m here to help with your train travel needs! You can ask me about routes, schedules, prices, or booking. Try searching for a destination below to get started!';
+    }
+  }
+
+  /// Scroll chat to bottom
+  void _scrollToBottom() {
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (_chatScrollController.hasClients) {
+        _chatScrollController.animateTo(
+          _chatScrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
     });
   }
 
@@ -221,13 +323,13 @@ class _MainPageState extends State<MainPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Welcome section
-                  _buildWelcomeSection(),
+                  // Promotional Banner Carousel - Independent section
+                  _buildPromotionalBanner(),
                   
                   const SizedBox(height: 24),
                   
-                  // Promotional Banner Carousel - Independent section
-                  _buildPromotionalBanner(),
+                  // AI Assistant section
+                  _buildAIAssistantSection(),
                   
                   const SizedBox(height: 24),
                   
@@ -360,84 +462,6 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  /// Build welcome section
-  Widget _buildWelcomeSection() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: isDark ? [
-            const Color(0xFF2A2A3E).withOpacity(0.9),
-            const Color(0xFF1E1E2E).withOpacity(0.8),
-          ] : [
-            Colors.white.withOpacity(0.9),
-            Colors.blue.shade50.withOpacity(0.8),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: isDark ? Colors.black.withOpacity(0.3) : Colors.blue.withOpacity(0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.blue.shade400, Colors.purple.shade400],
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: const Icon(
-                  Icons.explore,
-                  color: Colors.white,
-                  size: 28,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      AppLocalizations.of(context)!.welcomeMessage,
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      AppLocalizations.of(context)!.welcomeSubtitle,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: isDark ? Colors.white70 : Colors.grey.shade600,
-                        height: 1.3,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-        ],
-      ),
-    );
-  }
 
 
   /// Build search section
@@ -798,6 +822,250 @@ class _MainPageState extends State<MainPage> {
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  /// Build AI Assistant section
+  Widget _buildAIAssistantSection() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: isDark ? Colors.black.withOpacity(0.3) : Colors.black.withOpacity(0.08),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+        border: Border.all(
+          color: isDark ? const Color(0xFF6BB6FF).withOpacity(0.3) : const Color(0xFF4A90E2).withOpacity(0.1),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // AI Assistant header
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: isDark ? [
+                  const Color(0xFF334155),
+                  const Color(0xFF475569),
+                ] : [
+                  const Color(0xFFF8FAFC),
+                  const Color(0xFFE2E8F0),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        const Color(0xFF4A90E2),
+                        const Color(0xFF6BB6FF),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.chat_bubble_outline,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    AppLocalizations.of(context)!.aiTravelAssistant,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF4A90E2).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    'AI',
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF4A90E2),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          
+          const SizedBox(height: 20),
+          
+          // Chat messages area
+          Container(
+            height: 200,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF334155).withOpacity(0.3) : Colors.grey.shade50,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: ListView.builder(
+              controller: _chatScrollController,
+              itemCount: _chatMessages.length,
+              itemBuilder: (context, index) {
+                final message = _chatMessages[index];
+                return _buildChatMessage(message, isDark);
+              },
+            ),
+          ),
+          
+          const SizedBox(height: 20),
+          
+          // AI chat input
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF334155).withOpacity(0.3) : Colors.grey.shade50,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _chatController,
+                    decoration: InputDecoration(
+                      hintText: 'Ask me anything about train bookings...',
+                      hintStyle: TextStyle(
+                        color: isDark ? Colors.white54 : Colors.grey.shade500,
+                        fontSize: 14,
+                      ),
+                      border: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                    ),
+                    style: TextStyle(
+                      color: isDark ? Colors.white : Colors.black87,
+                      fontSize: 14,
+                    ),
+                    onSubmitted: (_) => _sendMessage(),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [
+                        Color(0xFF4A90E2),
+                        Color(0xFF6BB6FF),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: IconButton(
+                    onPressed: _sendMessage,
+                    icon: const Icon(
+                      Icons.send,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                    padding: EdgeInsets.zero,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Build chat message bubble
+  Widget _buildChatMessage(ChatMessage message, bool isDark) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (!message.isUser) ...[
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: const Color(0xFF4A90E2),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const Icon(
+                Icons.smart_toy,
+                color: Colors.white,
+                size: 18,
+              ),
+            ),
+            const SizedBox(width: 12),
+          ],
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: message.isUser 
+                    ? const Color(0xFF4A90E2)
+                    : (isDark ? const Color(0xFF334155).withOpacity(0.7) : Colors.white),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Text(
+                message.text,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: message.isUser 
+                      ? Colors.white
+                      : (isDark ? Colors.white70 : Colors.grey.shade700),
+                  height: 1.4,
+                ),
+              ),
+            ),
+          ),
+          if (message.isUser) ...[
+            const SizedBox(width: 12),
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Icon(
+                Icons.person,
+                color: Colors.grey.shade600,
+                size: 18,
+              ),
+            ),
+          ],
         ],
       ),
     );

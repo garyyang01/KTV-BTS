@@ -1,5 +1,5 @@
 {
-  "appTitle": "車票旅行預訂",
+  "appTitle": "歡迎來到Ticketrip!",
   "settings": "設定",
   "language": "語言",
   "theme": "主題",
@@ -31,6 +31,7 @@
   "comingSoon": "即將推出",
   "featureUnderDevelopment": "功能正在開發中，即將推出！",
   "ok": "確定",
+  "aiTravelAssistant": "AI 旅遊助手",
   "myTrainTickets": "我的火車票",
   "noTicketsFound": "找不到車票",
   "loadingTickets": "載入車票中...",
