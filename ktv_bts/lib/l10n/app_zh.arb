@@ -219,5 +219,240 @@
   "bundleTickets": "套裝行程",
   "noBundleTicketsYet": "還沒有套裝行程",
   "bundleTicketInfoWillBeDisplayed": "購買套裝行程後，您的票據資訊將在此顯示。",
-  "searchBundles": "搜尋套裝行程"
+  "searchBundles": "搜尋套裝行程",
+  "securePayment": "安全付款",
+  "combinedOrderSummary": "組合訂單摘要",
+  "orderSummary": "訂單摘要",
+  "customerName": "客戶姓名",
+  "ticketType": "票券類型",
+  "timeSlot": "時段",
+  "amount": "金額",
+  "costDetails": "費用詳情",
+  "neuschwansteinCastleTicket": "新天鵝堡門票",
+  "trainTicket": "火車票",
+  "trainInformation": "火車資訊",
+  "trainNumber": "火車班次",
+  "type": "類型",
+  "departure": "出發",
+  "arrival": "到達",
+  "duration": "行程時間",
+  "fareType": "票價類型",
+  "seatType": "座位類型",
+  "paymentInformation": "付款資訊",
+  "cardholderName": "持卡人姓名",
+  "cardNumber": "卡號",
+  "expiryDate": "到期日",
+  "cvc": "CVC",
+  "payNow": "立即付款",
+  "processing": "處理中...",
+  "pleaseEnterCardholderName": "請輸入持卡人姓名",
+  "pleaseEnterCardNumber": "請輸入卡號",
+  "cardNumberMustBe16Digits": "卡號必須為16位數字",
+  "pleaseEnterExpiryDate": "請輸入到期日",
+  "formatMMYY": "格式：MM/YY",
+  "pleaseEnterCVC": "請輸入CVC",
+  "cvcMustBe3To4Digits": "CVC必須為3-4位數字",
+  "paymentSuccessful": "付款成功！",
+  "trainTicketPurchaseSuccessful": "火車票購買成功！",
+  "yourTrainTicketHasBeenSuccessfullyPurchased": "您的火車票已成功購買並確認！",
+  "ticketInformation": "票券資訊",
+  "returnToHomepage": "返回首頁",
+  "viewMyTickets": "查看我的票券",
+  "trainTicketProcessingFailed": "火車票處理失敗",
+  "paymentWasSuccessfulButThereWasAnIssue": "付款成功，但處理火車票時出現問題：",
+  "pleaseContactCustomerService": "請聯繫客服並提供您的付款參考號碼：",
+  "apiError": "API錯誤",
+  "paymentWasSuccessfulButThereWasAnError": "付款成功，但提交票券請求時出現錯誤：",
+  "pleaseContactSupport": "請聯繫支援並提供您的付款參考：",
+  "done": "完成",
+  "bookingTrainTicket": "預訂火車票",
+  "ticketBuyingSuccessful": "票券購買成功！",
+  "doYouAlsoNeedToBookTrainTickets": "您是否還需要預訂到{attractionName}的火車票？",
+  "@doYouAlsoNeedToBookTrainTickets": {
+    "placeholders": {
+      "attractionName": {
+        "type": "String"
+      }
+    }
+  },
+  "defaultTrainTicketInformation": "預設火車票資訊",
+  "start": "出發地",
+  "session": "時段",
+  "noNeed": "不需要",
+  "bookingTrainTicketButton": "🚄 預訂火車票",
+  "threeDSAuthentication": "3DS身份驗證",
+  "yourBankRequiresAdditionalAuthentication": "您的銀行需要額外的身份驗證。",
+  "paymentIntentID": "付款意圖ID：",
+  "noteInActualApplication": "注意：在實際應用中，將在此處整合Stripe Elements來處理3DS身份驗證流程。",
+  "skipAuthenticationTest": "跳過身份驗證（測試）",
+  "cancel": "取消",
+  "accessDenied": "訪問被拒絕",
+  "pricePerPerson": "每人價格",
+  "participants": "參與者",
+  "totalPrice": "總價格",
+  "participant": "參與者{number}",
+  "@participant": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "email": "電子郵件",
+  "passport": "護照",
+  "trainTicketInformation": "火車票資訊",
+  "bundleTicketInformation": "套裝行程票券資訊",
+  "failedToCreatePaymentIntent": "創建付款意圖失敗：{error}",
+  "@failedToCreatePaymentIntent": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentInitializationFailed": "付款初始化失敗：{error}",
+  "@paymentInitializationFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentProcessingFailed": "付款處理失敗：{error}",
+  "@paymentProcessingFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentFailed": "付款失敗：{error}",
+  "@paymentFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentProcessingError": "付款處理錯誤：{error}",
+  "@paymentProcessingError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToCreatePaymentMethod": "創建付款方式失敗：{error}",
+  "@failedToCreatePaymentMethod": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToSubmitTicketRequest": "提交票券請求失敗：{error}",
+  "@failedToSubmitTicketRequest": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "bundleDataIsMissing": "套裝行程資料缺失",
+  "failedToSubmitBundleBooking": "提交套裝行程預訂失敗：{error}",
+  "@failedToSubmitBundleBooking": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "routeSelection": "路線選擇",
+  "selectDestinationStation": "選擇目的地車站",
+  "departureDateAndTime": "出發日期與時間",
+  "passengers": "乘客",
+  "adults": "成人",
+  "age18Plus": "18歲以上",
+  "children": "兒童",
+  "age0To17": "0-17歲",
+  "searchTrains": "搜尋火車",
+  "neuschwansteinCastle": "新天鵝堡",
+  "fairyTaleCastleDescription": "巴伐利亞阿爾卑斯山的童話城堡",
+  "country": "國家",
+  "city": "城市",
+  "hours": "開放時間",
+  "ticketPrices": "票價",
+  "adult18Plus": "成人（18歲以上）",
+  "from": "從",
+  "to": "到",
+  "pleaseEnterDepartureLocation": "請輸入出發地點",
+  "pleaseEnterDestination": "請輸入目的地",
+  "pleaseSelectDepartureDate": "請選擇出發日期",
+  "pleaseEnterDepartureTime": "請輸入出發時間",
+  "pleaseEnterValidAdultCount": "請輸入有效的成人數量",
+  "pleaseEnterValidChildrenCount": "請輸入有效的兒童數量",
+  "searching": "搜尋中...",
+  "startSearch": "開始搜尋",
+  "searchStatus": "搜尋狀態",
+  "searchResults": "搜尋結果",
+  "scheduleOptions": "班次選項",
+  "selectSchedule": "選擇班次",
+  "fareTypes": "票價類型",
+  "trainSchedule": "火車時刻表",
+  "priceRange": "價格範圍",
+  "stops": "停靠站",
+  "railwaySearch": "鐵路搜尋",
+  "neuschwansteinCastleTrainTicketBooking": "新天鵝堡火車票預訂",
+  "junior": "青少年",
+  "senior": "長者",
+  "infant": "嬰兒",
+  "rawData": "原始資料",
+  "country": "國家",
+  "city": "城市",
+  "hours": "開放時間",
+  "ticketPrices": "票價",
+  "adult18Plus": "成人（18歲以上）",
+  "under18": "18歲以下",
+  "free": "免費",
+  "ticketBookingForm": "票券預訂表單",
+  "pleaseFillBookingDetails": "請在下方填寫預訂詳情。您可以為您的團體添加多張票券。",
+  "adultTicket": "成人票",
+  "adultTickets": "成人票",
+  "under18Ticket": "18歲以下票",
+  "under18Tickets": "18歲以下票",
+  "totalWithCount": "總計（{count}張票{tickets}）",
+  "@totalWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "tickets": {
+        "type": "String"
+      }
+    }
+  },
+  "from": "從",
+  "destination": "目的地",
+  "selectDepartureStation": "選擇出發站",
+  "pleaseSelectDepartureStation": "請選擇出發站",
+  "swapStations": "交換車站",
+  "selectDestinationStation": "選擇目的地站",
+  "pleaseSelectDestinationStation": "請選擇目的地站",
+  "selectDate": "選擇日期",
+  "selectTime": "選擇時間",
+  "age18Plus": "18歲以上",
+  "age0To17": "0-17歲",
+  "selectDepartureStationTitle": "選擇出發站",
+  "selectDestinationStationTitle": "選擇目的地站",
+  "pleaseSelectDepartureStationFirst": "請先選擇出發站",
+  "noAvailableDestinations": "所選出發站沒有可用的目的地",
+  "onlyPairedStationsCanBeSwapped": "只有配對的車站才能交換",
+  "navigationFailed": "導航失敗：{error}",
+  "@navigationFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
 }

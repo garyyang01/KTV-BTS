@@ -69,7 +69,7 @@ class PriceDisplay extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Adult Ticket${adultCount > 1 ? 's' : ''} (${adultCount}x)',
+                  '${adultCount > 1 ? AppLocalizations.of(context)!.adultTickets : AppLocalizations.of(context)!.adultTicket} (${adultCount}x)',
                   style: const TextStyle(fontSize: 16),
                 ),
                 Text(
@@ -87,11 +87,11 @@ class PriceDisplay extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Under 18 Ticket${childCount > 1 ? 's' : ''} (${childCount}x)',
+                  '${childCount > 1 ? AppLocalizations.of(context)!.under18Tickets : AppLocalizations.of(context)!.under18Ticket} (${childCount}x)',
                   style: const TextStyle(fontSize: 16),
                 ),
                 Text(
-                  childPrice == 0 ? 'Free' : '€${childCount * childPrice}',
+                  childPrice == 0 ? AppLocalizations.of(context)!.free : '€${childCount * childPrice}',
                   style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),
               ],
@@ -106,7 +106,7 @@ class PriceDisplay extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Total (${tickets.length} ticket${tickets.length > 1 ? 's' : ''})',
+                  AppLocalizations.of(context)!.totalWithCount('${tickets.length}', tickets.length > 1 ? 's' : ''),
                   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 Text(
@@ -120,9 +120,9 @@ class PriceDisplay extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Total',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Text(
+                  AppLocalizations.of(context)!.total,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 Text(
                   '€$totalPrice',

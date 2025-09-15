@@ -219,5 +219,240 @@
   "bundleTickets": "Bundle Tickets",
   "noBundleTicketsYet": "No Bundle Tickets Yet",
   "bundleTicketInfoWillBeDisplayed": "Your bundle ticket information will be displayed here after purchase.",
-  "searchBundles": "Search Bundles"
+  "searchBundles": "Search Bundles",
+  "securePayment": "Secure Payment",
+  "combinedOrderSummary": "Combined Order Summary",
+  "orderSummary": "Order Summary",
+  "customerName": "Customer Name",
+  "ticketType": "Ticket Type",
+  "timeSlot": "Time Slot",
+  "amount": "Amount",
+  "costDetails": "Cost Details",
+  "neuschwansteinCastleTicket": "Neuschwanstein Castle Ticket",
+  "trainTicket": "Train Ticket",
+  "trainInformation": "Train Information",
+  "trainNumber": "Train Number",
+  "type": "Type",
+  "departure": "Departure",
+  "arrival": "Arrival",
+  "duration": "Duration",
+  "fareType": "Fare Type",
+  "seatType": "Seat Type",
+  "paymentInformation": "Payment Information",
+  "cardholderName": "Cardholder Name",
+  "cardNumber": "Card Number",
+  "expiryDate": "Expiry Date",
+  "cvc": "CVC",
+  "payNow": "Pay Now",
+  "processing": "Processing...",
+  "pleaseEnterCardholderName": "Please enter cardholder name",
+  "pleaseEnterCardNumber": "Please enter card number",
+  "cardNumberMustBe16Digits": "Card number must be 16 digits",
+  "pleaseEnterExpiryDate": "Please enter expiry date",
+  "formatMMYY": "Format: MM/YY",
+  "pleaseEnterCVC": "Please enter CVC",
+  "cvcMustBe3To4Digits": "CVC must be 3-4 digits",
+  "paymentSuccessful": "Payment Successful!",
+  "trainTicketPurchaseSuccessful": "Train Ticket Purchase Successful!",
+  "yourTrainTicketHasBeenSuccessfullyPurchased": "Your train ticket has been successfully purchased and confirmed!",
+  "ticketInformation": "Ticket Information",
+  "returnToHomepage": "Return to Homepage",
+  "viewMyTickets": "View My Tickets",
+  "trainTicketProcessingFailed": "Train Ticket Processing Failed",
+  "paymentWasSuccessfulButThereWasAnIssue": "Payment was successful, but there was an issue processing your train ticket:",
+  "pleaseContactCustomerService": "Please contact customer service and provide your payment reference number:",
+  "apiError": "API Error",
+  "paymentWasSuccessfulButThereWasAnError": "Payment was successful, but there was an error submitting the ticket request:",
+  "pleaseContactSupport": "Please contact support with your payment reference:",
+  "done": "Done",
+  "bookingTrainTicket": "Booking Train Ticket",
+  "ticketBuyingSuccessful": "Ticket buying successful！",
+  "doYouAlsoNeedToBookTrainTickets": "Do you also need to book train tickets to {attractionName}?",
+  "@doYouAlsoNeedToBookTrainTickets": {
+    "placeholders": {
+      "attractionName": {
+        "type": "String"
+      }
+    }
+  },
+  "defaultTrainTicketInformation": "Default Train Ticket Information",
+  "start": "Start",
+  "session": "Session",
+  "noNeed": "No need",
+  "bookingTrainTicketButton": "🚄 Booking Train Ticket",
+  "threeDSAuthentication": "3DS Authentication",
+  "yourBankRequiresAdditionalAuthentication": "Your bank requires additional authentication。",
+  "paymentIntentID": "PaymentIntent ID:",
+  "noteInActualApplication": "Note: In actual application, Stripe Elements will be integrated here to handle 3DS authentication flow.",
+  "skipAuthenticationTest": "Skip Authentication (Test)",
+  "cancel": "Cancel",
+  "accessDenied": "Access Denied",
+  "pricePerPerson": "Price per person",
+  "participants": "Participants",
+  "totalPrice": "Total Price",
+  "participant": "Participant {number}",
+  "@participant": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "email": "Email",
+  "passport": "Passport",
+  "trainTicketInformation": "Train Ticket Information",
+  "bundleTicketInformation": "Bundle Ticket Information",
+  "failedToCreatePaymentIntent": "Failed to create payment intent: {error}",
+  "@failedToCreatePaymentIntent": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentInitializationFailed": "Payment initialization failed: {error}",
+  "@paymentInitializationFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentProcessingFailed": "Payment processing failed: {error}",
+  "@paymentProcessingFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentFailed": "Payment failed: {error}",
+  "@paymentFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentProcessingError": "Payment processing error: {error}",
+  "@paymentProcessingError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToCreatePaymentMethod": "Failed to create payment method: {error}",
+  "@failedToCreatePaymentMethod": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToSubmitTicketRequest": "Failed to submit ticket request: {error}",
+  "@failedToSubmitTicketRequest": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "bundleDataIsMissing": "Bundle data is missing",
+  "failedToSubmitBundleBooking": "Failed to submit bundle booking: {error}",
+  "@failedToSubmitBundleBooking": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "routeSelection": "Route Selection",
+  "selectDestinationStation": "Select destination station",
+  "departureDateAndTime": "Departure Date & Time",
+  "passengers": "Passengers",
+  "adults": "Adults",
+  "age18Plus": "Age 18+",
+  "children": "Children",
+  "age0To17": "Age 0-17",
+  "searchTrains": "Search Trains",
+  "neuschwansteinCastle": "Neuschwanstein Castle",
+  "fairyTaleCastleDescription": "Fairy-tale castle in the Bavarian Alps",
+  "country": "Country",
+  "city": "City",
+  "hours": "Hours",
+  "ticketPrices": "Ticket Prices",
+  "adult18Plus": "Adult (18+)",
+  "from": "From",
+  "to": "To",
+  "pleaseEnterDepartureLocation": "Please enter departure location",
+  "pleaseEnterDestination": "Please enter destination",
+  "pleaseSelectDepartureDate": "Please select departure date",
+  "pleaseEnterDepartureTime": "Please enter departure time",
+  "pleaseEnterValidAdultCount": "Please enter valid adult count",
+  "pleaseEnterValidChildrenCount": "Please enter valid children count",
+  "searching": "Searching...",
+  "startSearch": "Start Search",
+  "searchStatus": "Search Status",
+  "searchResults": "Search Results",
+  "scheduleOptions": "schedule options",
+  "selectSchedule": "Select Schedule",
+  "fareTypes": "fare types",
+  "trainSchedule": "Train Schedule",
+  "priceRange": "Price Range",
+  "stops": "stops",
+  "railwaySearch": "Railway Search",
+  "neuschwansteinCastleTrainTicketBooking": "Neuschwanstein Castle Train Ticket Booking",
+  "junior": "Junior",
+  "senior": "Senior",
+  "infant": "Infant",
+  "rawData": "Raw Data",
+  "country": "Country",
+  "city": "City",
+  "hours": "Hours",
+  "ticketPrices": "Ticket Prices",
+  "adult18Plus": "Adult (18+)",
+  "under18": "Under 18",
+  "free": "Free",
+  "ticketBookingForm": "Ticket Booking Form",
+  "pleaseFillBookingDetails": "Please fill in the booking details below. You can add multiple tickets for your group.",
+  "adultTicket": "Adult Ticket",
+  "adultTickets": "Adult Tickets",
+  "under18Ticket": "Under 18 Ticket",
+  "under18Tickets": "Under 18 Tickets",
+  "totalWithCount": "Total ({count} ticket{tickets})",
+  "@totalWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "tickets": {
+        "type": "String"
+      }
+    }
+  },
+  "from": "From",
+  "destination": "Destination",
+  "selectDepartureStation": "Select departure station",
+  "pleaseSelectDepartureStation": "Please select departure station",
+  "swapStations": "Swap stations",
+  "selectDestinationStation": "Select destination station",
+  "pleaseSelectDestinationStation": "Please select destination station",
+  "selectDate": "Select date",
+  "selectTime": "Select time",
+  "age18Plus": "Age 18+",
+  "age0To17": "Age 0-17",
+  "selectDepartureStationTitle": "Select Departure Station",
+  "selectDestinationStationTitle": "Select Destination Station",
+  "pleaseSelectDepartureStationFirst": "Please select a departure station first",
+  "noAvailableDestinations": "No available destinations for the selected departure station",
+  "onlyPairedStationsCanBeSwapped": "Only paired stations can be swapped",
+  "navigationFailed": "Navigation failed: {error}",
+  "@navigationFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
 }

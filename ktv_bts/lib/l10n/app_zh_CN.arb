@@ -219,5 +219,240 @@
   "bundleTickets": "套装行程",
   "noBundleTicketsYet": "还没有套装行程",
   "bundleTicketInfoWillBeDisplayed": "购买套装行程后，您的票据信息将在此显示。",
-  "searchBundles": "搜索套装行程"
+  "searchBundles": "搜索套装行程",
+  "securePayment": "安全付款",
+  "combinedOrderSummary": "组合订单摘要",
+  "orderSummary": "订单摘要",
+  "customerName": "客户姓名",
+  "ticketType": "票券类型",
+  "timeSlot": "时段",
+  "amount": "金额",
+  "costDetails": "费用详情",
+  "neuschwansteinCastleTicket": "新天鹅堡门票",
+  "trainTicket": "火车票",
+  "trainInformation": "火车信息",
+  "trainNumber": "火车班次",
+  "type": "类型",
+  "departure": "出发",
+  "arrival": "到达",
+  "duration": "行程时间",
+  "fareType": "票价类型",
+  "seatType": "座位类型",
+  "paymentInformation": "付款信息",
+  "cardholderName": "持卡人姓名",
+  "cardNumber": "卡号",
+  "expiryDate": "到期日",
+  "cvc": "CVC",
+  "payNow": "立即付款",
+  "processing": "处理中...",
+  "pleaseEnterCardholderName": "请输入持卡人姓名",
+  "pleaseEnterCardNumber": "请输入卡号",
+  "cardNumberMustBe16Digits": "卡号必须为16位数字",
+  "pleaseEnterExpiryDate": "请输入到期日",
+  "formatMMYY": "格式：MM/YY",
+  "pleaseEnterCVC": "请输入CVC",
+  "cvcMustBe3To4Digits": "CVC必须为3-4位数字",
+  "paymentSuccessful": "付款成功！",
+  "trainTicketPurchaseSuccessful": "火车票购买成功！",
+  "yourTrainTicketHasBeenSuccessfullyPurchased": "您的火车票已成功购买并确认！",
+  "ticketInformation": "票券信息",
+  "returnToHomepage": "返回首页",
+  "viewMyTickets": "查看我的票券",
+  "trainTicketProcessingFailed": "火车票处理失败",
+  "paymentWasSuccessfulButThereWasAnIssue": "付款成功，但处理火车票时出现问题：",
+  "pleaseContactCustomerService": "请联系客服并提供您的付款参考号码：",
+  "apiError": "API错误",
+  "paymentWasSuccessfulButThereWasAnError": "付款成功，但提交票券请求时出现错误：",
+  "pleaseContactSupport": "请联系支持并提供您的付款参考：",
+  "done": "完成",
+  "bookingTrainTicket": "预订火车票",
+  "ticketBuyingSuccessful": "票券购买成功！",
+  "doYouAlsoNeedToBookTrainTickets": "您是否还需要预订到{attractionName}的火车票？",
+  "@doYouAlsoNeedToBookTrainTickets": {
+    "placeholders": {
+      "attractionName": {
+        "type": "String"
+      }
+    }
+  },
+  "defaultTrainTicketInformation": "默认火车票信息",
+  "start": "出发地",
+  "session": "时段",
+  "noNeed": "不需要",
+  "bookingTrainTicketButton": "🚄 预订火车票",
+  "threeDSAuthentication": "3DS身份验证",
+  "yourBankRequiresAdditionalAuthentication": "您的银行需要额外的身份验证。",
+  "paymentIntentID": "付款意图ID：",
+  "noteInActualApplication": "注意：在实际应用中，将在此处整合Stripe Elements来处理3DS身份验证流程。",
+  "skipAuthenticationTest": "跳过身份验证（测试）",
+  "cancel": "取消",
+  "accessDenied": "访问被拒绝",
+  "pricePerPerson": "每人价格",
+  "participants": "参与者",
+  "totalPrice": "总价格",
+  "participant": "参与者{number}",
+  "@participant": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "email": "电子邮件",
+  "passport": "护照",
+  "trainTicketInformation": "火车票信息",
+  "bundleTicketInformation": "套装行程票券信息",
+  "failedToCreatePaymentIntent": "创建付款意图失败：{error}",
+  "@failedToCreatePaymentIntent": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentInitializationFailed": "付款初始化失败：{error}",
+  "@paymentInitializationFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentProcessingFailed": "付款处理失败：{error}",
+  "@paymentProcessingFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentFailed": "付款失败：{error}",
+  "@paymentFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentProcessingError": "付款处理错误：{error}",
+  "@paymentProcessingError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToCreatePaymentMethod": "创建付款方式失败：{error}",
+  "@failedToCreatePaymentMethod": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToSubmitTicketRequest": "提交票券请求失败：{error}",
+  "@failedToSubmitTicketRequest": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "bundleDataIsMissing": "套装行程数据缺失",
+  "failedToSubmitBundleBooking": "提交套装行程预订失败：{error}",
+  "@failedToSubmitBundleBooking": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "routeSelection": "路线选择",
+  "selectDestinationStation": "选择目的地车站",
+  "departureDateAndTime": "出发日期与时间",
+  "passengers": "乘客",
+  "adults": "成人",
+  "age18Plus": "18岁以上",
+  "children": "儿童",
+  "age0To17": "0-17岁",
+  "searchTrains": "搜索火车",
+  "neuschwansteinCastle": "新天鹅堡",
+  "fairyTaleCastleDescription": "巴伐利亚阿尔卑斯山的童话城堡",
+  "country": "国家",
+  "city": "城市",
+  "hours": "开放时间",
+  "ticketPrices": "票价",
+  "adult18Plus": "成人（18岁以上）",
+  "from": "从",
+  "to": "到",
+  "pleaseEnterDepartureLocation": "请输入出发地点",
+  "pleaseEnterDestination": "请输入目的地",
+  "pleaseSelectDepartureDate": "请选择出发日期",
+  "pleaseEnterDepartureTime": "请输入出发时间",
+  "pleaseEnterValidAdultCount": "请输入有效的成人数量",
+  "pleaseEnterValidChildrenCount": "请输入有效的儿童数量",
+  "searching": "搜索中...",
+  "startSearch": "开始搜索",
+  "searchStatus": "搜索状态",
+  "searchResults": "搜索结果",
+  "scheduleOptions": "班次选项",
+  "selectSchedule": "选择班次",
+  "fareTypes": "票价类型",
+  "trainSchedule": "火车时刻表",
+  "priceRange": "价格范围",
+  "stops": "停靠站",
+  "railwaySearch": "铁路搜索",
+  "neuschwansteinCastleTrainTicketBooking": "新天鹅堡火车票预订",
+  "junior": "青少年",
+  "senior": "长者",
+  "infant": "婴儿",
+  "rawData": "原始数据",
+  "country": "国家",
+  "city": "城市",
+  "hours": "开放时间",
+  "ticketPrices": "票价",
+  "adult18Plus": "成人（18岁以上）",
+  "under18": "18岁以下",
+  "free": "免费",
+  "ticketBookingForm": "票券预订表单",
+  "pleaseFillBookingDetails": "请在下方填写预订详情。您可以为您的团体添加多张票券。",
+  "adultTicket": "成人票",
+  "adultTickets": "成人票",
+  "under18Ticket": "18岁以下票",
+  "under18Tickets": "18岁以下票",
+  "totalWithCount": "总计（{count}张票{tickets}）",
+  "@totalWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "tickets": {
+        "type": "String"
+      }
+    }
+  },
+  "from": "从",
+  "destination": "目的地",
+  "selectDepartureStation": "选择出发站",
+  "pleaseSelectDepartureStation": "请选择出发站",
+  "swapStations": "交换车站",
+  "selectDestinationStation": "选择目的地站",
+  "pleaseSelectDestinationStation": "请选择目的地站",
+  "selectDate": "选择日期",
+  "selectTime": "选择时间",
+  "age18Plus": "18岁以上",
+  "age0To17": "0-17岁",
+  "selectDepartureStationTitle": "选择出发站",
+  "selectDestinationStationTitle": "选择目的地站",
+  "pleaseSelectDepartureStationFirst": "请先选择出发站",
+  "noAvailableDestinations": "所选出发站没有可用的目的地",
+  "onlyPairedStationsCanBeSwapped": "只有配对的车站才能交换",
+  "navigationFailed": "导航失败：{error}",
+  "@navigationFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../models/search_option.dart';
 import '../widgets/booking_form.dart';
 
@@ -107,9 +108,9 @@ class _AttractionTicketWidgetState extends State<AttractionTicketWidget>
           size: 24,
         ),
         const SizedBox(width: 8),
-        const Text(
-          'Attraction Ticket Booking',
-          style: TextStyle(
+        Text(
+          AppLocalizations.of(context)!.attractionTicketBooking,
+          style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
             color: Colors.black87,
@@ -196,7 +197,7 @@ class _AttractionTicketWidgetState extends State<AttractionTicketWidget>
     if (metadata['country'] != null) {
       infoItems.add({
         'icon': '🏳️',
-        'label': 'Country',
+        'label': AppLocalizations.of(context)!.country,
         'value': metadata['country'].toString(),
       });
     }
@@ -204,7 +205,7 @@ class _AttractionTicketWidgetState extends State<AttractionTicketWidget>
     if (metadata['city'] != null) {
       infoItems.add({
         'icon': '🏙️',
-        'label': 'City',
+        'label': AppLocalizations.of(context)!.city,
         'value': metadata['city'].toString(),
       });
     }
@@ -212,7 +213,7 @@ class _AttractionTicketWidgetState extends State<AttractionTicketWidget>
     if (metadata['openingHours'] != null) {
       infoItems.add({
         'icon': '🕒',
-        'label': 'Hours',
+        'label': AppLocalizations.of(context)!.hours,
         'value': metadata['openingHours'].toString(),
       });
     }
@@ -287,7 +288,7 @@ class _AttractionTicketWidgetState extends State<AttractionTicketWidget>
               ),
               const SizedBox(width: 4),
               Text(
-                'Ticket Prices',
+                AppLocalizations.of(context)!.ticketPrices,
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -303,7 +304,7 @@ class _AttractionTicketWidgetState extends State<AttractionTicketWidget>
             children: [
               Expanded(
                 child: _buildPriceItem(
-                  'Adult (18+)',
+                  AppLocalizations.of(context)!.adult18Plus,
                   adultPrice,
                   Colors.blue.shade600,
                 ),
@@ -311,7 +312,7 @@ class _AttractionTicketWidgetState extends State<AttractionTicketWidget>
               const SizedBox(width: 12),
               Expanded(
                 child: _buildPriceItem(
-                  'Under 18',
+                  AppLocalizations.of(context)!.under18,
                   childPrice,
                   Colors.green.shade600,
                 ),
@@ -344,7 +345,7 @@ class _AttractionTicketWidgetState extends State<AttractionTicketWidget>
           ),
           const SizedBox(height: 2),
           Text(
-            price == 0 ? 'Free' : '€$price',
+            price == 0 ? AppLocalizations.of(context)!.free : '€$price',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -371,7 +372,7 @@ class _AttractionTicketWidgetState extends State<AttractionTicketWidget>
             ),
             const SizedBox(width: 8),
             Text(
-              'Ticket Booking Form',
+              AppLocalizations.of(context)!.ticketBookingForm,
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -401,7 +402,7 @@ class _AttractionTicketWidgetState extends State<AttractionTicketWidget>
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'Please fill in the booking details below. You can add multiple tickets for your group.',
+                  AppLocalizations.of(context)!.pleaseFillBookingDetails,
                   style: TextStyle(
                     fontSize: 13,
                     color: Colors.blue.shade700,
