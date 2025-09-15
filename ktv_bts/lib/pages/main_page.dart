@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../widgets/search_bar_widget.dart';
 import '../widgets/content_display_widget.dart';
 import '../models/search_option.dart';
+import '../services/ai_service.dart';
 import 'my_train_tickets_page.dart';
 import 'bundle_page.dart';
 
@@ -114,13 +115,28 @@ class _MainPageState extends State<MainPage> {
     _simulateAIResponse(text);
   }
 
-  /// Simulate AI response
-  void _simulateAIResponse(String userMessage) {
-    Future.delayed(const Duration(milliseconds: 1000), () {
+  /// Call AI API and get response
+  void _simulateAIResponse(String userMessage) async {
+    // Show loading message
+    setState(() {
+      _chatMessages.add(ChatMessage(
+        text: 'AI is thinking...',
+        isUser: false,
+        timestamp: DateTime.now(),
+      ));
+    });
+    
+    _scrollToBottom();
+
+    try {
+      // Call the n8n AI API
+      final aiResponse = await AIService.callAIAssistant(userMessage);
+      
       if (!mounted) return;
 
-      String aiResponse = _getAIResponse(userMessage);
+      // Remove loading message and add real response
       setState(() {
+        _chatMessages.removeLast(); // Remove loading message
         _chatMessages.add(ChatMessage(
           text: aiResponse,
           isUser: false,
@@ -129,25 +145,23 @@ class _MainPageState extends State<MainPage> {
       });
 
       _scrollToBottom();
-    });
-  }
+    } catch (e) {
+      if (!mounted) return;
+      
+      // Remove loading message and add error response
+      setState(() {
+        _chatMessages.removeLast(); // Remove loading message
+        _chatMessages.add(ChatMessage(
+          text: 'Sorry, there was an error processing your request. Please try again.',
+          isUser: false,
+          timestamp: DateTime.now(),
+        ));
+      });
 
-  /// Get AI response based on user message
-  String _getAIResponse(String message) {
-    final lowerMessage = message.toLowerCase();
-    
-    if (lowerMessage.contains('train') || lowerMessage.contains('火車')) {
-      return 'I can help you find train tickets! You can search for destinations in the search box below, or tell me where you want to go and I\'ll help you plan your journey.';
-    } else if (lowerMessage.contains('price') || lowerMessage.contains('價格') || lowerMessage.contains('多少錢')) {
-      return 'Train ticket prices vary depending on the route and travel class. You can search for your destination below to see current prices and availability.';
-    } else if (lowerMessage.contains('time') || lowerMessage.contains('時間') || lowerMessage.contains('什麼時候')) {
-      return 'Train schedules are available in real-time. Once you search for your destination, you\'ll see all available departure times and journey durations.';
-    } else if (lowerMessage.contains('booking') || lowerMessage.contains('預訂') || lowerMessage.contains('訂票')) {
-      return 'To book tickets, simply search for your destination using the search box below. I can guide you through the booking process step by step!';
-    } else {
-      return 'I\'m here to help with your train travel needs! You can ask me about routes, schedules, prices, or booking. Try searching for a destination below to get started!';
+      _scrollToBottom();
     }
   }
+
 
   /// Scroll chat to bottom
   void _scrollToBottom() {
@@ -919,8 +933,8 @@ class _MainPageState extends State<MainPage> {
           
           // Chat messages area
           Container(
-            height: 200,
-            padding: const EdgeInsets.all(16),
+            height: 250, // 增加高度從200到250
+            padding: const EdgeInsets.all(12), // 減少內邊距從16到12
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF334155).withOpacity(0.3) : Colors.grey.shade50,
               borderRadius: BorderRadius.circular(16),
@@ -939,7 +953,7 @@ class _MainPageState extends State<MainPage> {
           
           // AI chat input
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(12), // 減少內邊距從16到12
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF334155).withOpacity(0.3) : Colors.grey.shade50,
               borderRadius: BorderRadius.circular(16),
@@ -953,25 +967,25 @@ class _MainPageState extends State<MainPage> {
                       hintText: 'Ask me anything about train bookings...',
                       hintStyle: TextStyle(
                         color: isDark ? Colors.white54 : Colors.grey.shade500,
-                        fontSize: 14,
+                        fontSize: 13, // 減少字體大小從14到13
                       ),
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
+                        horizontal: 12, // 減少水平內邊距從16到12
+                        vertical: 10, // 減少垂直內邊距從12到10
                       ),
                     ),
                     style: TextStyle(
                       color: isDark ? Colors.white : Colors.black87,
-                      fontSize: 14,
+                      fontSize: 13, // 減少字體大小從14到13
                     ),
                     onSubmitted: (_) => _sendMessage(),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Container(
-                  width: 40,
-                  height: 40,
+                  width: 36, // 減少按鈕大小從40到36
+                  height: 36,
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       colors: [
@@ -986,7 +1000,7 @@ class _MainPageState extends State<MainPage> {
                     icon: const Icon(
                       Icons.send,
                       color: Colors.white,
-                      size: 18,
+                      size: 16, // 減少圖標大小從18到16
                     ),
                     padding: EdgeInsets.zero,
                   ),
@@ -1002,33 +1016,61 @@ class _MainPageState extends State<MainPage> {
   /// Build chat message bubble
   Widget _buildChatMessage(ChatMessage message, bool isDark) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (!message.isUser) ...[
+            // AI消息在左邊
             Container(
-              width: 32,
-              height: 32,
+              width: 28,
+              height: 28,
               decoration: BoxDecoration(
                 color: const Color(0xFF4A90E2),
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(14),
               ),
               child: const Icon(
                 Icons.smart_toy,
                 color: Colors.white,
-                size: 18,
+                size: 16,
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 8),
+            Expanded( // AI消息使用Expanded佔滿剩餘空間
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF334155).withOpacity(0.7) : Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Text(
+                  message.text,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: isDark ? Colors.white70 : Colors.grey.shade700,
+                    height: 1.3,
+                  ),
+                ),
+              ),
+            ),
           ],
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(12),
+          if (message.isUser) ...[
+            // 用戶消息在右邊
+            Expanded(child: Container()), // 佔滿左邊空間，把用戶消息推到右邊
+            Container(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.7, // 最大寬度為屏幕的70%
+              ),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: message.isUser 
-                    ? const Color(0xFF4A90E2)
-                    : (isDark ? const Color(0xFF334155).withOpacity(0.7) : Colors.white),
+                color: const Color(0xFF4A90E2),
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
@@ -1040,29 +1082,25 @@ class _MainPageState extends State<MainPage> {
               ),
               child: Text(
                 message.text,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: message.isUser 
-                      ? Colors.white
-                      : (isDark ? Colors.white70 : Colors.grey.shade700),
-                  height: 1.4,
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: Colors.white,
+                  height: 1.3,
                 ),
               ),
             ),
-          ),
-          if (message.isUser) ...[
-            const SizedBox(width: 12),
+            const SizedBox(width: 8),
             Container(
-              width: 32,
-              height: 32,
+              width: 28,
+              height: 28,
               decoration: BoxDecoration(
                 color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(14),
               ),
               child: Icon(
                 Icons.person,
                 color: Colors.grey.shade600,
-                size: 18,
+                size: 16,
               ),
             ),
           ],

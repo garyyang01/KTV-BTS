@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../models/bundle_info.dart';
+import '../services/bundle_service.dart';
 import 'bundle_booking_page.dart';
 
 /// Bundle Page - Display tour packages and bundles
@@ -21,67 +22,34 @@ class _BundlePageState extends State<BundlePage> {
     _loadBundles();
   }
 
-  /// Load sample bundle data
-  void _loadBundles() {
-    // Simulate loading delay
-    Future.delayed(const Duration(milliseconds: 500), () {
-      setState(() {
-        _bundles = _getSampleBundles();
-        _isLoading = false;
-      });
-    });
+  /// Load bundle data from API
+  void _loadBundles() async {
+    try {
+      final bundles = await BundleService.getBundles();
+      if (mounted) {
+        setState(() {
+          _bundles = bundles;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error loading bundles: $e');
+      if (mounted) {
+        setState(() {
+          _bundles = [];
+          _isLoading = false;
+        });
+        // Show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to load bundles: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
-  /// Get sample bundle data
-  List<BundleInfo> _getSampleBundles() {
-    return [
-      BundleInfo(
-        id: "TR__6274P15",
-        name: "Rome Independent Tour from Venice by High-Speed Train",
-        intro: "A new Sightseeing tour with daily departure from Venice by round trip high speed train. Includes ticket to hop-on hop-off bus and a tour of the Vatican and Sistine Chapel with an expert guide. Art, Culture and Leisure in Rome suitable for all!",
-        highlights: "• High-speed train round trip from Venice\n• Hop-on hop-off bus ticket\n• Vatican and Sistine Chapel guided tour\n• Expert guide included\n• Daily departures available",
-        priceEur: 232.0,
-        images: ["https://sematicweb.detie.cn/content/W__37747155.jpg"],
-        location: "Venice",
-      ),
-      BundleInfo(
-        id: "TR__3731P161",
-        name: "Milan Super Saver: Turin and Milan One-Day Highlights Tour",
-        intro: "Visit two of northern Italy's top cities in a single day with this Milan Super Saver, which combines two tours at one price. From Milan, travel to Turin by high-speed train, and see sights such as Piazza San Carlo with its 17th-century churches. You'll also enjoy a chocolate and gelato tasting. Back in Milan, take an evening walking tour around Piazza del Duomo, and sip a glass of prosecco. Special Offer - Book this tour and save 5% compared to booking each attraction separately! - Book Now!",
-        highlights: "",
-        priceEur: 155.0,
-        images: ["https://sematicweb.detie.cn/content/W__27626748.jpg"],
-        location: "Turin",
-      ),
-      BundleInfo(
-        id: "TR__7817P78",
-        name: "Chartres and Its Cathedral: 5-Hour Tour from Paris with Private Transport",
-        intro: "Visit the town of Chartres with a private driver and guide on this 5-hour tour from Paris. The main attraction is Chartres Cathedral, a UNESCO World Heritage site that dates back to the 12th century and is famous for its French Gothic architecture and stained-glass windows. With your private guide, explore the cathedral inside and out, and then have some time to walk around town.",
-        highlights: "",
-        priceEur: 131.39999389648438,
-        images: ["https://sematicweb.detie.cn/content/W__102809767.jpg"],
-        location: "Chartres",
-      ),
-      BundleInfo(
-        id: "TR__3517MOUSE",
-        name: "The Mousetrap Theater Show in London",
-        intro: "Be part of theater history and nab yourself a ticket to 'The Mousetrap' at St Martin's Theatre in London's West End. Based on a short story by Agatha Christie, this murder mystery play has been running for over 60 years and is the longest running show, of any kind, in the world. Find yourself on the edge of your seat as the story of a group of ill-fated hotel guests who are picked off by a mysterious murderer unfolds on the stage in front of you.",
-        highlights: "",
-        priceEur: 70.12000274658203,
-        images: ["https://sematicweb.detie.cn/content/W__107643576.jpg"],
-        location: "London",
-      ),
-      BundleInfo(
-        id: "TR__5081BOHEMIAN",
-        name: "London Rock Music Bohemian Soho and North London Small Group Tour",
-        intro: "Hit the bohemian neighborhoods of London including Soho and Camden Town as you delve into the city's rock 'n' roll past on a this small group London Rock Music Tour. With names like The Beatles, Madness, The Clash and Jimmy Page this tour offers something for all music fans. Numbers are limited to a maximum of 16 people, ensuring you'll receive personalized attention from your knowledgeable guide.",
-        highlights: "",
-        priceEur: 40.90999984741211,
-        images: ["https://sematicweb.detie.cn/content/N__313349354.jpg"],
-        location: "London",
-      ),
-    ];
-  }
 
   @override
   Widget build(BuildContext context) {
