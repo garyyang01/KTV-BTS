@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../services/stripe_payment_service.dart';
 import '../services/ticket_api_service.dart';
 import '../services/ip_verification_service.dart';
@@ -1018,11 +1019,11 @@ class _PaymentPageState extends State<PaymentPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.check_circle, color: Colors.green),
-            SizedBox(width: 8),
-            Text('Payment Successful!'),
+            const Icon(Icons.check_circle, color: Colors.green),
+            const SizedBox(width: 8),
+            Text(AppLocalizations.of(context)!.paymentSuccessful),
           ],
         ),
         content: SingleChildScrollView(
@@ -1468,9 +1469,9 @@ class _PaymentPageState extends State<PaymentPage> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                const Text(
-                  'Secure Payment',
-                  style: TextStyle(
+                Text(
+                  AppLocalizations.of(context)!.securePayment,
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
                     color: Colors.white,
@@ -1520,34 +1521,36 @@ class _PaymentPageState extends State<PaymentPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.paymentRequest.isCombinedPayment ? '📋 Combined Order Summary' : '📋 Order Summary',
+                      widget.paymentRequest.isCombinedPayment 
+                          ? '📋 ${AppLocalizations.of(context)!.combinedOrderSummary}' 
+                          : '📋 ${AppLocalizations.of(context)!.orderSummary}',
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Text('Customer Name: ${widget.paymentRequest.customerName}'),
-                    Text('Ticket Type: ${widget.paymentRequest.isAdult ? 'Adult' : 'Child'}'),
-                    Text('Time Slot: ${widget.paymentRequest.time}'),
+                    Text('${AppLocalizations.of(context)!.customerName}: ${widget.paymentRequest.customerName}'),
+                    Text('${AppLocalizations.of(context)!.ticketType}: ${widget.paymentRequest.isAdult ? AppLocalizations.of(context)!.adult : AppLocalizations.of(context)!.under18}'),
+                    Text('${AppLocalizations.of(context)!.timeSlot}: ${widget.paymentRequest.time}'),
                     
                     // If combined payment, show detailed amount breakdown
                     if (widget.paymentRequest.isCombinedPayment) ...[
                       const SizedBox(height: 8),
                       const Divider(),
-                      const Text(
-                        '💰 Cost Details',
-                        style: TextStyle(
+                      Text(
+                        '💰 ${AppLocalizations.of(context)!.costDetails}',
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text('Neuschwanstein Castle Ticket: ${widget.paymentRequest.ticketOnlyAmount.toStringAsFixed(2)} ${widget.paymentRequest.currency}'),
-                      Text('Train Ticket: ${widget.paymentRequest.trainTicketAmount!.toStringAsFixed(2)} ${widget.paymentRequest.currency}'),
+                      Text('${AppLocalizations.of(context)!.neuschwansteinCastleTicket}: ${widget.paymentRequest.ticketOnlyAmount.toStringAsFixed(2)} ${widget.paymentRequest.currency}'),
+                      Text('${AppLocalizations.of(context)!.trainTicket}: ${widget.paymentRequest.trainTicketAmount!.toStringAsFixed(2)} ${widget.paymentRequest.currency}'),
                       const Divider(),
                       Text(
-                        'Total Amount: ${widget.paymentRequest.amount.toStringAsFixed(2)} ${widget.paymentRequest.currency}',
+                        '${AppLocalizations.of(context)!.total}: ${widget.paymentRequest.amount.toStringAsFixed(2)} ${widget.paymentRequest.currency}',
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -1555,34 +1558,34 @@ class _PaymentPageState extends State<PaymentPage> {
                         ),
                       ),
                     ] else ...[
-                      Text('Amount: ${widget.paymentRequest.amount.toStringAsFixed(2)} ${widget.paymentRequest.currency}'),
+                      Text('${AppLocalizations.of(context)!.amount}: ${widget.paymentRequest.amount.toStringAsFixed(2)} ${widget.paymentRequest.currency}'),
                     ],
                     
-                    Text('Description: ${widget.paymentRequest.description}'),
+                    Text('${AppLocalizations.of(context)!.description}: ${widget.paymentRequest.description}'),
                     
                     // If train ticket or combined payment, show additional train information
                     if (widget.paymentRequest.time == 'Train Journey' || widget.paymentRequest.isCombinedPayment) ...[
                       const SizedBox(height: 8),
                       const Divider(),
-                      const Text(
-                        '🚄 Train Information',
-                        style: TextStyle(
+                      Text(
+                        '🚄 ${AppLocalizations.of(context)!.trainInformation}',
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 4),
                       if (widget.paymentRequest.trainInfo != null) ...[
-                        Text('Train Number: ${widget.paymentRequest.trainInfo!.number}'),
-                        Text('Type: ${widget.paymentRequest.trainInfo!.typeName}'),
-                        Text('Route: ${widget.paymentRequest.trainInfo!.from.localName} → ${widget.paymentRequest.trainInfo!.to.localName}'),
-                        Text('Departure: ${DateFormat('HH:mm').format(widget.paymentRequest.trainInfo!.departure)}'),
-                        Text('Arrival: ${DateFormat('HH:mm').format(widget.paymentRequest.trainInfo!.arrival)}'),
-                        Text('Duration: ${widget.paymentRequest.trainInfo!.formattedDuration}'),
+                        Text('${AppLocalizations.of(context)!.trainNumber}: ${widget.paymentRequest.trainInfo!.number}'),
+                        Text('${AppLocalizations.of(context)!.type}: ${widget.paymentRequest.trainInfo!.typeName}'),
+                        Text('${AppLocalizations.of(context)!.route}: ${widget.paymentRequest.trainInfo!.from.localName} → ${widget.paymentRequest.trainInfo!.to.localName}'),
+                        Text('${AppLocalizations.of(context)!.departure}: ${DateFormat('HH:mm').format(widget.paymentRequest.trainInfo!.departure)}'),
+                        Text('${AppLocalizations.of(context)!.arrival}: ${DateFormat('HH:mm').format(widget.paymentRequest.trainInfo!.arrival)}'),
+                        Text('${AppLocalizations.of(context)!.duration}: ${widget.paymentRequest.trainInfo!.formattedDuration}'),
                         if (widget.paymentRequest.trainOffer != null)
-                          Text('Fare Type: ${widget.paymentRequest.trainOffer!.description}'),
+                          Text('${AppLocalizations.of(context)!.fareType}: ${widget.paymentRequest.trainOffer!.description}'),
                         if (widget.paymentRequest.trainService != null)
-                          Text('Seat Type: ${widget.paymentRequest.trainService!.description}'),
+                          Text('${AppLocalizations.of(context)!.seatType}: ${widget.paymentRequest.trainService!.description}'),
                       ],
                     ],
                   ],
@@ -1600,9 +1603,9 @@ class _PaymentPageState extends State<PaymentPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        '💳 Payment Information',
-                        style: TextStyle(
+                      Text(
+                        '💳 ${AppLocalizations.of(context)!.paymentInformation}',
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -1612,14 +1615,14 @@ class _PaymentPageState extends State<PaymentPage> {
                       // Cardholder Name
                       TextFormField(
                         controller: _cardholderNameController,
-                        decoration: const InputDecoration(
-                          labelText: 'Cardholder Name',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.person),
+                        decoration: InputDecoration(
+                          labelText: AppLocalizations.of(context)!.cardholderName,
+                          border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.person),
                         ),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return 'Please enter cardholder name';
+                            return AppLocalizations.of(context)!.pleaseEnterCardholderName;
                           }
                           return null;
                         },
@@ -1641,19 +1644,19 @@ class _PaymentPageState extends State<PaymentPage> {
                             );
                           }),
                         ],
-                        decoration: const InputDecoration(
-                          labelText: 'Card Number',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.credit_card),
+                        decoration: InputDecoration(
+                          labelText: AppLocalizations.of(context)!.cardNumber,
+                          border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.credit_card),
                           hintText: '4242 4242 4242 4242',
                         ),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return 'Please enter card number';
+                            return AppLocalizations.of(context)!.pleaseEnterCardNumber;
                           }
                           String digitsOnly = value.replaceAll(' ', '');
                           if (digitsOnly.length != 16) {
-                            return 'Card number must be 16 digits';
+                            return AppLocalizations.of(context)!.cardNumberMustBe16Digits;
                           }
                           return null;
                         },
@@ -1679,17 +1682,17 @@ class _PaymentPageState extends State<PaymentPage> {
                                   );
                                 }),
                               ],
-                              decoration: const InputDecoration(
-                                labelText: 'Expiry Date',
-                                border: OutlineInputBorder(),
+                              decoration: InputDecoration(
+                                labelText: AppLocalizations.of(context)!.expiryDate,
+                                border: const OutlineInputBorder(),
                                 hintText: '12/25',
                               ),
                               validator: (value) {
                                 if (value == null || value.trim().isEmpty) {
-                                  return 'Please enter expiry date';
+                                  return AppLocalizations.of(context)!.pleaseEnterExpiryDate;
                                 }
                                 if (!RegExp(r'^\d{2}/\d{2}$').hasMatch(value)) {
-                                  return 'Format: MM/YY';
+                                  return AppLocalizations.of(context)!.formatMMYY;
                                 }
                                 return null;
                               },
@@ -1704,17 +1707,17 @@ class _PaymentPageState extends State<PaymentPage> {
                                 FilteringTextInputFormatter.digitsOnly,
                                 LengthLimitingTextInputFormatter(4),
                               ],
-                              decoration: const InputDecoration(
-                                labelText: 'CVC',
-                                border: OutlineInputBorder(),
+                              decoration: InputDecoration(
+                                labelText: AppLocalizations.of(context)!.cvc,
+                                border: const OutlineInputBorder(),
                                 hintText: '123',
                               ),
                               validator: (value) {
                                 if (value == null || value.trim().isEmpty) {
-                                  return 'Please enter CVC';
+                                  return AppLocalizations.of(context)!.pleaseEnterCVC;
                                 }
                                 if (value.length < 3 || value.length > 4) {
-                                  return 'CVC must be 3-4 digits';
+                                  return AppLocalizations.of(context)!.cvcMustBe3To4Digits;
                                 }
                                 return null;
                               },
@@ -1733,10 +1736,10 @@ class _PaymentPageState extends State<PaymentPage> {
                           minimumSize: const Size(double.infinity, 50),
                         ),
                         child: _isLoading
-                            ? const Row(
+                            ? Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 20,
                                     height: 20,
                                     child: CircularProgressIndicator(
@@ -1744,13 +1747,13 @@ class _PaymentPageState extends State<PaymentPage> {
                                       strokeWidth: 2,
                                     ),
                                   ),
-                                  SizedBox(width: 12),
-                                  Text('Processing...'),
+                                  const SizedBox(width: 12),
+                                  Text(AppLocalizations.of(context)!.processing),
                                 ],
                               )
-                            : const Text(
-                                '💳 Pay Now',
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            : Text(
+                                '💳 ${AppLocalizations.of(context)!.payNow}',
+                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                       ),
                     ],

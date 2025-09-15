@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../models/search_option.dart';
 import '../pages/rail_search_test_page.dart';
 
@@ -132,8 +133,8 @@ class _StationTicketWidgetState extends State<StationTicketWidget> {
         const SizedBox(width: 8),
         Expanded(
           child: Text(
-            'Train Ticket Booking',
-            style: TextStyle(
+            AppLocalizations.of(context)!.trainTicketBooking,
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
@@ -149,7 +150,7 @@ class _StationTicketWidgetState extends State<StationTicketWidget> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                'From: ${widget.selectedStation!.name}',
+                '${AppLocalizations.of(context)!.from}: ${widget.selectedStation!.name}',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
@@ -169,7 +170,7 @@ class _StationTicketWidgetState extends State<StationTicketWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Route Selection',
+          AppLocalizations.of(context)!.routeSelection,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -186,8 +187,8 @@ class _StationTicketWidgetState extends State<StationTicketWidget> {
               child: TextFormField(
                 controller: _departureController,
                 decoration: InputDecoration(
-                  labelText: 'Departure',
-                  hintText: 'Select departure station',
+                  labelText: AppLocalizations.of(context)!.departure,
+                  hintText: AppLocalizations.of(context)!.selectDepartureStation,
                   prefixIcon: const Icon(Icons.location_on),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -195,7 +196,7 @@ class _StationTicketWidgetState extends State<StationTicketWidget> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please select departure station';
+                    return AppLocalizations.of(context)!.pleaseSelectDepartureStation;
                   }
                   return null;
                 },
@@ -213,7 +214,7 @@ class _StationTicketWidgetState extends State<StationTicketWidget> {
                 Icons.swap_horiz,
                 color: Colors.blue.shade600,
               ),
-              tooltip: 'Swap stations',
+              tooltip: AppLocalizations.of(context)!.swapStations,
             ),
             
             const SizedBox(width: 12),
@@ -223,8 +224,8 @@ class _StationTicketWidgetState extends State<StationTicketWidget> {
               child: TextFormField(
                 controller: _destinationController,
                 decoration: InputDecoration(
-                  labelText: 'Destination',
-                  hintText: 'Select destination station',
+                  labelText: AppLocalizations.of(context)!.destination,
+                  hintText: AppLocalizations.of(context)!.selectDestinationStation,
                   prefixIcon: const Icon(Icons.flag),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -232,7 +233,7 @@ class _StationTicketWidgetState extends State<StationTicketWidget> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please select destination station';
+                    return AppLocalizations.of(context)!.pleaseSelectDestinationStation;
                   }
                   return null;
                 },
@@ -252,7 +253,7 @@ class _StationTicketWidgetState extends State<StationTicketWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Departure Date & Time',
+          AppLocalizations.of(context)!.departureDateAndTime,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -269,8 +270,8 @@ class _StationTicketWidgetState extends State<StationTicketWidget> {
               child: TextFormField(
                 controller: _departureDateController,
                 decoration: InputDecoration(
-                  labelText: 'Date',
-                  hintText: 'Select date',
+                  labelText: AppLocalizations.of(context)!.date,
+                  hintText: AppLocalizations.of(context)!.selectDate,
                   prefixIcon: const Icon(Icons.calendar_today),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -288,8 +289,8 @@ class _StationTicketWidgetState extends State<StationTicketWidget> {
               child: TextFormField(
                 controller: _departureTimeController,
                 decoration: InputDecoration(
-                  labelText: 'Time',
-                  hintText: 'Select time',
+                  labelText: AppLocalizations.of(context)!.time,
+                  hintText: AppLocalizations.of(context)!.selectTime,
                   prefixIcon: const Icon(Icons.access_time),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -311,7 +312,7 @@ class _StationTicketWidgetState extends State<StationTicketWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Passengers',
+          AppLocalizations.of(context)!.passengers,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -332,8 +333,8 @@ class _StationTicketWidgetState extends State<StationTicketWidget> {
             children: [
               // 成人數量
               _buildPassengerCounter(
-                'Adults',
-                'Age 18+',
+                AppLocalizations.of(context)!.adults,
+                AppLocalizations.of(context)!.age18Plus,
                 _adultCount,
                 (value) => setState(() => _adultCount = value),
                 minValue: 1,
@@ -343,8 +344,8 @@ class _StationTicketWidgetState extends State<StationTicketWidget> {
               
               // 兒童數量
               _buildPassengerCounter(
-                'Children',
-                'Age 0-17',
+                AppLocalizations.of(context)!.children,
+                AppLocalizations.of(context)!.age0To17,
                 _childCount,
                 (value) => setState(() => _childCount = value),
                 minValue: 0,
@@ -451,9 +452,9 @@ class _StationTicketWidgetState extends State<StationTicketWidget> {
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                 ),
               )
-            : const Text(
-                'Search Trains',
-                style: TextStyle(
+            : Text(
+                AppLocalizations.of(context)!.searchTrains,
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
@@ -545,7 +546,7 @@ class _StationTicketWidgetState extends State<StationTicketWidget> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              isDeparture ? 'Select Departure Station' : 'Select Destination Station',
+              isDeparture ? AppLocalizations.of(context)!.selectDepartureStationTitle : AppLocalizations.of(context)!.selectDestinationStationTitle,
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -559,8 +560,8 @@ class _StationTicketWidgetState extends State<StationTicketWidget> {
                 padding: const EdgeInsets.all(16),
                 child: Text(
                   isDeparture 
-                    ? 'Please select a departure station first'
-                    : 'No available destinations for the selected departure station',
+                    ? AppLocalizations.of(context)!.pleaseSelectDepartureStationFirst
+                    : AppLocalizations.of(context)!.noAvailableDestinations,
                   style: TextStyle(
                     color: Colors.grey.shade600,
                     fontSize: 14,
@@ -608,7 +609,7 @@ class _StationTicketWidgetState extends State<StationTicketWidget> {
       // 如果不是有效配對，顯示提示
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Only paired stations can be swapped'),
+          content: Text(AppLocalizations.of(context)!.onlyPairedStationsCanBeSwapped),
           backgroundColor: Colors.orange.shade600,
         ),
       );
@@ -649,7 +650,7 @@ class _StationTicketWidgetState extends State<StationTicketWidget> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Navigation failed: $e'),
+            content: Text(AppLocalizations.of(context)!.navigationFailed('$e')),
             backgroundColor: Colors.red.shade600,
           ),
         );

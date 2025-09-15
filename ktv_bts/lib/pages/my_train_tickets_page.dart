@@ -1428,11 +1428,11 @@ class _BundleTicketCardContentState extends State<_BundleTicketCardContent> {
                 const SizedBox(height: 12),
                 _buildEnhancedInfoRow(Icons.calendar_today, AppLocalizations.of(context)!.departureDate, DateFormat('yyyy-MM-dd').format(widget.bundleTicket.tourDate)),
                 const SizedBox(height: 12),
-                _buildEnhancedInfoRow(Icons.euro, 'Price per person', widget.bundleTicket.formattedPrice),
+                _buildEnhancedInfoRow(Icons.euro, AppLocalizations.of(context)!.pricePerPerson, widget.bundleTicket.formattedPrice),
                 const SizedBox(height: 12),
-                _buildEnhancedInfoRow(Icons.people, 'Participants', '${widget.bundleTicket.participants.length}'),
+                _buildEnhancedInfoRow(Icons.people, AppLocalizations.of(context)!.participants, '${widget.bundleTicket.participants.length}'),
                 const SizedBox(height: 12),
-                _buildEnhancedInfoRow(Icons.account_balance_wallet, 'Total Price', widget.bundleTicket.totalPrice),
+                _buildEnhancedInfoRow(Icons.account_balance_wallet, AppLocalizations.of(context)!.totalPrice, widget.bundleTicket.totalPrice),
               ],
             ),
           ),
@@ -1520,19 +1520,19 @@ class _BundleTicketCardContentState extends State<_BundleTicketCardContent> {
                     if (index > 0) const SizedBox(height: 12),
                     _buildEnhancedInfoRow(
                       Icons.person_outline, 
-                      'Participant ${index + 1}', 
+                      AppLocalizations.of(context)!.participant('${index + 1}'), 
                       '${participant.firstName} ${participant.lastName}'
                     ),
                     const SizedBox(height: 4),
                     _buildEnhancedInfoRow(
                       Icons.email, 
-                      'Email', 
+                      AppLocalizations.of(context)!.email, 
                       participant.email
                     ),
                     const SizedBox(height: 4),
                     _buildEnhancedInfoRow(
                       Icons.credit_card, 
-                      'Passport', 
+                      AppLocalizations.of(context)!.passport, 
                       participant.passportNumber
                     ),
                   ],

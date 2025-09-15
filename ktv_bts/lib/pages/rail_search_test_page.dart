@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../services/rail_booking_service.dart';
 import '../models/rail_search_criteria.dart';
 import '../models/rail_api_response.dart';
@@ -319,7 +320,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '🚄 Neuschwanstein Castle Train Ticket Booking',
+                '🚄 ${AppLocalizations.of(context)!.neuschwansteinCastleTrainTicketBooking}',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -338,7 +339,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'Route: ${_fromController.text} → ${_toController.text}',
+                        '${AppLocalizations.of(context)!.route}: ${_fromController.text} → ${_toController.text}',
                         style: TextStyle(
                           color: Colors.blue.shade700,
                           fontWeight: FontWeight.w500,
@@ -357,7 +358,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                     child: TextFormField(
                       controller: _fromController,
                       decoration: InputDecoration(
-                        labelText: 'From ${_fromController.text}',
+                        labelText: '${AppLocalizations.of(context)!.from} ${_fromController.text}',
                         hintText: _fromController.text,
                         border: const OutlineInputBorder(),
                         prefixIcon: const Icon(Icons.train),
@@ -365,7 +366,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                       readOnly: true, // Make it read-only since it's a fixed route
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Please enter departure location';
+                          return AppLocalizations.of(context)!.pleaseEnterDepartureLocation;
                         }
                         return null;
                       },
@@ -385,7 +386,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                     child: TextFormField(
                       controller: _toController,
                       decoration: InputDecoration(
-                        labelText: 'To ${_toController.text}',
+                        labelText: '${AppLocalizations.of(context)!.to} ${_toController.text}',
                         hintText: _toController.text,
                         border: const OutlineInputBorder(),
                         prefixIcon: const Icon(Icons.location_on),
@@ -393,7 +394,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                       readOnly: true, // Make it read-only since it's a fixed route
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Please enter destination';
+                          return AppLocalizations.of(context)!.pleaseEnterDestination;
                         }
                         return null;
                       },
@@ -409,11 +410,11 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                   Expanded(
                     child: TextFormField(
                       controller: _dateController,
-                      decoration: const InputDecoration(
-                        labelText: 'Departure Date',
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.departureDate,
                         hintText: 'yyyy-MM-dd',
-                        border: OutlineInputBorder(),
-                        suffixIcon: Icon(Icons.calendar_today),
+                        border: const OutlineInputBorder(),
+                        suffixIcon: const Icon(Icons.calendar_today),
                       ),
                       readOnly: true,
                       onTap: () async {
@@ -429,7 +430,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                       },
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Please select departure date';
+                          return AppLocalizations.of(context)!.pleaseSelectDepartureDate;
                         }
                         return null;
                       },
@@ -439,14 +440,14 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                   Expanded(
                     child: TextFormField(
                       controller: _timeController,
-                      decoration: const InputDecoration(
-                        labelText: 'Departure Time',
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.departureTime,
                         hintText: 'HH:mm',
-                        border: OutlineInputBorder(),
+                        border: const OutlineInputBorder(),
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Please enter departure time';
+                          return AppLocalizations.of(context)!.pleaseEnterDepartureTime;
                         }
                         return null;
                       },
@@ -458,7 +459,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
 
               // Passenger count
               Text(
-                '👥 Passenger Count',
+                '👥 ${AppLocalizations.of(context)!.passengers}',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 8),
@@ -467,15 +468,15 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                   Expanded(
                     child: TextFormField(
                       controller: _adultController,
-                      decoration: const InputDecoration(
-                        labelText: 'Adults',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.adults,
+                        border: const OutlineInputBorder(),
                       ),
                       keyboardType: TextInputType.number,
                       validator: (value) {
                         final count = int.tryParse(value ?? '');
                         if (count == null || count < 0) {
-                          return 'Please enter valid adult count';
+                          return AppLocalizations.of(context)!.pleaseEnterValidAdultCount;
                         }
                         return null;
                       },
@@ -485,15 +486,15 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                   Expanded(
                     child: TextFormField(
                       controller: _childController,
-                      decoration: const InputDecoration(
-                        labelText: 'Children',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.children,
+                        border: const OutlineInputBorder(),
                       ),
                       keyboardType: TextInputType.number,
                       validator: (value) {
                         final count = int.tryParse(value ?? '');
                         if (count == null || count < 0) {
-                          return 'Please enter valid children count';
+                          return AppLocalizations.of(context)!.pleaseEnterValidChildrenCount;
                         }
                         return null;
                       },
@@ -516,7 +517,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                     Column(
                       children: [
                         Text(
-                          'Junior',
+                          AppLocalizations.of(context)!.junior,
                           style: TextStyle(
                             color: Colors.grey.shade600,
                             fontSize: 12,
@@ -534,7 +535,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                     Column(
                       children: [
                         Text(
-                          'Senior',
+                          AppLocalizations.of(context)!.senior,
                           style: TextStyle(
                             color: Colors.grey.shade600,
                             fontSize: 12,
@@ -552,7 +553,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                     Column(
                       children: [
                         Text(
-                          'Infant',
+                          AppLocalizations.of(context)!.infant,
                           style: TextStyle(
                             color: Colors.grey.shade600,
                             fontSize: 12,
@@ -584,7 +585,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : const Icon(Icons.search),
-                  label: Text(_isLoading ? 'Searching...' : 'Start Search'),
+                  label: Text(_isLoading ? AppLocalizations.of(context)!.searching : AppLocalizations.of(context)!.startSearch),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     textStyle: const TextStyle(fontSize: 16),
@@ -611,7 +612,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '📊 Search Status',
+              '📊 ${AppLocalizations.of(context)!.searchStatus}',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -670,7 +671,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
               children: [
                 Expanded(
                   child: Text(
-                    '🚄 Search Results (${_trainSolutions.length} schedule options)',
+                    '🚄 ${AppLocalizations.of(context)!.searchResults} (${_trainSolutions.length} ${AppLocalizations.of(context)!.scheduleOptions})',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -681,7 +682,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                 ElevatedButton.icon(
                   onPressed: _navigateToTrainSelection,
                   icon: const Icon(Icons.arrow_forward),
-                  label: const Text('Select Schedule'),
+                  label: Text(AppLocalizations.of(context)!.selectSchedule),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).primaryColor,
                     foregroundColor: Colors.white,
@@ -733,7 +734,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  '${solution.offers.length} fare types',
+                  '${solution.offers.length} ${AppLocalizations.of(context)!.fareTypes}',
                   style: TextStyle(
                     color: Theme.of(context).primaryColor,
                     fontSize: 12,
@@ -749,7 +750,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
           // Train schedule list
           if (solution.trains.isNotEmpty) ...[
             Text(
-              '🚂 Train Schedule',
+              '🚂 ${AppLocalizations.of(context)!.trainSchedule}',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
@@ -769,7 +770,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
           Row(
             children: [
               Text(
-                '💰 Price Range: ',
+                '💰 ${AppLocalizations.of(context)!.priceRange}: ',
                 style: TextStyle(
                   color: Colors.grey.shade600,
                   fontSize: 14,
@@ -896,7 +897,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
                 ),
                 if (train.stops.isNotEmpty)
                   Text(
-                    '${train.stops.length} stops',
+                    '${train.stops.length} ${AppLocalizations.of(context)!.stops}',
                     style: TextStyle(
                       color: Colors.grey.shade600,
                       fontSize: 10,
@@ -930,7 +931,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Schedule $index Details'),
+        title: Text('${AppLocalizations.of(context)!.scheduleOptions} $index ${AppLocalizations.of(context)!.details}'),
         content: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -954,7 +955,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
               ],
               const SizedBox(height: 16),
               Text(
-                'Raw Data:',
+                '${AppLocalizations.of(context)!.rawData}:',
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -981,7 +982,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
+            child: Text(AppLocalizations.of(context)!.close),
           ),
         ],
       ),
@@ -1013,7 +1014,7 @@ class _RailSearchTestPageState extends State<RailSearchTestPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('🚄 Railway Search'),
+        title: Text('🚄 ${AppLocalizations.of(context)!.railwaySearch}'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: SingleChildScrollView(

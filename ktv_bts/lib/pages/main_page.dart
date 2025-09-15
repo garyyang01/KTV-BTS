@@ -23,6 +23,9 @@ class _MainPageState extends State<MainPage> {
   late PageController _bannerController;
   int _currentBannerIndex = 0;
   Timer? _bannerTimer;
+  
+  // Search bar key for controlling search text
+  final GlobalKey<SearchBarWidgetState> _searchBarKey = GlobalKey<SearchBarWidgetState>();
 
   @override
   void initState() {
@@ -146,13 +149,13 @@ class _MainPageState extends State<MainPage> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: isDark ? [
-              const Color(0xFF1A1A2E),
-              const Color(0xFF16213E),
-              const Color(0xFF0F3460),
+              const Color(0xFF1E293B), // 深藍灰
+              const Color(0xFF334155), // 中等藍灰
+              const Color(0xFF475569), // 淺藍灰
             ] : [
-              Colors.blue.shade50,
-              Colors.purple.shade50,
-              Colors.orange.shade50,
+              const Color(0xFFF8FAFC), // 非常淺的灰藍
+              const Color(0xFFE2E8F0), // 淺灰藍
+              const Color(0xFFCBD5E1), // 中等淺灰藍
             ],
             stops: const [0.0, 0.5, 1.0],
           ),
@@ -167,7 +170,10 @@ class _MainPageState extends State<MainPage> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.blue.shade400, Colors.purple.shade400],
+                      colors: [
+                        const Color(0xFF4A90E2), // 溫暖藍色
+                        const Color(0xFF6BB6FF), // 較亮的溫暖藍色
+                      ],
                     ),
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -196,10 +202,14 @@ class _MainPageState extends State<MainPage> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [
-                    Colors.blue.shade600,
-                    Colors.purple.shade600,
-                    Colors.orange.shade600,
+                  colors: isDark ? [
+                    const Color(0xFF1E293B), // 深藍灰
+                    const Color(0xFF4A90E2), // 溫暖藍色
+                    const Color(0xFF6BB6FF), // 較亮的溫暖藍色
+                  ] : [
+                    const Color(0xFF4A90E2), // 溫暖藍色
+                    const Color(0xFF6BB6FF), // 較亮的溫暖藍色
+                    const Color(0xFF93C5FD), // 淺藍色
                   ],
                 ),
               ),
@@ -254,23 +264,23 @@ class _MainPageState extends State<MainPage> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: isDark ? [
-            const Color(0xFF1A1A1A),
-            const Color(0xFF0F0F0F),
+            const Color(0xFF1E293B), // 深藍灰
+            const Color(0xFF0F172A), // 更深的藍灰
           ] : [
             Colors.white,
-            Colors.blue.shade50,
+            const Color(0xFFF8FAFC), // 非常淺的灰藍
           ],
         ),
         boxShadow: [
           BoxShadow(
-            color: isDark ? Colors.black.withOpacity(0.3) : Colors.blue.withOpacity(0.1),
+            color: isDark ? const Color(0xFF6BB6FF).withOpacity(0.1) : const Color(0xFF4A90E2).withOpacity(0.1),
             blurRadius: 20,
             offset: const Offset(0, -5),
           ),
         ],
         border: Border(
           top: BorderSide(
-            color: isDark ? Colors.blue.withOpacity(0.3) : Colors.blue.withOpacity(0.1),
+            color: isDark ? const Color(0xFF6BB6FF).withOpacity(0.2) : const Color(0xFF4A90E2).withOpacity(0.2),
             width: 1,
           ),
         ),
@@ -548,6 +558,7 @@ class _MainPageState extends State<MainPage> {
           
           // Search component
           SearchBarWidget(
+            key: _searchBarKey,
             hintText: AppLocalizations.of(context)!.typeDestination,
             onSelectionChanged: (option) {
               setState(() {
@@ -592,7 +603,13 @@ class _MainPageState extends State<MainPage> {
           children: suggestions.map((suggestion) {
             return InkWell(
               onTap: () {
-                // Handle suggestion tap
+                // 先設置文字到搜尋框
+                _searchBarKey.currentState?.setSearchText(suggestion['text'] as String);
+                
+                // 延遲一點時間後觸發輸入框點擊來顯示下拉選單
+                Future.delayed(const Duration(milliseconds: 100), () {
+                  _searchBarKey.currentState?.triggerInputFieldTap();
+                });
               },
               borderRadius: BorderRadius.circular(20),
               child: Container(

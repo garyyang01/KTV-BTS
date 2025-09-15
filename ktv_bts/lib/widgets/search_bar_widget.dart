@@ -16,15 +16,60 @@ class SearchBarWidget extends StatefulWidget {
   });
 
   @override
-  State<SearchBarWidget> createState() => _SearchBarWidgetState();
+  State<SearchBarWidget> createState() => SearchBarWidgetState();
 }
 
-class _SearchBarWidgetState extends State<SearchBarWidget> {
+class SearchBarWidgetState extends State<SearchBarWidget> {
   final TextEditingController _textEditingController = TextEditingController();
   SearchOption? _selectedOption;
   late FocusNode _focusNode;
   List<SearchResult> _searchResults = [];
   TextEditingController? _fieldTextEditingController;
+
+  /// 設置搜尋文字
+  void setSearchText(String text) {
+    _textEditingController.text = text;
+    _fieldTextEditingController?.text = text;
+    _updateSearchResults(text);
+  }
+
+  /// 設置搜尋文字並顯示下拉選單
+  void setSearchTextAndShowDropdown(String text) {
+    _textEditingController.text = text;
+    _fieldTextEditingController?.text = text;
+    _updateSearchResults(text);
+    
+    // 延遲一點時間讓搜尋結果更新，然後觸發焦點和模擬點擊
+    Future.delayed(const Duration(milliseconds: 150), () {
+      if (mounted) {
+        _focusNode.requestFocus();
+        
+        // 再次延遲一點時間，然後模擬點擊輸入框
+        Future.delayed(const Duration(milliseconds: 100), () {
+          if (mounted) {
+            // 觸發 onTap 回調來模擬用戶點擊輸入框
+            _simulateInputFieldTap();
+          }
+        });
+      }
+    });
+  }
+
+  /// 模擬點擊輸入框的行為
+  void _simulateInputFieldTap() {
+    // 如果已選中選項，清除選擇以允許新搜索
+    if (_selectedOption != null) {
+      _clearSelection();
+    }
+    
+    // 觸發重建來確保下拉選單顯示
+    setState(() {});
+  }
+
+  /// 外部調用：觸發輸入框點擊來顯示下拉選單
+  void triggerInputFieldTap() {
+    _simulateInputFieldTap();
+  }
 
   @override
   void initState() {
@@ -128,6 +173,15 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
               onChanged: (value) {
                 _textEditingController.text = value;
                 _updateSearchResults(value);
+                // 如果有搜尋結果且文字不為空，確保下拉選單會顯示
+                if (value.isNotEmpty && _searchResults.isNotEmpty) {
+                  // 觸發重建來確保下拉選單顯示
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (mounted) {
+                      setState(() {});
+                    }
+                  });
+                }
               },
               decoration: InputDecoration(
                 hintText: widget.hintText,

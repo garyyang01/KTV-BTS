@@ -66,55 +66,35 @@ class ThemeProvider extends ChangeNotifier {
     }
   }
   
-  /// Light theme configuration
+  /// Light theme configuration - 旅遊App溫馨配色
   static final ThemeData _lightTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
     colorScheme: ColorScheme.fromSeed(
-      seedColor: Colors.blue,
+      seedColor: const Color(0xFF4A90E2), // 溫暖的藍色
       brightness: Brightness.light,
     ),
+    scaffoldBackgroundColor: const Color(0xFFF8FAFC), // 非常淺的灰藍色背景
     appBarTheme: const AppBarTheme(
       centerTitle: true,
       elevation: 0,
-    ),
-    cardTheme: CardTheme(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-    ),
-  );
-  
-  /// Dark theme configuration
-  static final ThemeData _darkTheme = ThemeData(
-    useMaterial3: true,
-    brightness: Brightness.dark,
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: Colors.blue,
-      brightness: Brightness.dark,
-    ),
-    scaffoldBackgroundColor: const Color(0xFF0A0A0A),
-    appBarTheme: const AppBarTheme(
-      centerTitle: true,
-      elevation: 0,
-      backgroundColor: Color(0xFF1A1A1A),
+      backgroundColor: Color(0xFF4A90E2), // 溫暖藍色
       foregroundColor: Colors.white,
     ),
     cardTheme: CardTheme(
-      elevation: 8,
-      color: const Color(0xFF1E1E1E),
+      elevation: 2,
+      color: Colors.white,
+      shadowColor: const Color(0xFF4A90E2).withOpacity(0.1),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
-      shadowColor: Colors.black.withOpacity(0.3),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.blue.shade600,
+        backgroundColor: const Color(0xFF4A90E2),
         foregroundColor: Colors.white,
-        elevation: 4,
-        shadowColor: Colors.blue.withOpacity(0.3),
+        elevation: 3,
+        shadowColor: const Color(0xFF4A90E2).withOpacity(0.3),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -122,8 +102,8 @@ class ThemeProvider extends ChangeNotifier {
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        foregroundColor: Colors.white,
-        side: BorderSide(color: Colors.grey.shade400),
+        foregroundColor: const Color(0xFF4A90E2),
+        side: const BorderSide(color: Color(0xFF4A90E2)),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -131,7 +111,109 @@ class ThemeProvider extends ChangeNotifier {
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: const Color(0xFF2A2A2A),
+      fillColor: Colors.grey.shade50,
+      labelStyle: TextStyle(color: Colors.grey.shade700),
+      hintStyle: TextStyle(color: Colors.grey.shade500),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.grey.shade300),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.grey.shade300),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Color(0xFF4A90E2), width: 2),
+      ),
+    ),
+    dropdownMenuTheme: DropdownMenuThemeData(
+      menuStyle: MenuStyle(
+        backgroundColor: WidgetStateProperty.all(Colors.white),
+        elevation: WidgetStateProperty.all(8),
+      ),
+      textStyle: TextStyle(color: Colors.grey.shade800),
+    ),
+    radioTheme: RadioThemeData(
+      fillColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return const Color(0xFF4A90E2);
+        }
+        return Colors.grey.shade400;
+      }),
+    ),
+    checkboxTheme: CheckboxThemeData(
+      fillColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return const Color(0xFF4A90E2);
+        }
+        return Colors.grey.shade400;
+      }),
+    ),
+    snackBarTheme: SnackBarThemeData(
+      backgroundColor: const Color(0xFF4A90E2),
+      contentTextStyle: const TextStyle(color: Colors.white),
+      actionTextColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+    ),
+    dialogTheme: DialogTheme(
+      backgroundColor: Colors.white,
+      titleTextStyle: TextStyle(color: Colors.grey.shade800, fontSize: 20, fontWeight: FontWeight.bold),
+      contentTextStyle: TextStyle(color: Colors.grey.shade700),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+    ),
+  );
+  
+  /// Dark theme configuration - 旅遊App深色溫馨配色
+  static final ThemeData _darkTheme = ThemeData(
+    useMaterial3: true,
+    brightness: Brightness.dark,
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: const Color(0xFF6BB6FF), // 較亮的溫暖藍色
+      brightness: Brightness.dark,
+    ),
+    scaffoldBackgroundColor: const Color(0xFF121212), // 深灰背景
+    appBarTheme: const AppBarTheme(
+      centerTitle: true,
+      elevation: 0,
+      backgroundColor: Color(0xFF1E293B), // 深藍灰色
+      foregroundColor: Colors.white,
+    ),
+    cardTheme: CardTheme(
+      elevation: 6,
+      color: const Color(0xFF1E293B), // 深藍灰色卡片
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      shadowColor: const Color(0xFF6BB6FF).withOpacity(0.2),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFF6BB6FF),
+        foregroundColor: const Color(0xFF1E293B),
+        elevation: 4,
+        shadowColor: const Color(0xFF6BB6FF).withOpacity(0.3),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: const Color(0xFF6BB6FF),
+        side: const BorderSide(color: Color(0xFF6BB6FF)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: const Color(0xFF334155), // 中等深度的灰藍色
       labelStyle: const TextStyle(color: Colors.white70),
       hintStyle: const TextStyle(color: Colors.white54),
       border: OutlineInputBorder(
@@ -144,12 +226,13 @@ class ThemeProvider extends ChangeNotifier {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.blue.shade400, width: 2),
+        borderSide: const BorderSide(color: Color(0xFF6BB6FF), width: 2),
       ),
     ),
     dropdownMenuTheme: DropdownMenuThemeData(
       menuStyle: MenuStyle(
-        backgroundColor: WidgetStateProperty.all(const Color(0xFF2A2A2A)),
+        backgroundColor: WidgetStateProperty.all(const Color(0xFF334155)),
+        elevation: WidgetStateProperty.all(8),
       ),
       textStyle: const TextStyle(color: Colors.white),
     ),
@@ -167,7 +250,7 @@ class ThemeProvider extends ChangeNotifier {
     radioTheme: RadioThemeData(
       fillColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
-          return Colors.blue.shade400;
+          return const Color(0xFF6BB6FF);
         }
         return Colors.grey.shade600;
       }),
@@ -175,20 +258,26 @@ class ThemeProvider extends ChangeNotifier {
     checkboxTheme: CheckboxThemeData(
       fillColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
-          return Colors.blue.shade400;
+          return const Color(0xFF6BB6FF);
         }
         return Colors.grey.shade600;
       }),
     ),
     snackBarTheme: SnackBarThemeData(
-      backgroundColor: const Color(0xFF2A2A2A),
-      contentTextStyle: const TextStyle(color: Colors.white),
-      actionTextColor: Colors.blue.shade400,
+      backgroundColor: const Color(0xFF6BB6FF),
+      contentTextStyle: const TextStyle(color: Color(0xFF1E293B)),
+      actionTextColor: const Color(0xFF1E293B),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
     ),
     dialogTheme: DialogTheme(
-      backgroundColor: const Color(0xFF1E1E1E),
+      backgroundColor: const Color(0xFF1E293B),
       titleTextStyle: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
       contentTextStyle: const TextStyle(color: Colors.white70),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
     ),
   );
 }

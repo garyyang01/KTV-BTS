@@ -200,9 +200,6 @@ class _ContentDisplayWidgetState extends State<ContentDisplayWidget>
           ),
           
           const SizedBox(height: 24),
-          
-          // 快速選擇建議
-          _buildQuickSelections(),
         ],
       ),
     );
@@ -229,62 +226,4 @@ class _ContentDisplayWidgetState extends State<ContentDisplayWidget>
   }
 
 
-  /// 建立快速選擇建議
-  Widget _buildQuickSelections() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
-    final quickOptions = [
-      {'icon': '🚉', 'name': AppLocalizations.of(context)!.munichCentral, 'type': 'Station'},
-      {'icon': '🏰', 'name': AppLocalizations.of(context)!.neuschwansteinCastle, 'type': 'Attraction'},
-      {'icon': '🎨', 'name': AppLocalizations.of(context)!.uffiziGallery, 'type': 'Attraction'},
-    ];
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          AppLocalizations.of(context)!.popularDestinations,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: isDark ? Colors.white70 : Colors.grey.shade600,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: quickOptions.map((option) {
-            return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF2A2A2A) : Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: isDark ? Colors.grey.shade600 : Colors.grey.shade300,
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    option['icon']!,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    option['name']!,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: isDark ? Colors.white70 : Colors.grey.shade700,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
-        ),
-      ],
-    );
-  }
 }
