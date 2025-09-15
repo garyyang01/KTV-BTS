@@ -11,6 +11,7 @@ import 'pages/main_page.dart';
 import 'pages/payment_confirmation_page.dart';
 import 'pages/rail_search_test_page.dart';
 import 'pages/settings_page.dart';
+import 'pages/bundle_page.dart';
 import 'models/payment_request.dart';
 import 'providers/theme_provider.dart';
 import 'providers/locale_provider.dart';
@@ -87,6 +88,7 @@ class MyApp extends StatelessWidget {
               '/legacy-ticket-booking': (context) => const TicketBookingPage(),
               '/legacy-landing': (context) => const LandingPage(),
               '/settings': (context) => const SettingsPage(),
+              '/bundle': (context) => const BundlePage(),
             },
           );
         },

@@ -214,5 +214,10 @@
       }
     }
   },
-  "whereWouldYouLikeToGo": "您想去哪里？"
+  "whereWouldYouLikeToGo": "您想去哪里？",
+  "trainTickets": "火车票",
+  "bundleTickets": "套装行程",
+  "noBundleTicketsYet": "还没有套装行程",
+  "bundleTicketInfoWillBeDisplayed": "购买套装行程后，您的票据信息将在此显示。",
+  "searchBundles": "搜索套装行程"
 }

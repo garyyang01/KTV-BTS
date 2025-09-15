@@ -214,5 +214,10 @@
       }
     }
   },
-  "whereWouldYouLikeToGo": "Where would you like to go?"
+  "whereWouldYouLikeToGo": "Where would you like to go?",
+  "trainTickets": "Train Tickets",
+  "bundleTickets": "Bundle Tickets",
+  "noBundleTicketsYet": "No Bundle Tickets Yet",
+  "bundleTicketInfoWillBeDisplayed": "Your bundle ticket information will be displayed here after purchase.",
+  "searchBundles": "Search Bundles"
 }

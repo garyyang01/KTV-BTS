@@ -214,5 +214,10 @@
       }
     }
   },
-  "whereWouldYouLikeToGo": "您想去哪裡？"
+  "whereWouldYouLikeToGo": "您想去哪裡？",
+  "trainTickets": "火車票",
+  "bundleTickets": "套裝行程",
+  "noBundleTicketsYet": "還沒有套裝行程",
+  "bundleTicketInfoWillBeDisplayed": "購買套裝行程後，您的票據資訊將在此顯示。",
+  "searchBundles": "搜尋套裝行程"
 }

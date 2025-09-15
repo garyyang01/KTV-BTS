@@ -20,6 +20,8 @@ import 'dart:math';
 import 'rail_search_test_page.dart';
 import 'my_train_tickets_page.dart';
 import 'bundle_booking_page.dart';
+import '../models/bundle_ticket.dart';
+import '../services/bundle_ticket_storage_service.dart';
 
 class PaymentPage extends StatefulWidget {
   final PaymentRequest paymentRequest;
@@ -361,11 +363,19 @@ class _PaymentPageState extends State<PaymentPage> {
       
       if (response.success) {
         print('🎫 [BUNDLE] API call successful, showing success dialog');
+        
+        // Save bundle ticket to local storage
+        await _saveBundleTicket(paymentIntentId);
+        
         _showSuccessDialog();
       } else {
         // Temporary test: show success dialog even if API fails
         print('🎫 [BUNDLE] API failed but showing success dialog for testing');
         print('🎫 [BUNDLE] Error details: ${response.errorMessage}');
+        
+        // Still save bundle ticket even if API fails (for testing)
+        await _saveBundleTicket(paymentIntentId);
+        
         _showSuccessDialog();
       }
     } catch (e) {
@@ -383,6 +393,63 @@ class _PaymentPageState extends State<PaymentPage> {
       Iterable.generate(16, (_) => chars.codeUnitAt(random.nextInt(chars.length)))
     );
     return 'tickettrip_$randomString';
+  }
+
+  /// Save bundle ticket to local storage
+  Future<void> _saveBundleTicket(String paymentIntentId) async {
+    try {
+      if (widget.bundleData == null) {
+        print('🎫 [BUNDLE] Cannot save ticket: bundle data is null');
+        return;
+      }
+
+      final bundle = widget.bundleData!['bundle'] as BundleInfo;
+      final participants = widget.bundleData!['participants'] as List<dynamic>;
+      final date = widget.bundleData!['date'] as DateTime;
+
+      // Convert participants to BundleParticipant objects
+      final bundleParticipants = participants.map((p) {
+        // Handle both Map<String, dynamic> and ParticipantInfo types
+        if (p is Map<String, dynamic>) {
+          return BundleParticipant(
+            firstName: p['firstName'] as String,
+            lastName: p['lastName'] as String,
+            email: p['email'] as String,
+            passportNumber: p['passportNumber'] as String,
+          );
+        } else {
+          // Assume it's a ParticipantInfo object
+          final participant = p as ParticipantInfo;
+          return BundleParticipant(
+            firstName: participant.firstName,
+            lastName: participant.lastName,
+            email: participant.email,
+            passportNumber: participant.passportNumber,
+          );
+        }
+      }).toList();
+
+      // Create bundle ticket
+      final bundleTicket = BundleTicket(
+        id: paymentIntentId, // Use payment intent ID as ticket ID
+        bundleId: bundle.id,
+        bundleName: bundle.name,
+        location: bundle.location,
+        priceEur: bundle.priceEur,
+        bookingDate: DateTime.now(),
+        tourDate: date,
+        participants: bundleParticipants,
+        paymentRefno: paymentIntentId,
+        status: 'confirmed',
+      );
+
+      // Save to storage
+      await BundleTicketStorageService.saveBundleTicket(bundleTicket);
+      
+      print('🎫 [BUNDLE] Bundle ticket saved successfully: ${bundleTicket.id}');
+    } catch (e) {
+      print('🎫 [BUNDLE] Failed to save bundle ticket: $e');
+    }
   }
 
   /// Create comprehensive ticket request that includes both entrance and train tickets
