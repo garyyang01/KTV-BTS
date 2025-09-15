@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
       child: Consumer2<ThemeProvider, LocaleProvider>(
         builder: (context, themeProvider, localeProvider, child) {
           return MaterialApp(
-            title: 'Ticket Trip Booking',
+            title: 'Welcome to Ticketrip!',
             debugShowCheckedModeBanner: false,
             theme: themeProvider.getThemeData(context),
             locale: localeProvider.locale,
